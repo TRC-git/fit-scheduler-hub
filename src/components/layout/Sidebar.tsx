@@ -27,7 +27,7 @@ const Sidebar = () => {
           {staffMembers.map((staff) => (
             <div
               key={staff.id}
-              className="flex items-center justify-between p-3 bg-[#1A1F2C] rounded-md"
+              className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
             >
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
@@ -54,7 +54,7 @@ const Sidebar = () => {
           {approvedTimeOff.map((item, index) => (
             <div
               key={index}
-              className="p-3 bg-[#1A1F2C] rounded-md text-fitness-text"
+              className="p-3 bg-fitness-inner rounded-md text-fitness-text"
             >
               <p className="font-medium">{item.name}</p>
               <p className="text-sm text-gray-400">Approved: {item.approver}</p>
@@ -77,7 +77,7 @@ const Sidebar = () => {
           {timeOffRequests.map((request, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-3 bg-[#1A1F2C] rounded-md"
+              className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
             >
               <span className="text-fitness-text">{request.name}</span>
               <div className="flex gap-2">

@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const timeSlots = [
   "5:00am - 6:00am",
@@ -14,7 +14,7 @@ const days = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
 
 const ScheduleGrid = () => {
   return (
-    <div className="bg-fitness-card rounded-lg p-4">
+    <div className="bg-fitness-grid rounded-lg p-4">
       <div className="grid grid-cols-8 gap-2 mb-4">
         <div className="text-fitness-text font-medium p-2">Avail. Times</div>
         {days.map((day, index) => (
@@ -36,14 +36,14 @@ const ScheduleGrid = () => {
             {days.map((day) => (
               <div
                 key={`${timeSlot}-${day}`}
-                className="bg-fitness-muted/50 rounded-md p-2"
+                className="bg-fitness-muted rounded-md p-2"
               >
-                <div className="bg-[#1A1F2C] p-2 rounded flex items-center justify-between">
+                <div className="bg-fitness-inner p-2 rounded flex items-center justify-between">
                   <div>
                     <p className="text-fitness-text text-sm">Heath Graham</p>
                     <p className="text-xs text-gray-400">CrossFit</p>
                   </div>
-                  <X className="w-4 h-4 text-red-500 cursor-pointer" />
+                  <Trash2 className="w-4 h-4 text-fitness-danger cursor-pointer" />
                 </div>
               </div>
             ))}

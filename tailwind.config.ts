@@ -52,13 +52,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors for the fitness app
         fitness: {
-          background: "#1A1F2C",
-          card: "#222831",
+          background: "#1a1d23",
+          card: "#000000",
           accent: "#00ADB5",
           text: "#EEEEEE",
-          muted: "#393E46",
+          muted: "#333333",
+          inner: "#171717",
+          grid: "#202020",
+          danger: "#ea384c",
         },
       },
       borderRadius: {
