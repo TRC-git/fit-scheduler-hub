@@ -19,7 +19,7 @@ const Header = () => {
         </button>
       </nav>
       <div className="flex items-center gap-6">
-        <Sun className="w-5 h-5 text-fitness-text" />
+        <Sun className="w-5 h-5 text-fitness-text cursor-pointer" />
         <div className="flex items-center gap-4">
           <span className="text-fitness-text">Messages</span>
           <MessageSquare className="w-5 h-5 text-fitness-text" />
