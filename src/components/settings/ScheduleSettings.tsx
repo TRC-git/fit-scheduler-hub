@@ -3,14 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const ScheduleSettings = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+  const [editingTemplate, setEditingTemplate] = useState<any>(null);
 
   const { data: templates } = useQuery({
     queryKey: ['scheduleTemplates'],
@@ -35,12 +39,57 @@ const ScheduleSettings = () => {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scheduleTemplates'] });
       toast({
         title: "Success",
         description: "Schedule template created successfully",
       });
     },
   });
+
+  const updateTemplateMutation = useMutation({
+    mutationFn: async (templateData: any) => {
+      const { data, error } = await supabase
+        .from('schedules')
+        .update(templateData)
+        .eq('scheduleid', templateData.scheduleid);
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scheduleTemplates'] });
+      setEditingTemplate(null);
+      toast({
+        title: "Success",
+        description: "Schedule template updated successfully",
+      });
+    },
+  });
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (templateId: number) => {
+      const { error } = await supabase
+        .from('schedules')
+        .delete()
+        .eq('scheduleid', templateId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scheduleTemplates'] });
+      toast({
+        title: "Success",
+        description: "Schedule template deleted successfully",
+      });
+    },
+  });
+
+  // ... keep existing code (Days of Operation section)
+
+  // ... keep existing code (Operating Hours section)
+
+  // ... keep existing code (Class Types section)
 
   return (
     <Card className="bg-fitness-card">
@@ -100,10 +149,69 @@ const ScheduleSettings = () => {
           <div className="grid gap-4">
             {templates?.map((template: any) => (
               <div key={template.scheduleid} className="p-4 bg-fitness-inner rounded-md">
-                <h4 className="text-fitness-text font-medium">{template.template_name}</h4>
-                <p className="text-fitness-text/70 text-sm mt-1">
-                  {template.recurring_pattern || 'No recurring pattern'}
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-fitness-text font-medium">{template.template_name}</h4>
+                    <p className="text-fitness-text/70 text-sm mt-1">
+                      {template.recurring_pattern || 'No recurring pattern'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => setEditingTemplate(template)}
+                        >
+                          <Pencil className="h-4 w-4 text-[#15e7fb]" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-fitness-card">
+                        <DialogHeader>
+                          <DialogTitle className="text-fitness-text">Edit Template</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 pt-4">
+                          <div>
+                            <Label className="text-fitness-text">Template Name</Label>
+                            <Input 
+                              className="bg-fitness-inner text-fitness-text"
+                              value={editingTemplate?.template_name}
+                              onChange={(e) => setEditingTemplate({
+                                ...editingTemplate,
+                                template_name: e.target.value
+                              })}
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-fitness-text">Recurring Pattern</Label>
+                            <Input 
+                              className="bg-fitness-inner text-fitness-text"
+                              value={editingTemplate?.recurring_pattern || ''}
+                              onChange={(e) => setEditingTemplate({
+                                ...editingTemplate,
+                                recurring_pattern: e.target.value
+                              })}
+                            />
+                          </div>
+                          <Button 
+                            className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 w-full"
+                            onClick={() => updateTemplateMutation.mutate(editingTemplate)}
+                          >
+                            Save Changes
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => deleteTemplateMutation.mutate(template.scheduleid)}
+                    >
+                      <Trash2 className="h-4 w-4 text-fitness-danger" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
             <Button 
