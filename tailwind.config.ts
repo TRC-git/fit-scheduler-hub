@@ -55,7 +55,7 @@ export default {
         fitness: {
           background: "#1a1d23",
           card: "#000000",
-          accent: "#00ADB5",
+          accent: "#15e7fb",
           text: "#EEEEEE",
           muted: "#333333",
           inner: "#171717",
