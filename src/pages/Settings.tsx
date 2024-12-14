@@ -1,3 +1,5 @@
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ScheduleSettings from "@/components/settings/ScheduleSettings";
 import PositionSettings from "@/components/settings/PositionSettings";
@@ -7,8 +9,17 @@ import PermissionSettings from "@/components/settings/PermissionSettings";
 const Settings = () => {
   return (
     <div className="flex flex-col min-h-screen bg-fitness-background">
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-fitness-text mb-6">Settings</h1>
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Link 
+            to="/" 
+            className="flex items-center gap-2 text-fitness-text hover:text-[#15e7fb] transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Schedule
+          </Link>
+          <h1 className="text-2xl font-bold text-fitness-text">Settings</h1>
+        </div>
         
         <Tabs defaultValue="schedule" className="w-full">
           <TabsList className="bg-fitness-card">
@@ -34,7 +45,7 @@ const Settings = () => {
             <PayrollSettings />
           </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 };
