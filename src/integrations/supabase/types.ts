@@ -36,6 +36,41 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_access: {
+        Row: {
+          access_id: number
+          calendar_type: string
+          can_edit: boolean | null
+          can_manage: boolean | null
+          can_view: boolean | null
+          employeeid: number | null
+        }
+        Insert: {
+          access_id?: number
+          calendar_type: string
+          can_edit?: boolean | null
+          can_manage?: boolean | null
+          can_view?: boolean | null
+          employeeid?: number | null
+        }
+        Update: {
+          access_id?: number
+          calendar_type?: string
+          can_edit?: boolean | null
+          can_manage?: boolean | null
+          can_view?: boolean | null
+          employeeid?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_access_employeeid_fkey"
+            columns: ["employeeid"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       compliancelogs: {
         Row: {
           actiontaken: string | null
@@ -115,20 +150,29 @@ export type Database = {
       }
       employeepositions: {
         Row: {
+          access_level: string | null
+          certification_expiry: string | null
           employeeid: number | null
           employeepositionid: number
+          is_primary: boolean | null
           payrate: number
           positionid: number | null
         }
         Insert: {
+          access_level?: string | null
+          certification_expiry?: string | null
           employeeid?: number | null
           employeepositionid?: number
+          is_primary?: boolean | null
           payrate: number
           positionid?: number | null
         }
         Update: {
+          access_level?: string | null
+          certification_expiry?: string | null
           employeeid?: number | null
           employeepositionid?: number
+          is_primary?: boolean | null
           payrate?: number
           positionid?: number | null
         }
@@ -238,21 +282,30 @@ export type Database = {
       positions: {
         Row: {
           defaultpayrate: number | null
+          description: string | null
+          min_experience_months: number | null
           paytype: string | null
           positionid: number
           positionname: string
+          required_certifications: string[] | null
         }
         Insert: {
           defaultpayrate?: number | null
+          description?: string | null
+          min_experience_months?: number | null
           paytype?: string | null
           positionid?: number
           positionname: string
+          required_certifications?: string[] | null
         }
         Update: {
           defaultpayrate?: number | null
+          description?: string | null
+          min_experience_months?: number | null
           paytype?: string | null
           positionid?: number
           positionname?: string
+          required_certifications?: string[] | null
         }
         Relationships: []
       }
@@ -294,36 +347,48 @@ export type Database = {
       schedules: {
         Row: {
           breakduration: number | null
+          color: string | null
           employeeid: number | null
           endtime: string
+          is_template: boolean | null
           locationid: number | null
           notes: string | null
           positionid: number | null
+          recurring_pattern: string | null
           scheduleid: number
           shiftdate: string
           starttime: string
+          template_name: string | null
         }
         Insert: {
           breakduration?: number | null
+          color?: string | null
           employeeid?: number | null
           endtime: string
+          is_template?: boolean | null
           locationid?: number | null
           notes?: string | null
           positionid?: number | null
+          recurring_pattern?: string | null
           scheduleid?: number
           shiftdate: string
           starttime: string
+          template_name?: string | null
         }
         Update: {
           breakduration?: number | null
+          color?: string | null
           employeeid?: number | null
           endtime?: string
+          is_template?: boolean | null
           locationid?: number | null
           notes?: string | null
           positionid?: number | null
+          recurring_pattern?: string | null
           scheduleid?: number
           shiftdate?: string
           starttime?: string
+          template_name?: string | null
         }
         Relationships: [
           {
