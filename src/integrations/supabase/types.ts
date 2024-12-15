@@ -71,6 +71,27 @@ export type Database = {
           },
         ]
       }
+      class_types: {
+        Row: {
+          class_type_id: number
+          created_at: string | null
+          duration: number
+          name: string
+        }
+        Insert: {
+          class_type_id?: number
+          created_at?: string | null
+          duration?: number
+          name: string
+        }
+        Update: {
+          class_type_id?: number
+          created_at?: string | null
+          duration?: number
+          name?: string
+        }
+        Relationships: []
+      }
       compliancelogs: {
         Row: {
           actiontaken: string | null
