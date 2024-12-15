@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { ClassType } from "@/types/class-types";
+import { ClassType, CreateClassTypeData, UpdateClassTypeData } from "@/types/class-types";
 
 interface ClassTypeFormProps {
   classType?: ClassType;
-  onSubmit: (data: Partial<ClassType>) => Promise<void>;
+  onSubmit: (data: CreateClassTypeData | UpdateClassTypeData) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -29,6 +29,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="bg-fitness-inner text-fitness-text"
+          required
         />
       </div>
       <div>
@@ -38,6 +39,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
           value={formData.duration}
           onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
           className="bg-fitness-inner text-fitness-text"
+          required
         />
       </div>
       <div className="flex justify-end gap-2">

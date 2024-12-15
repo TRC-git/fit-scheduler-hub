@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ClassType } from "@/types/class-types";
+import { ClassType, UpdateClassTypeData } from "@/types/class-types";
 import { Pencil, Trash2 } from "lucide-react";
 import ClassTypeForm from "./ClassTypeForm";
 
 interface ClassTypeItemProps {
   classType: ClassType;
-  onUpdate: (id: number, data: Partial<ClassType>) => Promise<void>;
+  onUpdate: (id: number, data: UpdateClassTypeData) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
 }
 

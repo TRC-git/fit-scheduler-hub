@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClassType } from "@/types/class-types";
+import { ClassType, CreateClassTypeData, UpdateClassTypeData } from "@/types/class-types";
 import ClassTypeForm from "./class-types/ClassTypeForm";
 import ClassTypeItem from "./class-types/ClassTypeItem";
 
@@ -25,7 +25,7 @@ const ClassTypes = () => {
   });
 
   const createClassTypeMutation = useMutation({
-    mutationFn: async (classTypeData: Partial<ClassType>) => {
+    mutationFn: async (classTypeData: CreateClassTypeData) => {
       const { error } = await supabase
         .from('class_types')
         .insert([classTypeData]);
@@ -42,7 +42,7 @@ const ClassTypes = () => {
   });
 
   const updateClassTypeMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<ClassType> }) => {
+    mutationFn: async ({ id, data }: { id: number; data: UpdateClassTypeData }) => {
       const { error } = await supabase
         .from('class_types')
         .update(data)
