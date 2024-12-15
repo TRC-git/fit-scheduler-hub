@@ -32,7 +32,9 @@ const ScheduleSettings = () => {
     mutationFn: async (templateData: any) => {
       const { data, error } = await supabase
         .from('schedules')
-        .insert([{ ...templateData, is_template: true }]);
+        .insert([{ ...templateData, is_template: true }])
+        .select()
+        .single();
       
       if (error) throw error;
       return data;
@@ -74,7 +76,7 @@ const ScheduleSettings = () => {
                 <DialogTitle className="text-fitness-text">Create New Template</DialogTitle>
               </DialogHeader>
               <TemplateForm 
-                onSubmit={(data) => createTemplateMutation.mutate(data)}
+                onSubmit={(data) => createTemplateMutation.mutateAsync(data)}
                 onCancel={() => {}}
               />
             </DialogContent>

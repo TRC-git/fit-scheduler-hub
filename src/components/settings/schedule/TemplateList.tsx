@@ -117,7 +117,7 @@ const TemplateList = ({ templates }: TemplateListProps) => {
                   </DialogHeader>
                   <TemplateForm 
                     template={editingTemplate}
-                    onSubmit={(data) => updateTemplateMutation.mutate({
+                    onSubmit={(data) => updateTemplateMutation.mutateAsync({
                       ...data,
                       scheduleid: template.scheduleid
                     })}
