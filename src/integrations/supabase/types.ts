@@ -508,6 +508,47 @@ export type Database = {
           },
         ]
       }
+      template_slots: {
+        Row: {
+          class_type: string | null
+          created_at: string | null
+          day_of_week: string
+          end_time: string
+          max_capacity: number | null
+          slot_id: number
+          start_time: string
+          template_id: number | null
+        }
+        Insert: {
+          class_type?: string | null
+          created_at?: string | null
+          day_of_week: string
+          end_time: string
+          max_capacity?: number | null
+          slot_id?: number
+          start_time: string
+          template_id?: number | null
+        }
+        Update: {
+          class_type?: string | null
+          created_at?: string | null
+          day_of_week?: string
+          end_time?: string
+          max_capacity?: number | null
+          slot_id?: number
+          start_time?: string
+          template_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_slots_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "schedules"
+            referencedColumns: ["scheduleid"]
+          },
+        ]
+      }
       timeentries: {
         Row: {
           approvalby: number | null

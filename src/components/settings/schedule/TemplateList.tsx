@@ -18,13 +18,39 @@ const TemplateList = ({ templates }: TemplateListProps) => {
 
   const updateTemplateMutation = useMutation({
     mutationFn: async (templateData: any) => {
-      const { data, error } = await supabase
+      // Update template
+      const { data: templateResult, error: templateError } = await supabase
         .from('schedules')
         .update(templateData)
-        .eq('scheduleid', templateData.scheduleid);
+        .eq('scheduleid', templateData.scheduleid)
+        .select()
+        .single();
       
-      if (error) throw error;
-      return data;
+      if (templateError) throw templateError;
+
+      // Delete existing slots
+      const { error: deleteError } = await supabase
+        .from('template_slots')
+        .delete()
+        .eq('template_id', templateData.scheduleid);
+
+      if (deleteError) throw deleteError;
+
+      // Insert new slots if provided
+      if (templateData.slots?.length > 0) {
+        const { error: slotsError } = await supabase
+          .from('template_slots')
+          .insert(
+            templateData.slots.map((slot: any) => ({
+              ...slot,
+              template_id: templateData.scheduleid
+            }))
+          );
+
+        if (slotsError) throw slotsError;
+      }
+
+      return templateResult;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['scheduleTemplates'] });
@@ -38,6 +64,15 @@ const TemplateList = ({ templates }: TemplateListProps) => {
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (templateId: number) => {
+      // Delete slots first due to foreign key constraint
+      const { error: slotsError } = await supabase
+        .from('template_slots')
+        .delete()
+        .eq('template_id', templateId);
+      
+      if (slotsError) throw slotsError;
+
+      // Then delete the template
       const { error } = await supabase
         .from('schedules')
         .delete()
