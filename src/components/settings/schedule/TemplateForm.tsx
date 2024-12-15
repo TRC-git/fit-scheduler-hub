@@ -7,9 +7,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import TimeSlotGrid from "./TimeSlotGrid";
 
+interface Template {
+  scheduleid: number;
+  template_name: string;
+  recurring_pattern: string;
+}
+
 interface TemplateFormProps {
-  template?: any;
-  onSubmit: (data: any) => void;
+  template?: Template;
+  onSubmit: (data: Omit<Template, 'scheduleid'>) => Promise<Template>;
   onCancel: () => void;
 }
 
@@ -27,7 +33,7 @@ const TemplateForm = ({ template, onSubmit, onCancel }: TemplateFormProps) => {
     try {
       const templateResult = await onSubmit(formData);
       
-      if (slots.length > 0 && templateResult?.scheduleid) {
+      if (slots.length > 0 && templateResult.scheduleid) {
         const { error } = await supabase
           .from('template_slots')
           .insert(
