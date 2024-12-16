@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { ClassType, CreateClassTypeData, UpdateClassTypeData } from "@/types/class-types";
+import { ClassType, CreateClassTypeData, UpdateClassTypeData } from "@/types/schedule/class-types";
 
 export const useClassTypes = () => {
   const { toast } = useToast();
