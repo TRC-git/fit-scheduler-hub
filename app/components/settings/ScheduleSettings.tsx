@@ -14,7 +14,6 @@ const ScheduleSettings = () => {
         <DaysOfOperation />
         <OperatingHours />
         <ClassTypes />
-        
         <div>
           <h3 className="text-fitness-text mb-4">Schedule Templates</h3>
           <TemplateList templates={[]} />
