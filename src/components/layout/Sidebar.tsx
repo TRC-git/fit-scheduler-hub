@@ -1,5 +1,5 @@
 import { Plus, Check, X } from "lucide-react";
-import { Avatar } from "../../ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 
 const staffMembers = [
   { id: 1, name: "Heath Graham", role: "Coach", avatar: "HG" },

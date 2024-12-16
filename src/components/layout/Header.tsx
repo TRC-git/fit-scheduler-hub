@@ -1,5 +1,5 @@
 import { Bell, MessageSquare, Settings, Sun } from "lucide-react";
-import { Avatar } from "../../ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 
 const Header = () => {

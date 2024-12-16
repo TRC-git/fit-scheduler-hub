@@ -1,7 +1,7 @@
-import Header from "../components/layout/Header";
-import Sidebar from "../components/layout/Sidebar";
-import ScheduleHeader from "../components/schedule/ScheduleHeader";
-import ScheduleGrid from "../components/schedule/ScheduleGrid";
+import Header from "@/components/layout/Header";
+import Sidebar from "@/components/layout/Sidebar";
+import ScheduleHeader from "@/components/schedule/ScheduleHeader";
+import ScheduleGrid from "@/components/schedule/ScheduleGrid";
 
 export default function HomePage() {
   return (
