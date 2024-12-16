@@ -1,8 +1,12 @@
+'use client';
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ClassType, CreateClassTypeData, UpdateClassTypeData } from "@/types/schedule/class-types";
+import { useToast } from "@/components/ui/use-toast";
 
 export const useClassTypes = () => {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: classTypes, isLoading } = useQuery({
@@ -25,6 +29,10 @@ export const useClassTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classTypes"] });
+      toast({
+        title: "Success",
+        description: "Class type created successfully",
+      });
     },
   });
 
@@ -44,6 +52,10 @@ export const useClassTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classTypes"] });
+      toast({
+        title: "Success",
+        description: "Class type updated successfully",
+      });
     },
   });
 
@@ -57,6 +69,10 @@ export const useClassTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classTypes"] });
+      toast({
+        title: "Success",
+        description: "Class type deleted successfully",
+      });
     },
   });
 
