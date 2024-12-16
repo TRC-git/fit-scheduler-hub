@@ -1,9 +1,9 @@
-import Header from "@/components/layout/Header";
-import Sidebar from "@/components/layout/Sidebar";
-import ScheduleHeader from "@/components/schedule/ScheduleHeader";
-import ScheduleGrid from "@/components/schedule/ScheduleGrid";
+import Header from "../components/layout/Header"
+import Sidebar from "../components/layout/Sidebar"
+import ScheduleHeader from "../components/schedule/ScheduleHeader"
+import ScheduleGrid from "../components/schedule/ScheduleGrid"
 
-const Index = () => {
+export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-fitness-background">
       <Header />
@@ -18,7 +18,5 @@ const Index = () => {
         </main>
       </div>
     </div>
-  );
-};
-
-export default Index;
+  )
+}
