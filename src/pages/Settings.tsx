@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
-import ScheduleSettings from "../components/settings/ScheduleSettings"
-import PositionSettings from "../components/settings/PositionSettings"
-import PayrollSettings from "../components/settings/PayrollSettings"
-import PermissionSettings from "../components/settings/PermissionSettings"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ScheduleSettings from "@/components/settings/ScheduleSettings";
+import PositionSettings from "@/components/settings/PositionSettings";
+import PayrollSettings from "@/components/settings/PayrollSettings";
+import PermissionSettings from "@/components/settings/PermissionSettings";
 
 export default function SettingsPage() {
   return (
@@ -26,5 +26,5 @@ export default function SettingsPage() {
         <PermissionSettings />
       </TabsContent>
     </Tabs>
-  )
+  );
 }
