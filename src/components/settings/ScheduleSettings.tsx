@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import DaysOfOperation from "./schedule/DaysOfOperation"
-import OperatingHours from "./schedule/OperatingHours"
-import ClassTypes from "./schedule/class-types/ClassTypes"
-import TemplateList from "./schedule/TemplateList"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import DaysOfOperation from "./schedule/DaysOfOperation";
+import OperatingHours from "./schedule/OperatingHours";
+import ClassTypes from "./schedule/ClassTypes";
+import TemplateList from "./schedule/TemplateList";
 
 const ScheduleSettings = () => {
   return (
@@ -21,7 +21,7 @@ const ScheduleSettings = () => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ScheduleSettings
+export default ScheduleSettings;
