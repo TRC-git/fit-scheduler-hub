@@ -1,7 +1,7 @@
+import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import ClassTypeForm from "./class-types/ClassTypeForm";
 import ClassTypesList from "./class-types/ClassTypesList";
 
