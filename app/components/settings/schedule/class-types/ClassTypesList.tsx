@@ -1,4 +1,4 @@
-import { ClassType } from "@/types/schedule/class-types";
+import { ClassType } from "../../../../types/schedule/class-types";
 import ClassTypeItem from "./ClassTypeItem";
 
 interface ClassTypesListProps {
