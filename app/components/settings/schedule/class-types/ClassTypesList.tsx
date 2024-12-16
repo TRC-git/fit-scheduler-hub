@@ -1,9 +1,9 @@
-import { ClassType } from "../../../../types/schedule/class-types";
+import { ClassType, UpdateClassTypeData } from "@/types/schedule/class-types";
 import ClassTypeItem from "./ClassTypeItem";
 
 interface ClassTypesListProps {
   classTypes: ClassType[];
-  onUpdate: (id: number, data: any) => Promise<void>;
+  onUpdate: (id: number, data: UpdateClassTypeData) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
 }
 
