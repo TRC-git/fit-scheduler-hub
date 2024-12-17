@@ -1,15 +1,12 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { Toaster } from "@/components/ui/toaster"
-import { Toaster as Sonner } from "@/components/ui/sonner"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import './globals.css'
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Fit Scheduler Hub',
-  description: 'A comprehensive fitness scheduling application',
+  title: "Fitness Schedule",
+  description: "Schedule management for fitness professionals",
 }
 
 export default function RootLayout({
@@ -19,13 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          {children}
-        </TooltipProvider>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
