@@ -20,7 +20,7 @@ export const EditAppointmentDialog = ({
   appointment,
 }: EditAppointmentDialogProps) => {
   return (
-    <DialogContent className="bg-[#171717] border-[#15e7fb]">
+    <DialogContent className="bg-[#171717] border-0">
       <DialogHeader>
         <DialogTitle className="text-fitness-text">Edit Appointment</DialogTitle>
       </DialogHeader>
@@ -28,10 +28,10 @@ export const EditAppointmentDialog = ({
         <div>
           <label className="text-sm font-medium text-fitness-text">Staff Name</label>
           <Select defaultValue={appointment.name}>
-            <SelectTrigger className="bg-[#333333] border-[#15e7fb] text-fitness-text">
+            <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select staff" />
             </SelectTrigger>
-            <SelectContent className="bg-[#333333] border-[#15e7fb]">
+            <SelectContent className="bg-[#333333] border-[#d1d1d1]">
               <SelectItem value="Heath Graham" className="text-fitness-text hover:bg-[#171717]">Heath Graham</SelectItem>
               <SelectItem value="John Doe" className="text-fitness-text hover:bg-[#171717]">John Doe</SelectItem>
               <SelectItem value="Jane Smith" className="text-fitness-text hover:bg-[#171717]">Jane Smith</SelectItem>
@@ -41,10 +41,10 @@ export const EditAppointmentDialog = ({
         <div>
           <label className="text-sm font-medium text-fitness-text">Class Type</label>
           <Select defaultValue={appointment.type}>
-            <SelectTrigger className="bg-[#333333] border-[#15e7fb] text-fitness-text">
+            <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
-            <SelectContent className="bg-[#333333] border-[#15e7fb]">
+            <SelectContent className="bg-[#333333] border-[#d1d1d1]">
               <SelectItem value="CrossFit" className="text-fitness-text hover:bg-[#171717]">CrossFit</SelectItem>
               <SelectItem value="Yoga" className="text-fitness-text hover:bg-[#171717]">Yoga</SelectItem>
               <SelectItem value="HIIT" className="text-fitness-text hover:bg-[#171717]">HIIT</SelectItem>
