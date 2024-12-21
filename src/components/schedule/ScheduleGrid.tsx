@@ -66,6 +66,10 @@ const ScheduleGrid = () => {
     });
   };
 
+  const handleDragStart = (appointment: Appointment) => {
+    setDraggedAppointment(appointment);
+  };
+
   return (
     <div className="bg-fitness-grid rounded-lg p-4">
       <div className="grid grid-cols-8 gap-2 mb-4">
@@ -92,6 +96,7 @@ const ScheduleGrid = () => {
             onDrop={handleDrop}
             onDelete={handleDelete}
             onAdd={handleAdd}
+            onDragStart={handleDragStart}
           />
         ))}
       </div>

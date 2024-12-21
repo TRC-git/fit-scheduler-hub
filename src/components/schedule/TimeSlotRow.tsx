@@ -8,6 +8,7 @@ interface TimeSlotRowProps {
   onDrop: (timeSlot: string, day: string) => void;
   onDelete: (appointmentId: string) => void;
   onAdd: (timeSlot: string, day: string) => void;
+  onDragStart: (appointment: Appointment) => void;
 }
 
 export const TimeSlotRow = ({
@@ -17,6 +18,7 @@ export const TimeSlotRow = ({
   onDrop,
   onDelete,
   onAdd,
+  onDragStart,
 }: TimeSlotRowProps) => {
   const getAppointmentForSlot = (timeSlot: string, day: string) => {
     return appointments.find((apt) => apt.timeSlot === timeSlot && apt.day === day);
@@ -34,6 +36,7 @@ export const TimeSlotRow = ({
           onDrop={onDrop}
           onDelete={onDelete}
           onAdd={onAdd}
+          onDragStart={onDragStart}
         />
       ))}
     </div>

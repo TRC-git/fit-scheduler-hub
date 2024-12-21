@@ -12,6 +12,7 @@ interface AppointmentCellProps {
   onDrop: (timeSlot: string, day: string) => void;
   onDelete: (appointmentId: string) => void;
   onAdd: (timeSlot: string, day: string) => void;
+  onDragStart: (appointment: Appointment) => void;
 }
 
 export const AppointmentCell = ({
@@ -21,9 +22,15 @@ export const AppointmentCell = ({
   onDrop,
   onDelete,
   onAdd,
+  onDragStart,
 }: AppointmentCellProps) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleDragStart = (e: React.DragEvent, appointment: Appointment) => {
+    e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+    onDragStart(appointment);
   };
 
   return (
@@ -36,6 +43,7 @@ export const AppointmentCell = ({
         <div
           className="bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move"
           draggable
+          onDragStart={(e) => handleDragStart(e, appointment)}
         >
           <Dialog>
             <DialogTrigger className="flex-1 text-left">
