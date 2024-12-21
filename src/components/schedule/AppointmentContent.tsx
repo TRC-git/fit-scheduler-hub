@@ -16,7 +16,7 @@ export const AppointmentContent = ({ appointment, onDelete, onCopy }: Appointmen
     className="bg-fitness-inner p-2 rounded flex items-start justify-between cursor-move group"
     draggable="true"
   >
-    <div className="flex items-start gap-2">
+    <div className="flex items-center gap-2">
       <DragHandle />
       <Dialog>
         <DialogTrigger className="text-left">
