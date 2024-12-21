@@ -2,6 +2,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -23,6 +24,9 @@ export const EditAppointmentDialog = ({
     <DialogContent className="bg-[#171717] border-0">
       <DialogHeader>
         <DialogTitle className="text-fitness-text">Edit Appointment</DialogTitle>
+        <DialogDescription className="text-fitness-text/70">
+          Edit appointment details for {appointment.name}
+        </DialogDescription>
       </DialogHeader>
       <div className="space-y-4 pt-4">
         <div>

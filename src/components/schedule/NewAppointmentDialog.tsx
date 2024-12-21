@@ -2,6 +2,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -27,6 +28,9 @@ export const NewAppointmentDialog = ({
     <DialogContent className="bg-[#171717] border-0">
       <DialogHeader>
         <DialogTitle className="text-fitness-text">Add New Appointment</DialogTitle>
+        <DialogDescription className="text-fitness-text/70">
+          Create a new appointment for {day} at {timeSlot}
+        </DialogDescription>
       </DialogHeader>
       <div className="space-y-4 pt-4">
         <div>
