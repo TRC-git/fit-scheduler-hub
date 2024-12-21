@@ -9,6 +9,7 @@ export const TimeSlotRow = ({
   onDelete,
   onAdd,
   onDragStart,
+  onCopy,
 }: TimeSlotRowProps) => {
   const getAppointmentForSlot = (timeSlot: string, day: string) => {
     return appointments.find((apt) => apt.timeSlot === timeSlot && apt.day === day);
@@ -27,6 +28,7 @@ export const TimeSlotRow = ({
           onDelete={onDelete}
           onAdd={onAdd}
           onDragStart={onDragStart}
+          onCopy={onCopy}
         />
       ))}
     </div>

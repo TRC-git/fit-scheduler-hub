@@ -10,6 +10,7 @@ export const AppointmentCell = ({
   onDelete,
   onAdd,
   onDragStart,
+  onCopy,
 }: AppointmentCellProps) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -49,6 +50,7 @@ export const AppointmentCell = ({
           <AppointmentContent
             appointment={appointment}
             onDelete={() => onDelete(appointment.id)}
+            onCopy={() => onCopy(appointment)}
           />
         </div>
       ) : (

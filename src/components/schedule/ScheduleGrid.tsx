@@ -27,6 +27,7 @@ const ScheduleGrid = () => {
     },
   ]);
   const [draggedAppointment, setDraggedAppointment] = useState<Appointment | null>(null);
+  const [copiedAppointment, setCopiedAppointment] = useState<Appointment | null>(null);
 
   const handleDrop = (timeSlot: string, day: string) => {
     if (!draggedAppointment) return;
@@ -84,22 +85,39 @@ const ScheduleGrid = () => {
       return;
     }
 
-    const newAppointment: Appointment = {
-      id: Math.random().toString(),
-      name: "Heath Graham",
-      type: "CrossFit",
-      timeSlot,
-      day,
-    };
+    const newAppointment: Appointment = copiedAppointment
+      ? {
+          ...copiedAppointment,
+          id: Math.random().toString(),
+          timeSlot,
+          day,
+        }
+      : {
+          id: Math.random().toString(),
+          name: "Heath Graham",
+          type: "CrossFit",
+          timeSlot,
+          day,
+        };
+
     setAppointments([...appointments, newAppointment]);
+    setCopiedAppointment(null);
     toast({
       title: "Appointment added",
-      description: "A new appointment has been added to the schedule",
+      description: `${newAppointment.name}'s appointment has been added to ${day} ${timeSlot}`,
     });
   };
 
   const handleDragStart = (appointment: Appointment) => {
     setDraggedAppointment(appointment);
+  };
+
+  const handleCopy = (appointment: Appointment) => {
+    setCopiedAppointment(appointment);
+    toast({
+      title: "Appointment copied",
+      description: "Click any empty slot to paste the appointment",
+    });
   };
 
   return (
@@ -122,6 +140,7 @@ const ScheduleGrid = () => {
             onDelete={handleDelete}
             onAdd={handleAdd}
             onDragStart={handleDragStart}
+            onCopy={handleCopy}
           />
         ))}
       </div>
