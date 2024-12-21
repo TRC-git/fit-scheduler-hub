@@ -1,6 +1,6 @@
 import { AppointmentContent } from "./AppointmentContent";
 import { AddAppointmentButton } from "./AddAppointmentButton";
-import { AppointmentCellProps } from "./types";
+import { AppointmentCellProps, Appointment } from "./types";
 
 export const AppointmentCell = ({
   appointment,
