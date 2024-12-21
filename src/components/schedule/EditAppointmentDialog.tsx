@@ -32,9 +32,9 @@ export const EditAppointmentDialog = ({
               <SelectValue placeholder="Select staff" />
             </SelectTrigger>
             <SelectContent className="bg-[#333333] border-[#d1d1d1]">
-              <SelectItem value="Heath Graham" className="text-fitness-text hover:bg-[#171717]">Heath Graham</SelectItem>
-              <SelectItem value="John Doe" className="text-fitness-text hover:bg-[#171717]">John Doe</SelectItem>
-              <SelectItem value="Jane Smith" className="text-fitness-text hover:bg-[#171717]">Jane Smith</SelectItem>
+              <SelectItem value="Heath Graham" className="text-fitness-text hover:bg-[#15e7fb]/10">Heath Graham</SelectItem>
+              <SelectItem value="John Doe" className="text-fitness-text hover:bg-[#15e7fb]/10">John Doe</SelectItem>
+              <SelectItem value="Jane Smith" className="text-fitness-text hover:bg-[#15e7fb]/10">Jane Smith</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -45,9 +45,9 @@ export const EditAppointmentDialog = ({
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent className="bg-[#333333] border-[#d1d1d1]">
-              <SelectItem value="CrossFit" className="text-fitness-text hover:bg-[#171717]">CrossFit</SelectItem>
-              <SelectItem value="Yoga" className="text-fitness-text hover:bg-[#171717]">Yoga</SelectItem>
-              <SelectItem value="HIIT" className="text-fitness-text hover:bg-[#171717]">HIIT</SelectItem>
+              <SelectItem value="CrossFit" className="text-fitness-text hover:bg-[#15e7fb]/10">CrossFit</SelectItem>
+              <SelectItem value="Yoga" className="text-fitness-text hover:bg-[#15e7fb]/10">Yoga</SelectItem>
+              <SelectItem value="HIIT" className="text-fitness-text hover:bg-[#15e7fb]/10">HIIT</SelectItem>
             </SelectContent>
           </Select>
         </div>
