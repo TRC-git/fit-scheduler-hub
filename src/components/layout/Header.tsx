@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, Menu, List, Search } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -20,19 +20,17 @@ const Header = () => {
             Fitness Schedule
           </Link>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5 text-fitness-text" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <List className="h-5 w-5 text-fitness-text" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Search className="h-5 w-5 text-fitness-text" />
-            </Button>
+            <Link to="/">
+              <Button variant="ghost">Schedule</Button>
+            </Link>
+            <Link to="/payroll">
+              <Button variant="ghost">Payroll/Hrs</Button>
+            </Link>
+            <Link to="/reports">
+              <Button variant="ghost">Reports</Button>
+            </Link>
             <Link to="/settings">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5 text-fitness-text" />
-              </Button>
+              <Button variant="ghost">Settings</Button>
             </Link>
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="h-5 w-5 text-fitness-text" />
