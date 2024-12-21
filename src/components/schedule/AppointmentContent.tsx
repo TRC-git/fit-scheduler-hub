@@ -15,7 +15,7 @@ interface AppointmentContentProps {
 export const AppointmentContent = ({ appointment, onDelete, onCopy, isCopied }: AppointmentContentProps) => (
   <div
     className={`bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move group ${
-      isCopied ? 'border border-[#15e7fb]' : ''
+      isCopied ? 'border-2 border-[#15e7fb]' : ''
     }`}
     draggable="true"
   >
