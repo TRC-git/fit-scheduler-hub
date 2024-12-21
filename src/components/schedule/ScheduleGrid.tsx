@@ -30,6 +30,12 @@ const ScheduleGrid = () => {
   const handleDrop = (timeSlot: string, day: string) => {
     if (!draggedAppointment) return;
 
+    // Don't do anything if dropping in the same slot
+    if (draggedAppointment.timeSlot === timeSlot && draggedAppointment.day === day) {
+      setDraggedAppointment(null);
+      return;
+    }
+
     // Check if there's already an appointment in the target slot
     const existingAppointment = appointments.find(
       apt => apt.timeSlot === timeSlot && apt.day === day

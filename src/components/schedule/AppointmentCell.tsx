@@ -26,27 +26,35 @@ export const AppointmentCell = ({
 }: AppointmentCellProps) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.currentTarget.classList.add('bg-fitness-inner/20');
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.currentTarget.classList.remove('bg-fitness-inner/20');
   };
 
   const handleDragStart = (e: React.DragEvent, appointment: Appointment) => {
-    e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', appointment.id);
     onDragStart(appointment);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.currentTarget.classList.remove('bg-fitness-inner/20');
     onDrop(timeSlot, day);
   };
 
   return (
     <div
-      className="bg-fitness-muted rounded-md p-2 min-h-[60px]"
+      className="bg-fitness-muted rounded-md p-2 min-h-[60px] transition-colors duration-200"
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       {appointment ? (
         <div
-          className="bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move"
+          className="bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move group"
           draggable
           onDragStart={(e) => handleDragStart(e, appointment)}
         >
@@ -59,9 +67,9 @@ export const AppointmentCell = ({
             </DialogTrigger>
             <EditAppointmentDialog appointment={appointment} />
           </Dialog>
-          <GripVertical className="w-4 h-4 text-gray-400 mr-2" />
+          <GripVertical className="w-4 h-4 text-gray-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
           <Trash2
-            className="w-4 h-4 text-fitness-danger cursor-pointer"
+            className="w-4 h-4 text-fitness-danger cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(appointment.id);
