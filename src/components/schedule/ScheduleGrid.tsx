@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trash2, Plus, DragHandleDots2Icon } from "lucide-react";
+import { Trash2, Plus, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -166,7 +166,7 @@ const ScheduleGrid = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <DragHandleDots2Icon className="w-4 h-4 text-gray-400 mr-2" />
+                      <GripVertical className="w-4 h-4 text-gray-400 mr-2" />
                       <Trash2
                         className="w-4 h-4 text-fitness-danger cursor-pointer"
                         onClick={() => handleDelete(appointment.id)}
