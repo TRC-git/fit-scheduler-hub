@@ -11,6 +11,7 @@ export const AppointmentCell = ({
   onAdd,
   onDragStart,
   onCopy,
+  copiedAppointment,
 }: AppointmentCellProps) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -38,12 +39,21 @@ export const AppointmentCell = ({
     onDrop(timeSlot, day);
   };
 
+  const handleClick = () => {
+    if (copiedAppointment) {
+      onAdd(timeSlot, day);
+    }
+  };
+
   return (
     <div
-      className="bg-fitness-muted rounded-md p-2 min-h-[80px] transition-colors duration-200"
+      className={`bg-fitness-muted rounded-md p-2 min-h-[80px] transition-colors duration-200 ${
+        copiedAppointment ? 'cursor-pointer hover:bg-fitness-inner/20' : ''
+      }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onClick={handleClick}
     >
       {appointment ? (
         <div onDragStart={(e) => handleDragStart(e, appointment)}>
@@ -51,6 +61,7 @@ export const AppointmentCell = ({
             appointment={appointment}
             onDelete={() => onDelete(appointment.id)}
             onCopy={() => onCopy(appointment)}
+            isCopied={copiedAppointment?.id === appointment.id}
           />
         </div>
       ) : (
