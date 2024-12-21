@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-// Component logic will go here
+// App component logic will go here
 </script>
