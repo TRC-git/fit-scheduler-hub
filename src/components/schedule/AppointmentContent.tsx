@@ -16,17 +16,19 @@ export const AppointmentContent = ({ appointment, onDelete, onCopy }: Appointmen
     className="bg-fitness-inner p-2 rounded flex items-start justify-between cursor-move group"
     draggable="true"
   >
-    <Dialog>
-      <DialogTrigger className="flex-1 text-left">
-        <div>
-          <p className="text-fitness-text text-sm font-medium">{appointment.name}</p>
-          <p className="text-xs text-gray-400">{appointment.type}</p>
-        </div>
-      </DialogTrigger>
-      <EditAppointmentDialog appointment={appointment} />
-    </Dialog>
-    <div className="flex flex-col gap-2 ml-2">
+    <div className="flex items-start gap-2">
       <DragHandle />
+      <Dialog>
+        <DialogTrigger className="text-left">
+          <div>
+            <p className="text-fitness-text text-sm font-medium">{appointment.name}</p>
+            <p className="text-xs text-gray-400">{appointment.type}</p>
+          </div>
+        </DialogTrigger>
+        <EditAppointmentDialog appointment={appointment} />
+      </Dialog>
+    </div>
+    <div className="flex flex-col gap-2">
       <Copy
         className="w-4 h-4 text-fitness-text cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => {
