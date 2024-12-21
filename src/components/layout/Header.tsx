@@ -1,34 +1,42 @@
+import { Bell, MessageSquare, Settings, Sun } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Settings, LogOut } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
-
   return (
-    <header className="bg-fitness-card border-b border-fitness-border">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="text-fitness-text text-xl font-bold">
-            Fitness Schedule
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/settings">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5 text-fitness-text" />
-              </Button>
-            </Link>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5 text-fitness-text" />
-            </Button>
-          </div>
+    <header className="flex items-center justify-between px-6 py-4 bg-fitness-card border-b border-fitness-muted">
+      <nav className="flex gap-4">
+        <button className="px-4 py-2 rounded-md bg-[#15e7fb] text-white">
+          Schedule
+        </button>
+        <button className="px-4 py-2 rounded-md hover:bg-fitness-muted text-fitness-text">
+          Hrs/ Payroll
+        </button>
+        <button className="px-4 py-2 rounded-md hover:bg-fitness-muted text-fitness-text">
+          Reports
+        </button>
+        <Link 
+          to="/settings" 
+          className="px-4 py-2 rounded-md hover:bg-fitness-muted text-fitness-text flex items-center gap-2"
+        >
+          <Settings className="w-4 h-4" />
+          Settings
+        </Link>
+      </nav>
+      <div className="flex items-center gap-6">
+        <Sun className="w-5 h-5 text-fitness-text cursor-pointer" />
+        <div className="flex items-center gap-4">
+          <span className="text-fitness-text">Messages</span>
+          <MessageSquare className="w-5 h-5 text-fitness-text" />
+        </div>
+        <Bell className="w-5 h-5 text-fitness-text" />
+        <div className="flex items-center gap-2">
+          <Avatar className="w-8 h-8">
+            <div className="w-full h-full bg-[#15e7fb] flex items-center justify-center text-white font-semibold">
+              HG
+            </div>
+          </Avatar>
+          <span className="text-fitness-text">Heath Graham</span>
         </div>
       </div>
     </header>
