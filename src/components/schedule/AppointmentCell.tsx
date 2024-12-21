@@ -1,6 +1,7 @@
 import { AppointmentContent } from "./AppointmentContent";
 import { AddAppointmentButton } from "./AddAppointmentButton";
 import { AppointmentCellProps, Appointment } from "./types";
+import { useOperationalDays } from "@/contexts/OperationalDaysContext";
 
 export const AppointmentCell = ({
   appointment,
@@ -13,19 +14,25 @@ export const AppointmentCell = ({
   onCopy,
   copiedAppointment,
 }: AppointmentCellProps) => {
+  const { operationalDays } = useOperationalDays();
+  const isOperational = operationalDays.has(day);
+
   const handleDragOver = (e: React.DragEvent) => {
+    if (!isOperational) return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.classList.add('bg-fitness-inner/20');
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
+    if (!isOperational) return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.classList.remove('bg-fitness-inner/20');
   };
 
   const handleDragStart = (e: React.DragEvent, appointment: Appointment) => {
+    if (!isOperational) return;
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('appointment', JSON.stringify(appointment));
@@ -33,6 +40,7 @@ export const AppointmentCell = ({
   };
 
   const handleDrop = (e: React.DragEvent) => {
+    if (!isOperational) return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.classList.remove('bg-fitness-inner/20');
@@ -40,6 +48,7 @@ export const AppointmentCell = ({
   };
 
   const handleClick = () => {
+    if (!isOperational) return;
     if (copiedAppointment) {
       onAdd(timeSlot, day);
     }
@@ -48,14 +57,16 @@ export const AppointmentCell = ({
   return (
     <div
       className={`bg-fitness-muted rounded-md p-2 min-h-[80px] transition-colors duration-200 ${
-        copiedAppointment ? 'cursor-pointer hover:bg-fitness-inner/20' : ''
+        isOperational && copiedAppointment ? 'cursor-pointer hover:bg-fitness-inner/20' : ''
+      } ${appointment?.id === copiedAppointment?.id ? 'border border-[#15e7fb]' : ''} ${
+        !isOperational ? 'bg-red-900/20' : ''
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
     >
-      {appointment ? (
+      {appointment && isOperational ? (
         <div onDragStart={(e) => handleDragStart(e, appointment)}>
           <AppointmentContent
             appointment={appointment}
@@ -64,13 +75,13 @@ export const AppointmentCell = ({
             isCopied={copiedAppointment?.id === appointment.id}
           />
         </div>
-      ) : (
+      ) : isOperational ? (
         <AddAppointmentButton
           timeSlot={timeSlot}
           day={day}
           onAdd={onAdd}
         />
-      )}
+      ) : null}
     </div>
   );
 };
