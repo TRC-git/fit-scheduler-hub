@@ -1,19 +1,6 @@
-import { GripVertical, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { EditAppointmentDialog } from "./EditAppointmentDialog";
-import { NewAppointmentDialog } from "./NewAppointmentDialog";
-import { Appointment } from "./types";
-
-interface AppointmentCellProps {
-  appointment: Appointment | undefined;
-  timeSlot: string;
-  day: string;
-  onDrop: (timeSlot: string, day: string) => void;
-  onDelete: (appointmentId: string) => void;
-  onAdd: (timeSlot: string, day: string) => void;
-  onDragStart: (appointment: Appointment) => void;
-}
+import { AppointmentContent } from "./AppointmentContent";
+import { AddAppointmentButton } from "./AddAppointmentButton";
+import { AppointmentCellProps } from "./types";
 
 export const AppointmentCell = ({
   appointment,
@@ -58,47 +45,18 @@ export const AppointmentCell = ({
       onDrop={handleDrop}
     >
       {appointment ? (
-        <div
-          className="bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move group"
-          draggable="true"
-          onDragStart={(e) => handleDragStart(e, appointment)}
-        >
-          <Dialog>
-            <DialogTrigger className="flex-1 text-left">
-              <div>
-                <p className="text-fitness-text text-sm font-medium">{appointment.name}</p>
-                <p className="text-xs text-gray-400">{appointment.type}</p>
-              </div>
-            </DialogTrigger>
-            <EditAppointmentDialog appointment={appointment} />
-          </Dialog>
-          <div className="flex items-center gap-2">
-            <GripVertical className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing" />
-            <Trash2
-              className="w-4 h-4 text-fitness-danger cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(appointment.id);
-              }}
-            />
-          </div>
+        <div onDragStart={(e) => handleDragStart(e, appointment)}>
+          <AppointmentContent
+            appointment={appointment}
+            onDelete={() => onDelete(appointment.id)}
+          />
         </div>
       ) : (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full h-full flex items-center justify-center hover:bg-fitness-inner/20"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </DialogTrigger>
-          <NewAppointmentDialog
-            timeSlot={timeSlot}
-            day={day}
-            onAdd={onAdd}
-          />
-        </Dialog>
+        <AddAppointmentButton
+          timeSlot={timeSlot}
+          day={day}
+          onAdd={onAdd}
+        />
       )}
     </div>
   );

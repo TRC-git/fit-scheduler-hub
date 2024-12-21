@@ -1,15 +1,5 @@
 import { AppointmentCell } from "./AppointmentCell";
-import { Appointment } from "./types";
-
-interface TimeSlotRowProps {
-  timeSlot: string;
-  days: string[];
-  appointments: Appointment[];
-  onDrop: (timeSlot: string, day: string) => void;
-  onDelete: (appointmentId: string) => void;
-  onAdd: (timeSlot: string, day: string) => void;
-  onDragStart: (appointment: Appointment) => void;
-}
+import { TimeSlotRowProps } from "./types";
 
 export const TimeSlotRow = ({
   timeSlot,

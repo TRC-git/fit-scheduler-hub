@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TimeSlotRow } from "./TimeSlotRow";
+import { DayHeader } from "./DayHeader";
 import { toast } from "@/hooks/use-toast";
 import { Appointment } from "./types";
 
@@ -30,13 +31,11 @@ const ScheduleGrid = () => {
   const handleDrop = (timeSlot: string, day: string) => {
     if (!draggedAppointment) return;
 
-    // Don't do anything if dropping in the same slot
     if (draggedAppointment.timeSlot === timeSlot && draggedAppointment.day === day) {
       setDraggedAppointment(null);
       return;
     }
 
-    // Check if there's already an appointment in the target slot
     const existingAppointment = appointments.find(
       apt => apt.timeSlot === timeSlot && apt.day === day
     );
@@ -72,7 +71,6 @@ const ScheduleGrid = () => {
   };
 
   const handleAdd = (timeSlot: string, day: string) => {
-    // Check if there's already an appointment in this slot
     const existingAppointment = appointments.find(
       apt => apt.timeSlot === timeSlot && apt.day === day
     );
@@ -109,14 +107,7 @@ const ScheduleGrid = () => {
       <div className="grid grid-cols-8 gap-2 mb-4">
         <div className="text-fitness-text font-medium p-2">Avail. Times</div>
         {days.map((day, index) => (
-          <div
-            key={day}
-            className={`text-fitness-text font-medium p-2 text-center ${
-              index === 6 ? "bg-red-900/20" : "bg-fitness-muted"
-            } rounded-md`}
-          >
-            {day}
-          </div>
+          <DayHeader key={day} day={day} index={index} />
         ))}
       </div>
 
