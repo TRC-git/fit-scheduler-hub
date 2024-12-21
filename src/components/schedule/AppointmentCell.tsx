@@ -33,11 +33,16 @@ export const AppointmentCell = ({
     onDragStart(appointment);
   };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    onDrop(timeSlot, day);
+  };
+
   return (
     <div
-      className="bg-fitness-muted rounded-md p-2"
+      className="bg-fitness-muted rounded-md p-2 min-h-[60px]"
       onDragOver={handleDragOver}
-      onDrop={() => onDrop(timeSlot, day)}
+      onDrop={handleDrop}
     >
       {appointment ? (
         <div
@@ -57,7 +62,10 @@ export const AppointmentCell = ({
           <GripVertical className="w-4 h-4 text-gray-400 mr-2" />
           <Trash2
             className="w-4 h-4 text-fitness-danger cursor-pointer"
-            onClick={() => onDelete(appointment.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(appointment.id);
+            }}
           />
         </div>
       ) : (

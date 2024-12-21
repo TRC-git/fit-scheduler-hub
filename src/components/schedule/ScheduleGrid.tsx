@@ -28,19 +28,32 @@ const ScheduleGrid = () => {
   const [draggedAppointment, setDraggedAppointment] = useState<Appointment | null>(null);
 
   const handleDrop = (timeSlot: string, day: string) => {
-    if (draggedAppointment) {
-      const updatedAppointments = appointments.map((apt) =>
-        apt.id === draggedAppointment.id
-          ? { ...apt, timeSlot, day }
-          : apt
-      );
-      setAppointments(updatedAppointments);
-      setDraggedAppointment(null);
+    if (!draggedAppointment) return;
+
+    // Check if there's already an appointment in the target slot
+    const existingAppointment = appointments.find(
+      apt => apt.timeSlot === timeSlot && apt.day === day
+    );
+
+    if (existingAppointment) {
       toast({
-        title: "Appointment moved",
-        description: `${draggedAppointment.name}'s appointment has been moved to ${day} ${timeSlot}`,
+        title: "Cannot move appointment",
+        description: "There is already an appointment in this time slot",
       });
+      return;
     }
+
+    const updatedAppointments = appointments.map((apt) =>
+      apt.id === draggedAppointment.id
+        ? { ...apt, timeSlot, day }
+        : apt
+    );
+    setAppointments(updatedAppointments);
+    setDraggedAppointment(null);
+    toast({
+      title: "Appointment moved",
+      description: `${draggedAppointment.name}'s appointment has been moved to ${day} ${timeSlot}`,
+    });
   };
 
   const handleDelete = (appointmentId: string) => {
@@ -52,6 +65,19 @@ const ScheduleGrid = () => {
   };
 
   const handleAdd = (timeSlot: string, day: string) => {
+    // Check if there's already an appointment in this slot
+    const existingAppointment = appointments.find(
+      apt => apt.timeSlot === timeSlot && apt.day === day
+    );
+
+    if (existingAppointment) {
+      toast({
+        title: "Cannot add appointment",
+        description: "There is already an appointment in this time slot",
+      });
+      return;
+    }
+
     const newAppointment: Appointment = {
       id: Math.random().toString(),
       name: "New Client",
