@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/use-toast"
-import { useQuery, useMutation } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const PermissionSettings = () => {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const { data: employees } = useQuery({
     queryKey: ['employees'],
@@ -22,12 +22,12 @@ const PermissionSettings = () => {
             positions (*)
           ),
           calendar_access (*)
-        `)
+        `);
       
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     }
-  })
+  });
 
   const updateAccessMutation = useMutation({
     mutationFn: async ({ employeeId, access }: any) => {
@@ -36,18 +36,18 @@ const PermissionSettings = () => {
         .upsert([{
           employeeid: employeeId,
           ...access
-        }])
+        }]);
       
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       toast({
         title: "Success",
         description: "Permissions updated successfully",
-      })
+      });
     },
-  })
+  });
 
   return (
     <Card className="bg-fitness-card">
@@ -141,7 +141,7 @@ const PermissionSettings = () => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default PermissionSettings
+export default PermissionSettings;

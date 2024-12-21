@@ -1,8 +1,8 @@
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const DaysOfOperation = () => {
-  const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"]
+  const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
 
   return (
     <div>
@@ -19,7 +19,7 @@ const DaysOfOperation = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DaysOfOperation
+export default DaysOfOperation;
