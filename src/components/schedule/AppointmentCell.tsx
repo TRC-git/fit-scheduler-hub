@@ -58,7 +58,7 @@ export const AppointmentCell = ({
     <div
       className={`bg-fitness-muted rounded-md p-2 min-h-[80px] transition-colors duration-200 ${
         isOperational && copiedAppointment ? 'cursor-pointer hover:bg-fitness-inner/20' : ''
-      } ${appointment?.id === copiedAppointment?.id ? 'border border-[#15e7fb]' : ''} ${
+      } ${copiedAppointment ? 'border border-[#15e7fb]' : ''} ${
         !isOperational ? 'bg-red-900/20' : ''
       }`}
       onDragOver={handleDragOver}
