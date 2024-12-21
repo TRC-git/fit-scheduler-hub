@@ -45,6 +45,7 @@ const ScheduleGrid = () => {
       toast({
         title: "Cannot move appointment",
         description: "There is already an appointment in this time slot",
+        variant: "destructive",
       });
       return;
     }
@@ -80,13 +81,14 @@ const ScheduleGrid = () => {
       toast({
         title: "Cannot add appointment",
         description: "There is already an appointment in this time slot",
+        variant: "destructive",
       });
       return;
     }
 
     const newAppointment: Appointment = {
       id: Math.random().toString(),
-      name: "New Client",
+      name: "Heath Graham",
       type: "CrossFit",
       timeSlot,
       day,
