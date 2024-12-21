@@ -39,6 +39,12 @@ const Login = () => {
                 container: 'auth-container',
                 button: 'auth-button',
                 anchor: 'auth-anchor',
+                input: 'text-white',
+              },
+              style: {
+                input: {
+                  color: '#FFFFFF',
+                },
               },
             }}
             providers={[]}
