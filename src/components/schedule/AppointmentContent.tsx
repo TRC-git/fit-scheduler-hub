@@ -13,7 +13,7 @@ interface AppointmentContentProps {
 
 export const AppointmentContent = ({ appointment, onDelete, onCopy }: AppointmentContentProps) => (
   <div
-    className="bg-fitness-inner p-2 rounded flex items-start justify-between cursor-move group"
+    className="bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move group"
     draggable="true"
   >
     <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ export const AppointmentContent = ({ appointment, onDelete, onCopy }: Appointmen
         <EditAppointmentDialog appointment={appointment} />
       </Dialog>
     </div>
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col items-center gap-2">
       <Copy
         className="w-4 h-4 text-fitness-text cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => {
