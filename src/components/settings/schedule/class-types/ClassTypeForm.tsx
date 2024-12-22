@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { ClassType, CreateClassTypeData, TimeSlot } from "@/types/schedule/class-types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import BasicDetails from "./form/BasicDetails";
+import OperationalDays from "./form/OperationalDays";
+import TimeSlots from "./form/TimeSlots";
 
 interface ClassTypeFormProps {
   classType?: ClassType;
@@ -16,7 +15,6 @@ interface ClassTypeFormProps {
 
 const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) => {
   const { toast } = useToast();
-  const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
   const [formData, setFormData] = useState<CreateClassTypeData>({
     name: classType?.name || "",
     duration: classType?.duration || 60,
@@ -25,6 +23,10 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
 
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const handleFieldChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleDayToggle = (day: string) => {
     setFormData(prev => {
@@ -38,7 +40,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
 
   const addTimeSlot = () => {
     setTimeSlots([...timeSlots, {
-      day_of_week: formData.operational_days?.[0] || daysOfWeek[0],
+      day_of_week: formData.operational_days?.[0] || "Mon",
       start_time: "09:00",
       end_time: "10:00"
     }]);
@@ -61,14 +63,12 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
       await onSubmit(formData);
       
       if (classType?.class_type_id) {
-        // Delete existing time slots
         await supabase
           .from('class_time_slots')
           .delete()
           .eq('class_type_id', classType.class_type_id);
       }
 
-      // Insert new time slots
       if (timeSlots.length > 0) {
         const { error } = await supabase
           .from('class_time_slots')
@@ -84,13 +84,13 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
 
       toast({
         title: "Success",
-        description: `Class type ${classType ? 'updated' : 'created'} successfully`,
+        description: `Schedule type ${classType ? 'updated' : 'created'} successfully`,
       });
     } catch (error) {
-      console.error('Error saving class type:', error);
+      console.error('Error saving schedule type:', error);
       toast({
         title: "Error",
-        description: "Failed to save class type",
+        description: "Failed to save schedule type",
         variant: "destructive",
       });
     } finally {
@@ -100,96 +100,24 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <Label className="text-fitness-text">Class Name</Label>
-        <Input
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="bg-fitness-inner text-fitness-text"
-          required
-        />
-      </div>
+      <BasicDetails
+        name={formData.name}
+        duration={formData.duration}
+        onChange={handleFieldChange}
+      />
 
-      <div>
-        <Label className="text-fitness-text">Duration (minutes)</Label>
-        <Input
-          type="number"
-          value={formData.duration}
-          onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-          className="bg-fitness-inner text-fitness-text"
-          required
-        />
-      </div>
+      <OperationalDays
+        selectedDays={formData.operational_days || []}
+        onDayToggle={handleDayToggle}
+      />
 
-      <div>
-        <Label className="text-fitness-text mb-2 block">Operational Days</Label>
-        <div className="flex flex-wrap gap-4">
-          {daysOfWeek.map((day) => (
-            <div key={day} className="flex items-center gap-2">
-              <Checkbox
-                id={day}
-                checked={(formData.operational_days || []).includes(day)}
-                onCheckedChange={() => handleDayToggle(day)}
-                className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
-              />
-              <Label htmlFor={day} className="text-fitness-text">{day}</Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <Label className="text-fitness-text">Time Slots</Label>
-          <Button
-            type="button"
-            onClick={addTimeSlot}
-            className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Time Slot
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          {timeSlots.map((slot, index) => (
-            <div key={index} className="flex items-center gap-4 bg-fitness-inner p-4 rounded-md">
-              <select
-                value={slot.day_of_week}
-                onChange={(e) => updateTimeSlot(index, 'day_of_week', e.target.value)}
-                className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-2 py-1"
-              >
-                {formData.operational_days?.map((day) => (
-                  <option key={day} value={day}>{day}</option>
-                ))}
-              </select>
-              
-              <Input
-                type="time"
-                value={slot.start_time}
-                onChange={(e) => updateTimeSlot(index, 'start_time', e.target.value)}
-                className="bg-fitness-card text-fitness-text"
-              />
-              
-              <Input
-                type="time"
-                value={slot.end_time}
-                onChange={(e) => updateTimeSlot(index, 'end_time', e.target.value)}
-                className="bg-fitness-card text-fitness-text"
-              />
-              
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => removeTimeSlot(index)}
-                className="text-fitness-danger hover:text-fitness-danger/80"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
+      <TimeSlots
+        timeSlots={timeSlots}
+        operationalDays={formData.operational_days || []}
+        onAddSlot={addTimeSlot}
+        onRemoveSlot={removeTimeSlot}
+        onUpdateSlot={updateTimeSlot}
+      />
 
       <div className="flex justify-end gap-2">
         <Button
