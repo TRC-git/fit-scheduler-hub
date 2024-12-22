@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ClassType, CreateClassTypeData, TimeSlot } from "@/types/schedule/class-types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,6 +24,18 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Initialize time slots when operational days change
+  useEffect(() => {
+    if (formData.operational_days && formData.operational_days.length > 0) {
+      const initialSlots = formData.operational_days.map(day => ({
+        day_of_week: day,
+        start_time: "09:00",
+        end_time: "10:00"
+      }));
+      setTimeSlots(initialSlots);
+    }
+  }, [formData.operational_days]);
+
   const handleFieldChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -34,13 +46,25 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
       const newDays = currentDays.includes(day)
         ? currentDays.filter(d => d !== day)
         : [...currentDays, day];
+      
+      // Update time slots based on selected days
+      if (!currentDays.includes(day)) {
+        setTimeSlots(prev => [...prev, {
+          day_of_week: day,
+          start_time: "09:00",
+          end_time: "10:00"
+        }]);
+      } else {
+        setTimeSlots(prev => prev.filter(slot => slot.day_of_week !== day));
+      }
+      
       return { ...prev, operational_days: newDays };
     });
   };
 
-  const addTimeSlot = () => {
+  const addTimeSlot = (day: string) => {
     setTimeSlots([...timeSlots, {
-      day_of_week: formData.operational_days?.[0] || "Mon",
+      day_of_week: day,
       start_time: "09:00",
       end_time: "10:00"
     }]);
