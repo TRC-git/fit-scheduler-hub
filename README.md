@@ -1,69 +1,135 @@
-# Welcome to your Lovable project
+# Fitness Class Scheduling System
 
-## Project info
+A comprehensive web application for managing fitness class schedules, instructors, and class types.
 
-**URL**: https://lovable.dev/projects/102849b9-59eb-4110-a600-cd6b14e01e55
+## Table of Contents
+- [Installation](#installation)
+- [Supabase Setup](#supabase-setup)
+- [Features](#features)
+- [Usage Guide](#usage-guide)
 
-## How can I edit this code?
+## Installation
 
-There are several ways of editing your application.
+1. Clone the repository:
+```bash
+git clone <your-repository-url>
+```
 
-**Use Lovable**
+2. Navigate to the project directory:
+```bash
+cd <project-directory>
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/102849b9-59eb-4110-a600-cd6b14e01e55) and start prompting.
+3. Install dependencies:
+```bash
+npm install
+```
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Supabase Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+This application uses Supabase for backend functionality. To set up Supabase:
 
-**Use GitHub Codespaces**
+1. Create a Supabase account at [https://supabase.com](https://supabase.com)
+2. Create a new project
+3. Copy your project URL and anon key from the project settings
+4. The project is already configured to use Supabase - no additional setup required!
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Features
 
-## What technologies are used for this project?
+### Schedule Management
+- Interactive weekly schedule view
+- Drag-and-drop appointment management
+- Copy and paste appointments
+- Mark non-operational days
 
-This project is built with .
+### Class Types
+- Create and manage different class types
+- Set operational days for each class type
+- Configure time slots per class type
+- Customize class duration
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Templates
+- Create schedule templates
+- Apply templates to different time periods
+- Manage recurring schedules
 
-## How can I deploy this project?
+## Usage Guide
 
-Simply open [Lovable](https://lovable.dev/projects/102849b9-59eb-4110-a600-cd6b14e01e55) and click on Share -> Publish.
+### Managing the Schedule
 
-## I want to use a custom domain - is that possible?
+1. **Viewing the Schedule**
+   - The main page displays a weekly schedule grid
+   - Time slots are shown vertically
+   - Days of the week are shown horizontally
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+2. **Adding Appointments**
+   - Click the "+" button in any empty time slot
+   - Select an instructor and class type
+   - Click "Add Appointment" to confirm
+
+3. **Moving Appointments**
+   - Drag and drop appointments between time slots
+   - The system will prevent dropping on non-operational days
+
+4. **Copying Appointments**
+   - Click the copy icon on any appointment
+   - Click on an empty slot to paste
+   - Click the copy icon again to cancel
+
+### Managing Class Types
+
+1. **Creating a Class Type**
+   - Go to Settings > Schedule Templates
+   - Click "Add Schedule Type"
+   - Fill in the name and duration
+   - Select operational days
+   - Add time slots for each day
+
+2. **Editing Class Types**
+   - Click the edit icon on any class type
+   - Modify details as needed
+   - Save changes
+
+3. **Time Slots**
+   - Add multiple time slots per day
+   - Copy time slots to other operational days
+   - Set start and end times for each slot
+
+### Using Templates
+
+1. **Creating Templates**
+   - Navigate to Settings > Schedule Templates
+   - Create a new template with a name
+   - Set the recurring pattern (weekly, biweekly, monthly)
+   - Add appointments to the template
+
+2. **Applying Templates**
+   - Select a template from the templates list
+   - Choose the date range for application
+   - Apply the template to create scheduled appointments
+
+### Best Practices
+
+- Regularly review and update operational days
+- Use templates for recurring schedules
+- Check for schedule conflicts before confirming appointments
+- Keep class types and instructor information up to date
+
+## Support
+
+For additional support or questions, please refer to:
+- [Lovable Documentation](https://docs.lovable.dev/)
+- [Supabase Documentation](https://supabase.com/docs)
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
