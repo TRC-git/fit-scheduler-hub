@@ -86,9 +86,17 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
           
         if (deleteError) throw deleteError;
 
-        // Insert new slots if there are any
-        if (timeSlots.length > 0) {
-          const slotsToInsert = timeSlots.map(slot => ({
+        // Filter out any invalid time slots before inserting
+        const validTimeSlots = timeSlots.filter(slot => 
+          slot && 
+          slot.day_of_week && 
+          slot.start_time && 
+          slot.end_time
+        );
+
+        // Insert new slots if there are any valid ones
+        if (validTimeSlots.length > 0) {
+          const slotsToInsert = validTimeSlots.map(slot => ({
             class_type_id: classTypeId,
             day_of_week: slot.day_of_week,
             start_time: slot.start_time,
