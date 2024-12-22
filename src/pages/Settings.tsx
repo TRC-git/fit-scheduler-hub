@@ -5,7 +5,7 @@ import ScheduleSettings from "@/components/settings/ScheduleSettings";
 import PositionSettings from "@/components/settings/PositionSettings";
 import PayrollSettings from "@/components/settings/PayrollSettings";
 import PermissionSettings from "@/components/settings/PermissionSettings";
-import { OperationalDaysProvider } from "@/contexts/OperationalDaysContext";
+import { OperationalDaysProvider } from "@/contexts/operational-days/OperationalDaysContext";
 
 const Settings = () => {
   return (

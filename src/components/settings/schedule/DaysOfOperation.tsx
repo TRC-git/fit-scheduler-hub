@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useOperationalDays } from "@/contexts/OperationalDaysContext";
+import { useOperationalDays } from '@/contexts/operational-days/useOperationalDays';
 import { useToast } from "@/components/ui/use-toast";
 
 const DaysOfOperation = () => {

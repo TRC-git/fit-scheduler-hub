@@ -1,7 +1,7 @@
 import { AppointmentContent } from "./AppointmentContent";
 import { AddAppointmentButton } from "./AddAppointmentButton";
 import { AppointmentCellProps, Appointment } from "./types";
-import { useOperationalDays } from "@/contexts/OperationalDaysContext";
+import { useOperationalDays } from "@/contexts/operational-days/useOperationalDays";
 
 export const AppointmentCell = ({
   appointment,

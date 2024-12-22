@@ -1,4 +1,4 @@
-import { useOperationalDays } from "@/contexts/OperationalDaysContext";
+import { useOperationalDays } from '@/contexts/operational-days/useOperationalDays';
 
 interface DayHeaderProps {
   day: string;
