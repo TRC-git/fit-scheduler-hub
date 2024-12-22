@@ -5,7 +5,7 @@ import { loadOperationalDays, saveOperationalDays } from './operations';
 
 export const OperationalDaysContext = createContext<OperationalDaysContextType | undefined>(undefined);
 
-export const OperationalDaysProvider = ({ children }: { children: React.ReactNode }) => {
+export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
