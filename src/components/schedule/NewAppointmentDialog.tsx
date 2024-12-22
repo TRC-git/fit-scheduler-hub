@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
+import { useState } from "react";
 
 interface NewAppointmentDialogProps {
   timeSlot: string;
@@ -26,6 +27,16 @@ export const NewAppointmentDialog = ({
   onAdd,
 }: NewAppointmentDialogProps) => {
   const { classTypes, isLoading } = useClassTypes();
+  const [selectedStaff, setSelectedStaff] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("");
+
+  const handleSubmit = () => {
+    if (!selectedStaff || !selectedType) {
+      // You might want to show an error message here
+      return;
+    }
+    onAdd(timeSlot, day);
+  };
 
   return (
     <DialogContent className="bg-[#171717] border-0">
@@ -38,7 +49,7 @@ export const NewAppointmentDialog = ({
       <div className="space-y-4 pt-4">
         <div>
           <label className="text-sm font-medium text-fitness-text">Staff Name</label>
-          <Select>
+          <Select onValueChange={setSelectedStaff} value={selectedStaff}>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select staff" />
             </SelectTrigger>
@@ -51,7 +62,7 @@ export const NewAppointmentDialog = ({
         </div>
         <div>
           <label className="text-sm font-medium text-fitness-text">Schedule Type</label>
-          <Select>
+          <Select onValueChange={setSelectedType} value={selectedType}>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
@@ -73,8 +84,9 @@ export const NewAppointmentDialog = ({
           </Select>
         </div>
         <Button 
-          onClick={() => onAdd(timeSlot, day)}
+          onClick={handleSubmit}
           className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
+          disabled={!selectedStaff || !selectedType}
         >
           Add Appointment
         </Button>

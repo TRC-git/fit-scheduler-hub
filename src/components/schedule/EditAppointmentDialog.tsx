@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Appointment } from "./types";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
+import { useState } from "react";
 
 interface EditAppointmentDialogProps {
   appointment: Appointment;
@@ -22,6 +23,21 @@ export const EditAppointmentDialog = ({
   appointment,
 }: EditAppointmentDialogProps) => {
   const { classTypes, isLoading } = useClassTypes();
+  const [selectedStaff, setSelectedStaff] = useState<string>(appointment.name);
+  const [selectedType, setSelectedType] = useState<string>(appointment.type);
+
+  const handleSubmit = () => {
+    if (!selectedStaff || !selectedType) {
+      // You might want to show an error message here
+      return;
+    }
+    // Here you would typically call an update function passed as a prop
+    console.log('Updated appointment:', {
+      ...appointment,
+      name: selectedStaff,
+      type: selectedType
+    });
+  };
 
   return (
     <DialogContent className="bg-[#171717] border-0 w-[calc(100%-2rem)] max-w-[32rem]">
@@ -34,7 +50,7 @@ export const EditAppointmentDialog = ({
       <div className="space-y-4 pt-4">
         <div>
           <label className="text-sm font-medium text-fitness-text">Staff Name</label>
-          <Select defaultValue={appointment.name}>
+          <Select value={selectedStaff} onValueChange={setSelectedStaff}>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select staff" />
             </SelectTrigger>
@@ -47,7 +63,7 @@ export const EditAppointmentDialog = ({
         </div>
         <div>
           <label className="text-sm font-medium text-fitness-text">Schedule Type</label>
-          <Select defaultValue={appointment.type}>
+          <Select value={selectedType} onValueChange={setSelectedType}>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
