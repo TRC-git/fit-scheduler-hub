@@ -28,11 +28,17 @@ const TimeSlots = ({
   };
 
   const handleAddSlot = (day: string) => {
+    const newSlot: TimeSlot = {
+      day_of_week: day,
+      start_time: '09:00',
+      end_time: '10:00'
+    };
+    
     onAddSlot();
     const newIndex = timeSlots.length;
-    onUpdateSlot(newIndex, 'day_of_week', day);
-    onUpdateSlot(newIndex, 'start_time', '09:00');
-    onUpdateSlot(newIndex, 'end_time', '10:00');
+    onUpdateSlot(newIndex, 'day_of_week', newSlot.day_of_week);
+    onUpdateSlot(newIndex, 'start_time', newSlot.start_time);
+    onUpdateSlot(newIndex, 'end_time', newSlot.end_time);
   };
 
   const copyDaySlots = (fromDay: string) => {
@@ -50,11 +56,17 @@ const TimeSlots = ({
       .filter(day => day !== fromDay)
       .forEach(targetDay => {
         slotsFromDay.forEach(slot => {
+          const newSlot: TimeSlot = {
+            day_of_week: targetDay,
+            start_time: slot.start_time,
+            end_time: slot.end_time
+          };
+          
           onAddSlot();
           const newIndex = timeSlots.length;
-          onUpdateSlot(newIndex, 'day_of_week', targetDay);
-          onUpdateSlot(newIndex, 'start_time', slot.start_time);
-          onUpdateSlot(newIndex, 'end_time', slot.end_time);
+          onUpdateSlot(newIndex, 'day_of_week', newSlot.day_of_week);
+          onUpdateSlot(newIndex, 'start_time', newSlot.start_time);
+          onUpdateSlot(newIndex, 'end_time', newSlot.end_time);
         });
       });
 
