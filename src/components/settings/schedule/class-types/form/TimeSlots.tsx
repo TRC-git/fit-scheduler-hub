@@ -20,11 +20,16 @@ const TimeSlots = ({
   onUpdateSlot 
 }: TimeSlotsProps) => {
   const addTimeSlotForDay = (day: string) => {
+    const newSlot: TimeSlot = {
+      day_of_week: day,
+      start_time: '09:00',
+      end_time: '10:00'
+    };
     onAddSlot();
     const newIndex = timeSlots.length;
-    onUpdateSlot(newIndex, 'day_of_week', day);
-    onUpdateSlot(newIndex, 'start_time', '09:00');
-    onUpdateSlot(newIndex, 'end_time', '10:00');
+    onUpdateSlot(newIndex, 'day_of_week', newSlot.day_of_week);
+    onUpdateSlot(newIndex, 'start_time', newSlot.start_time);
+    onUpdateSlot(newIndex, 'end_time', newSlot.end_time);
   };
 
   // Group time slots by day
