@@ -21,22 +21,28 @@ const OperatingHours = () => {
         .from('class_types')
         .select('opening_time, closing_time')
         .eq('name', 'default')
-        .single();
+        .limit(1);  // Get only the first record
 
       if (error) throw error;
       
-      if (data) {
-        setOpeningTime(data.opening_time || "09:00");
-        setClosingTime(data.closing_time || "17:00");
+      if (data && data.length > 0) {
+        setOpeningTime(data[0].opening_time || "09:00");
+        setClosingTime(data[0].closing_time || "17:00");
       }
     } catch (error) {
       console.error('Error loading operating hours:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load operating hours",
+        variant: "destructive",
+      });
     }
   };
 
   const handleSave = async () => {
     try {
-      const { data, error } = await supabase
+      // Update all default records to maintain consistency
+      const { error } = await supabase
         .from('class_types')
         .update({ 
           opening_time: openingTime,
