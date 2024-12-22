@@ -1,14 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ClassType } from "@/types/schedule/class-types";
 
 const OperatingHours = () => {
   const [openingTime, setOpeningTime] = useState("09:00");
   const [closingTime, setClosingTime] = useState("17:00");
   const { toast } = useToast();
+
+  useEffect(() => {
+    loadOperatingHours();
+  }, []);
+
+  const loadOperatingHours = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('class_types')
+        .select('opening_time, closing_time')
+        .eq('name', 'default')
+        .single();
+
+      if (error) throw error;
+      
+      if (data) {
+        setOpeningTime(data.opening_time || "09:00");
+        setClosingTime(data.closing_time || "17:00");
+      }
+    } catch (error) {
+      console.error('Error loading operating hours:', error);
+    }
+  };
 
   const handleSave = async () => {
     try {

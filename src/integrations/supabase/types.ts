@@ -109,23 +109,29 @@ export type Database = {
       class_types: {
         Row: {
           class_type_id: number
+          closing_time: string | null
           created_at: string | null
           duration: number
           name: string
+          opening_time: string | null
           operational_days: string[] | null
         }
         Insert: {
           class_type_id?: number
+          closing_time?: string | null
           created_at?: string | null
           duration?: number
           name: string
+          opening_time?: string | null
           operational_days?: string[] | null
         }
         Update: {
           class_type_id?: number
+          closing_time?: string | null
           created_at?: string | null
           duration?: number
           name?: string
+          opening_time?: string | null
           operational_days?: string[] | null
         }
         Relationships: []

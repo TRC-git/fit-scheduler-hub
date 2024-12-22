@@ -4,18 +4,24 @@ export interface ClassType {
   duration: number;
   created_at?: string;
   operational_days?: string[];
+  opening_time?: string;
+  closing_time?: string;
 }
 
 export interface CreateClassTypeData {
   name: string;
   duration: number;
   operational_days?: string[];
+  opening_time?: string;
+  closing_time?: string;
 }
 
 export interface UpdateClassTypeData {
   name?: string;
   duration?: number;
   operational_days?: string[];
+  opening_time?: string;
+  closing_time?: string;
 }
 
 export interface TimeSlot {
