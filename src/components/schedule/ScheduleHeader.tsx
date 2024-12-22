@@ -1,13 +1,24 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 
 const ScheduleHeader = () => {
+  const { classTypes, isLoading } = useClassTypes();
+
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
         <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2">
-          <option>CrossFit</option>
-          <option>Personal Training</option>
-          <option>Yoga</option>
+          {isLoading ? (
+            <option>Loading...</option>
+          ) : (
+            <>
+              {classTypes?.map((type) => (
+                <option key={type.class_type_id} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+            </>
+          )}
         </select>
         <button className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md">
           Post Schedule
