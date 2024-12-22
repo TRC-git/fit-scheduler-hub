@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Copy, Plus } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { TimeSlot } from "@/types/schedule/class-types";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import TimeSlotInputs from "./TimeSlotInputs";
 
 interface TimeSlotsProps {
@@ -13,22 +14,25 @@ interface TimeSlotsProps {
   onUpdateSlot: (index: number, field: keyof TimeSlot, value: string) => void;
 }
 
-const TimeSlots = ({
-  timeSlots,
-  operationalDays,
-  onAddSlot,
-  onRemoveSlot,
-  onUpdateSlot,
+const TimeSlots = ({ 
+  timeSlots, 
+  operationalDays, 
+  onAddSlot, 
+  onRemoveSlot, 
+  onUpdateSlot 
 }: TimeSlotsProps) => {
+  const [copiedFromDay, setCopiedFromDay] = useState<string | null>(null);
+
   const getSlotsByDay = (day: string) => {
     return timeSlots.filter(slot => slot.day_of_week === day);
   };
 
   const handleAddSlot = (day: string) => {
     onAddSlot();
-    onUpdateSlot(timeSlots.length, 'day_of_week', day);
-    onUpdateSlot(timeSlots.length, 'start_time', '09:00');
-    onUpdateSlot(timeSlots.length, 'end_time', '10:00');
+    const newIndex = timeSlots.length;
+    onUpdateSlot(newIndex, 'day_of_week', day);
+    onUpdateSlot(newIndex, 'start_time', '09:00');
+    onUpdateSlot(newIndex, 'end_time', '10:00');
   };
 
   const copyDaySlots = (fromDay: string) => {
@@ -47,31 +51,42 @@ const TimeSlots = ({
       .forEach(targetDay => {
         slotsFromDay.forEach(slot => {
           onAddSlot();
-          onUpdateSlot(timeSlots.length, 'day_of_week', targetDay);
-          onUpdateSlot(timeSlots.length, 'start_time', slot.start_time);
-          onUpdateSlot(timeSlots.length, 'end_time', slot.end_time);
+          const newIndex = timeSlots.length;
+          onUpdateSlot(newIndex, 'day_of_week', targetDay);
+          onUpdateSlot(newIndex, 'start_time', slot.start_time);
+          onUpdateSlot(newIndex, 'end_time', slot.end_time);
         });
       });
 
+    setCopiedFromDay(fromDay);
     toast({
       title: "Time slots copied",
       description: "Time slots have been copied to other scheduled days.",
     });
   };
 
+  const getSlotIndex = (slot: TimeSlot) => {
+    return timeSlots.findIndex(
+      s => s.day_of_week === slot.day_of_week && 
+      s.start_time === slot.start_time && 
+      s.end_time === slot.end_time
+    );
+  };
+
   return (
     <div>
       <Label className="text-fitness-text mb-4 block">Time Slots</Label>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="space-y-6">
         {operationalDays.map((day) => (
-          <div key={day} className="space-y-2">
-            <div className="flex items-center justify-between">
+          <div key={day} className="bg-fitness-inner p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
               <div className="flex gap-2">
                 {operationalDays[0] === day && (
                   <Button
                     type="button"
                     onClick={() => copyDaySlots(day)}
+                    disabled={!!copiedFromDay}
                     className="bg-transparent text-white hover:bg-fitness-inner/20"
                   >
                     <Copy className="w-4 h-4 mr-2" />
@@ -90,14 +105,11 @@ const TimeSlots = ({
             </div>
 
             <TimeSlotInputs
-              slots={getSlotsByDay(day)}
+              slots={timeSlots}
+              day={day}
               onRemoveSlot={onRemoveSlot}
               onUpdateSlot={onUpdateSlot}
-              getSlotIndex={(slot) => timeSlots.findIndex(
-                s => s.day_of_week === slot.day_of_week && 
-                s.start_time === slot.start_time && 
-                s.end_time === slot.end_time
-              )}
+              getSlotIndex={getSlotIndex}
             />
           </div>
         ))}
