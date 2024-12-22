@@ -12,6 +12,7 @@ const ScheduleHeader = () => {
             <option className="pl-2">Loading...</option>
           ) : (
             <>
+              <option value="all" className="pl-2">All Schedules</option>
               {classTypes?.map((type) => (
                 <option key={type.class_type_id} value={type.name} className="pl-2">
                   {type.name}
