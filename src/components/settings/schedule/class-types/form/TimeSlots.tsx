@@ -20,15 +20,8 @@ const TimeSlots = ({
   onUpdateSlot 
 }: TimeSlotsProps) => {
   const copyToAllDays = (sourceSlot: TimeSlot) => {
-    const sourceIndex = timeSlots.indexOf(sourceSlot);
-    if (sourceIndex === -1) return;
-
     operationalDays.forEach(day => {
       if (day !== sourceSlot.day_of_week) {
-        const newSlot = {
-          ...sourceSlot,
-          day_of_week: day
-        };
         onAddSlot();
         const newIndex = timeSlots.length;
         onUpdateSlot(newIndex, 'day_of_week', day);
