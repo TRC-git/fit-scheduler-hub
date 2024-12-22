@@ -13,10 +13,7 @@ const ScheduleSettings = () => {
       <CardContent className="space-y-6">
         <DaysOfOperation />
         <OperatingHours />
-        <div>
-          <h3 className="text-fitness-text mb-4">Schedule Types</h3>
-          <ClassTypes />
-        </div>
+        <ClassTypes />
         
         <div>
           <h3 className="text-fitness-text mb-4">Schedule Templates</h3>
