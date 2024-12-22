@@ -9,10 +9,17 @@ interface AppointmentContentProps {
   appointment: Appointment;
   onDelete: () => void;
   onCopy: () => void;
+  onUpdate?: (updatedAppointment: Appointment) => void;
   isCopied?: boolean;
 }
 
-export const AppointmentContent = ({ appointment, onDelete, onCopy, isCopied }: AppointmentContentProps) => (
+export const AppointmentContent = ({ 
+  appointment, 
+  onDelete, 
+  onCopy, 
+  onUpdate,
+  isCopied 
+}: AppointmentContentProps) => (
   <div
     className={`bg-fitness-inner p-2 rounded flex items-center justify-between cursor-move group ${
       isCopied ? 'border-2 border-[#15e7fb]' : ''
@@ -28,7 +35,10 @@ export const AppointmentContent = ({ appointment, onDelete, onCopy, isCopied }: 
             <p className="text-xs text-gray-400">{appointment.type}</p>
           </div>
         </DialogTrigger>
-        <EditAppointmentDialog appointment={appointment} />
+        <EditAppointmentDialog 
+          appointment={appointment} 
+          onUpdate={onUpdate}
+        />
       </Dialog>
     </div>
     <div className="flex flex-col items-center gap-2">

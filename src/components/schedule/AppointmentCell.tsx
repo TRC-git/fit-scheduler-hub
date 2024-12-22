@@ -12,6 +12,7 @@ export const AppointmentCell = ({
   onAdd,
   onDragStart,
   onCopy,
+  onUpdate,
   copiedAppointment,
 }: AppointmentCellProps) => {
   const { operationalDays } = useOperationalDays();
@@ -70,6 +71,7 @@ export const AppointmentCell = ({
             appointment={appointment}
             onDelete={() => onDelete(appointment.id)}
             onCopy={() => onCopy(appointment)}
+            onUpdate={onUpdate}
             isCopied={copiedAppointment?.id === appointment.id}
           />
         </div>
