@@ -91,7 +91,7 @@ const OperatingHours = () => {
       </div>
       <Button 
         onClick={handleSave}
-        className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+        className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
       >
         Save Operating Hours
       </Button>
