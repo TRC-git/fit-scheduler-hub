@@ -2,9 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ClassType, UpdateClassTypeData } from "@/types/schedule/class-types";
 import { Pencil, Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import ClassTypeForm from "./ClassTypeForm";
 
 interface ClassTypeItemProps {
   classType: ClassType;
@@ -13,16 +12,6 @@ interface ClassTypeItemProps {
 }
 
 const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) => {
-  const [formData, setFormData] = useState<UpdateClassTypeData>({
-    name: classType.name,
-    duration: classType.duration,
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onUpdate(classType.class_type_id, formData);
-  };
-
   return (
     <div className="p-4 bg-fitness-inner rounded-md">
       <div className="flex items-center justify-between">
@@ -39,34 +28,22 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
                 <Pencil className="h-4 w-4 text-[#15e7fb]" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-fitness-card">
+            <DialogContent className="bg-fitness-card max-h-[90vh] w-[calc(100%+100px)] max-w-[calc(32rem+100px)]">
               <DialogHeader>
-                <DialogTitle className="text-fitness-text">Edit Class Type</DialogTitle>
+                <DialogTitle className="text-fitness-text">Edit Schedule Type</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label className="text-fitness-text">Class Name</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="bg-fitness-inner text-fitness-text"
-                  />
-                </div>
-                <div>
-                  <Label className="text-fitness-text">Duration (minutes)</Label>
-                  <Input
-                    type="number"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-                    className="bg-fitness-inner text-fitness-text"
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button type="submit" className="bg-[#15e7fb] hover:bg-[#15e7fb]/80">
-                    Update
-                  </Button>
-                </div>
-              </form>
+              <ScrollArea className="max-h-[calc(90vh-120px)] pr-4" style={{
+                '--scrollbar-thumb': '#15e7fb',
+                '--scrollbar-track': 'transparent'
+              } as React.CSSProperties}>
+                <ClassTypeForm
+                  classType={classType}
+                  onSubmit={async (data) => {
+                    await onUpdate(classType.class_type_id, data);
+                  }}
+                  onCancel={() => {}}
+                />
+              </ScrollArea>
             </DialogContent>
           </Dialog>
           <Button
