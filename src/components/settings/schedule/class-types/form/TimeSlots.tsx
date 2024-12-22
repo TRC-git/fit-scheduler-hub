@@ -69,63 +69,51 @@ const TimeSlots = ({
   const getSlotIndex = (slot: TimeSlot) => {
     return timeSlots.findIndex(
       s => s.day_of_week === slot.day_of_week && 
-      s.start_time === s.start_time && 
-      s.end_time === s.end_time
+      s.start_time === slot.start_time && 
+      s.end_time === slot.end_time
     );
-  };
-
-  // Initialize default time slots for each operational day if none exist
-  const initializeDefaultSlots = (day: string) => {
-    if (getSlotsByDay(day).length === 0) {
-      handleAddSlot(day);
-    }
   };
 
   return (
     <div>
       <Label className="text-fitness-text mb-4 block">Time Slots</Label>
       <div className="space-y-6">
-        {operationalDays.map((day) => {
-          // Initialize default slot if none exists
-          initializeDefaultSlots(day);
-          
-          return (
-            <div key={day} className="bg-fitness-inner p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-fitness-text font-medium">{day}</h4>
-                <div className="flex gap-2">
-                  {operationalDays[0] === day && (
-                    <Button
-                      type="button"
-                      onClick={() => copyDaySlots(day)}
-                      disabled={!!copiedFromDay}
-                      className="bg-transparent text-white hover:bg-fitness-inner/20"
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy to Other Days
-                    </Button>
-                  )}
+        {operationalDays.map((day) => (
+          <div key={day} className="bg-fitness-inner p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-fitness-text font-medium">{day}</h4>
+              <div className="flex gap-2">
+                {operationalDays[0] === day && (
                   <Button
                     type="button"
-                    onClick={() => handleAddSlot(day)}
-                    className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+                    onClick={() => copyDaySlots(day)}
+                    disabled={!!copiedFromDay}
+                    className="bg-transparent text-white hover:bg-fitness-inner/20"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Time Slot
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy to Other Days
                   </Button>
-                </div>
+                )}
+                <Button
+                  type="button"
+                  onClick={() => handleAddSlot(day)}
+                  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Time Slot
+                </Button>
               </div>
-
-              <TimeSlotInputs
-                slots={timeSlots}
-                day={day}
-                onRemoveSlot={onRemoveSlot}
-                onUpdateSlot={onUpdateSlot}
-                getSlotIndex={getSlotIndex}
-              />
             </div>
-          );
-        })}
+
+            <TimeSlotInputs
+              slots={timeSlots}
+              day={day}
+              onRemoveSlot={onRemoveSlot}
+              onUpdateSlot={onUpdateSlot}
+              getSlotIndex={getSlotIndex}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
