@@ -21,7 +21,7 @@ export const EditAppointmentDialog = ({
   appointment,
 }: EditAppointmentDialogProps) => {
   return (
-    <DialogContent className="bg-[#171717] border-0">
+    <DialogContent className="bg-[#171717] border-0 w-[calc(100%-2rem)] max-w-[32rem]">
       <DialogHeader>
         <DialogTitle className="text-fitness-text">Edit Appointment</DialogTitle>
         <DialogDescription className="text-fitness-text/70">
