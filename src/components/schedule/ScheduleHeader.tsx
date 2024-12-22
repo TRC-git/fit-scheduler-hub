@@ -7,7 +7,7 @@ const ScheduleHeader = () => {
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[140px]">
+        <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[210px]">
           {isLoading ? (
             <option className="pl-2">Loading...</option>
           ) : (
