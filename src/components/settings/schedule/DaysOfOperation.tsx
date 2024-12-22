@@ -19,7 +19,7 @@ const DaysOfOperation = () => {
 
   return (
     <div>
-      <h3 className="text-fitness-text mb-2">Days Available for Scheduling</h3>
+      <h3 className="text-fitness-text mb-2">Schedule Days</h3>
       <p className="text-sm text-fitness-text/70 mb-4">
         Select which days appointments can be scheduled. Unselected days will be marked as unavailable in the schedule.
       </p>

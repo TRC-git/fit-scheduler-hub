@@ -11,7 +11,7 @@ const OperationalDays = ({ selectedDays, onDayToggle }: OperationalDaysProps) =>
 
   return (
     <div>
-      <Label className="text-fitness-text mb-2 block">Operational Days</Label>
+      <Label className="text-fitness-text mb-2 block">Schedule Days</Label>
       <div className="flex flex-wrap gap-4">
         {daysOfWeek.map((day) => (
           <div key={day} className="flex items-center gap-2">
