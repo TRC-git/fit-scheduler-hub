@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy, Plus, X } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface TimeSlotsProps {
   timeSlots: TimeSlot[];
@@ -48,20 +48,18 @@ const TimeSlots = ({
 
     // For each target day
     targetDays.forEach(targetDay => {
-      // Find all slots for the target day
-      const targetDaySlots = timeSlots.filter(slot => slot.day_of_week === targetDay);
-      
-      // Remove all existing slots for the target day
-      targetDaySlots.forEach((_, idx) => {
-        const slotIndex = timeSlots.findIndex(
-          slot => slot.day_of_week === targetDay
-        );
-        if (slotIndex !== -1) {
-          onRemoveSlot(slotIndex);
-        }
+      // First, remove all existing slots for the target day
+      const slotsToRemove = timeSlots
+        .map((slot, index) => ({ slot, index }))
+        .filter(({ slot }) => slot.day_of_week === targetDay)
+        .sort((a, b) => b.index - a.index); // Sort in reverse order to avoid index shifting
+
+      // Remove slots from end to start
+      slotsToRemove.forEach(({ index }) => {
+        onRemoveSlot(index);
       });
 
-      // Add new slots copied from source day
+      // Then add new slots copied from source day
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
