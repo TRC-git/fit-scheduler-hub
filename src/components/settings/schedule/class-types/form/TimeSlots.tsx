@@ -21,40 +21,38 @@ const TimeSlots = ({
 }: TimeSlotsProps) => {
   const dayOrder = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
   
-  // Sort operational days according to the defined order
   const sortedOperationalDays = [...operationalDays].sort(
     (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
   );
 
-  // Group time slots by day
   const groupedSlots = sortedOperationalDays.reduce((acc, day) => {
     acc[day] = timeSlots.filter(slot => slot.day_of_week === day);
     return acc;
   }, {} as Record<string, TimeSlot[]>);
 
-  const handleCopyToAll = (sourceDay: string) => {
+  const handleCopyToAll = async (sourceDay: string) => {
     const sourceDaySlots = groupedSlots[sourceDay];
     if (!sourceDaySlots?.length) return;
 
     // Only copy to days that are checked in operationalDays
-    sortedOperationalDays.forEach(targetDay => {
+    for (const targetDay of sortedOperationalDays) {
       // Skip if it's the source day or if the day isn't in operationalDays
-      if (targetDay === sourceDay || !operationalDays.includes(targetDay)) return;
+      if (targetDay === sourceDay || !operationalDays.includes(targetDay)) continue;
 
       // Copy each slot from the source day to the target day
-      sourceDaySlots.forEach(sourceSlot => {
-        // First create the new slot with the correct day
+      for (const sourceSlot of sourceDaySlots) {
+        // First create the new slot
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
         
-        // Ensure day_of_week is set first
+        // Set the day_of_week first to avoid null constraint violation
         onUpdateSlot(newSlotIndex, 'day_of_week', targetDay);
         
-        // Then update other fields
+        // Then update the time values
         onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
         onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
-      });
-    });
+      }
+    }
   };
 
   return (
