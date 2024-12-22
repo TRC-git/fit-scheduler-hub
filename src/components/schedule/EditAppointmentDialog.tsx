@@ -3,6 +3,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -11,16 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Appointment } from "./types";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import { useState } from "react";
 
 interface EditAppointmentDialogProps {
   appointment: Appointment;
+  onUpdate?: (updatedAppointment: Appointment) => void;
 }
 
 export const EditAppointmentDialog = ({
   appointment,
+  onUpdate,
 }: EditAppointmentDialogProps) => {
   const { classTypes, isLoading } = useClassTypes();
   const [selectedStaff, setSelectedStaff] = useState<string>(appointment.name);
@@ -28,15 +32,16 @@ export const EditAppointmentDialog = ({
 
   const handleSubmit = () => {
     if (!selectedStaff || !selectedType) {
-      // You might want to show an error message here
       return;
     }
-    // Here you would typically call an update function passed as a prop
-    console.log('Updated appointment:', {
+    
+    const updatedAppointment = {
       ...appointment,
       name: selectedStaff,
       type: selectedType
-    });
+    };
+    
+    onUpdate?.(updatedAppointment);
   };
 
   return (
@@ -83,6 +88,25 @@ export const EditAppointmentDialog = ({
               )}
             </SelectContent>
           </Select>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              className="bg-[#333333] text-fitness-text hover:bg-[#444444]"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              onClick={handleSubmit}
+              className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
+              disabled={!selectedStaff || !selectedType}
+            >
+              Save Changes
+            </Button>
+          </DialogClose>
         </div>
       </div>
     </DialogContent>
