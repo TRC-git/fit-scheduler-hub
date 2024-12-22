@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
 
 interface TimeSlotGridProps {
   slots: any[];
@@ -15,6 +14,8 @@ const TimeSlotGrid = ({ slots, onSlotsChange }: TimeSlotGridProps) => {
   const classTypes = ['CrossFit', 'Yoga', 'HIIT', 'Strength'];
 
   const addSlot = (day: string) => {
+    if (!day) return; // Prevent adding slots without a day
+    
     onSlotsChange([...slots, {
       day_of_week: day,
       start_time: '09:00',
@@ -31,6 +32,8 @@ const TimeSlotGrid = ({ slots, onSlotsChange }: TimeSlotGridProps) => {
   };
 
   const updateSlot = (index: number, field: string, value: any) => {
+    if (field === 'day_of_week' && !value) return; // Prevent updating to null day
+    
     const newSlots = [...slots];
     newSlots[index] = { ...newSlots[index], [field]: value };
     onSlotsChange(newSlots);
