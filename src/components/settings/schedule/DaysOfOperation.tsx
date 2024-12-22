@@ -1,15 +1,26 @@
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useOperationalDays } from "@/contexts/OperationalDaysContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const DaysOfOperation = () => {
   const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
-  const { operationalDays, toggleDay } = useOperationalDays();
+  const { operationalDays, toggleDay, saveOperationalDays } = useOperationalDays();
+  const { toast } = useToast();
+
+  const handleSave = async () => {
+    await saveOperationalDays();
+    toast({
+      title: "Success",
+      description: "Days of operation have been updated",
+    });
+  };
 
   return (
     <div>
       <h3 className="text-fitness-text mb-4">Days of Operation</h3>
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap mb-4">
         {daysOfWeek.map((day) => (
           <div key={day} className="flex items-center gap-2">
             <Checkbox 
@@ -22,6 +33,12 @@ const DaysOfOperation = () => {
           </div>
         ))}
       </div>
+      <Button 
+        onClick={handleSave}
+        className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+      >
+        Save Changes
+      </Button>
     </div>
   );
 };
