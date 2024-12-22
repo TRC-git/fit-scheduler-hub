@@ -79,7 +79,11 @@ export const AppointmentCell = ({
           day={day}
           onAdd={onAdd}
         />
-      ) : null}
+      ) : (
+        <div className="text-fitness-text/50 text-sm text-center h-full flex items-center justify-center">
+          Not Available
+        </div>
+      )}
     </div>
   );
 };

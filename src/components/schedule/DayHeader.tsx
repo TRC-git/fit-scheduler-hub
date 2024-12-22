@@ -12,10 +12,13 @@ export const DayHeader = ({ day, index }: DayHeaderProps) => {
   return (
     <div
       className={`text-fitness-text font-medium p-2 text-center ${
-        !isOperational || index === 6 ? "bg-red-900/20" : "bg-fitness-muted"
+        !isOperational ? "bg-red-900/20" : "bg-fitness-muted"
       } rounded-md`}
     >
       {day}
+      {!isOperational && (
+        <div className="text-xs text-fitness-text/50 mt-1">Closed</div>
+      )}
     </div>
   );
 };
