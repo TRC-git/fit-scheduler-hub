@@ -33,6 +33,7 @@ export const TimeSlots = ({
   };
 
   const handleCopyToAll = (sourceDay: string) => {
+    console.log('Copying from source day:', sourceDay);
     const sourceDaySlots = getTimeSlotsByDay(sourceDay);
     
     if (!sourceDaySlots?.length) {
@@ -46,25 +47,24 @@ export const TimeSlots = ({
 
     // Get target days (all operational days except the source day)
     const targetDays = sortedOperationalDays.filter(day => day !== sourceDay);
+    console.log('Target days:', targetDays);
 
-    // For each target day
-    targetDays.forEach(targetDay => {
-      // Remove existing slots for the target day (from last to first to maintain correct indices)
-      const existingSlots = timeSlots
-        .map((slot, index) => ({ slot, index }))
-        .filter(({ slot }) => slot.day_of_week === targetDay)
-        .sort((a, b) => b.index - a.index);
-
-      existingSlots.forEach(({ index }) => {
+    // Remove existing slots for all target days first
+    timeSlots
+      .map((slot, index) => ({ slot, index }))
+      .filter(({ slot }) => targetDays.includes(slot.day_of_week))
+      .sort((a, b) => b.index - a.index) // Sort in reverse order to not affect indices
+      .forEach(({ index }) => {
         onRemoveSlot(index);
       });
-    });
 
-    // Now add new slots for each target day
+    // Copy source slots to each target day
     targetDays.forEach(targetDay => {
+      console.log('Copying to day:', targetDay);
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
+        console.log('Setting times for new slot:', sourceSlot.start_time, sourceSlot.end_time);
         onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
         onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
       });
