@@ -100,14 +100,16 @@ export const TimeSlots = ({
                     </Button>
                   )}
                 </div>
-                <Button
-                  type="button"
-                  onClick={() => onAddSlot(day)}
-                  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Time Slot
-                </Button>
+
+<Button
+  type="button"
+  onClick={() => onAddSlot(day)}
+  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
+>
+  <Plus className="w-4 h-4 mr-2" />
+  Add Time Slot
+</Button>
+
               </div>
               
               <div className="space-y-4">

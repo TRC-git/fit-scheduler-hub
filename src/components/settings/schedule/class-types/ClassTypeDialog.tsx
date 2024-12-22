@@ -13,7 +13,7 @@ const ClassTypeDialog = ({ onSubmit }: ClassTypeDialogProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80">
+        <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]">
           <Plus className="w-4 h-4 mr-2" />
           Add Schedule Type
         </Button>

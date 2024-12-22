@@ -61,7 +61,7 @@ export const NewAppointmentDialog = ({
         </div>
         <Button 
           onClick={() => onAdd(timeSlot, day)}
-          className="bg-[#15e7fb] text-[#171717] hover:bg-[#15e7fb]/80"
+          className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
         >
           Add Appointment
         </Button>

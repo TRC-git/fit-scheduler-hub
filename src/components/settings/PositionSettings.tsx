@@ -105,7 +105,7 @@ const PositionSettings = () => {
             </div>
 
             <Button 
-              className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+              className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
               onClick={() => createPositionMutation.mutate({
                 positionname: "New Position",
                 defaultpayrate: 15,

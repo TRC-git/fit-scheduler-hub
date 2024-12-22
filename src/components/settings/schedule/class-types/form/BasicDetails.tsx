@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface BasicDetailsProps {
   name: string;
@@ -30,6 +31,13 @@ const BasicDetails = ({ name, duration, onChange }: BasicDetailsProps) => {
           className="bg-fitness-card text-fitness-text"
         />
       </div>
+
+      <Button 
+        type="submit"
+        className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
+      >
+        Save Changes
+      </Button>
     </div>
   );
 };
