@@ -71,6 +71,41 @@ export type Database = {
           },
         ]
       }
+      class_time_slots: {
+        Row: {
+          class_type_id: number | null
+          created_at: string | null
+          day_of_week: string
+          end_time: string
+          slot_id: number
+          start_time: string
+        }
+        Insert: {
+          class_type_id?: number | null
+          created_at?: string | null
+          day_of_week: string
+          end_time: string
+          slot_id?: number
+          start_time: string
+        }
+        Update: {
+          class_type_id?: number | null
+          created_at?: string | null
+          day_of_week?: string
+          end_time?: string
+          slot_id?: number
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_time_slots_class_type_id_fkey"
+            columns: ["class_type_id"]
+            isOneToOne: false
+            referencedRelation: "class_types"
+            referencedColumns: ["class_type_id"]
+          },
+        ]
+      }
       class_types: {
         Row: {
           class_type_id: number
