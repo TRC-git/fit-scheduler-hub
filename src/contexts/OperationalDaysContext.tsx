@@ -20,10 +20,13 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
 
   const loadOperationalDays = async () => {
     try {
-      const { data: settings } = await supabase
+      const { data: settings, error } = await supabase
         .from('class_types')
         .select('operational_days')
+        .eq('name', 'default')
         .single();
+
+      if (error) throw error;
 
       if (settings?.operational_days) {
         setOperationalDays(new Set(settings.operational_days));
@@ -63,6 +66,11 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         .eq('name', 'default');
 
       if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Operational days saved successfully",
+      });
     } catch (error) {
       console.error('Error saving operational days:', error);
       toast({

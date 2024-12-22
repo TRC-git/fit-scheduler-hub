@@ -3,6 +3,7 @@ export interface ClassType {
   name: string;
   duration: number;
   created_at?: string;
+  operational_days?: string[];
 }
 
 export interface CreateClassTypeData {
@@ -13,4 +14,5 @@ export interface CreateClassTypeData {
 export interface UpdateClassTypeData {
   name?: string;
   duration?: number;
+  operational_days?: string[];
 }

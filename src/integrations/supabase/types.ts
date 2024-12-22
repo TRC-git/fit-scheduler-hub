@@ -77,18 +77,21 @@ export type Database = {
           created_at: string | null
           duration: number
           name: string
+          operational_days: string[] | null
         }
         Insert: {
           class_type_id?: number
           created_at?: string | null
           duration?: number
           name: string
+          operational_days?: string[] | null
         }
         Update: {
           class_type_id?: number
           created_at?: string | null
           duration?: number
           name?: string
+          operational_days?: string[] | null
         }
         Relationships: []
       }
