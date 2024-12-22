@@ -15,10 +15,11 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
       setOperationalDays(days);
     } catch (error) {
       console.error('Error loading operational days:', error);
+      // Set default days if loading fails
+      setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       toast({
-        title: "Error",
-        description: "Failed to load operational days",
-        variant: "destructive",
+        title: "Notice",
+        description: "Using default operational days",
       });
     }
   };
