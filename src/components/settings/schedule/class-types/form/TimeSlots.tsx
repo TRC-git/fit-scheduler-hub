@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Copy, Plus } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
 import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import TimeSlotInputs from "./TimeSlotInputs";
 
 interface TimeSlotsProps {
@@ -21,6 +21,7 @@ const TimeSlots = ({
   onRemoveSlot, 
   onUpdateSlot 
 }: TimeSlotsProps) => {
+  const { toast } = useToast();
   const [copiedFromDay, setCopiedFromDay] = useState<string | null>(null);
 
   const getSlotsByDay = (day: string) => {
