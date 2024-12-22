@@ -61,25 +61,32 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
+      // First submit the class type data
       await onSubmit(formData);
       
-      let classTypeId = classType?.class_type_id;
-      if (!classTypeId) {
-        const { data: newClassType } = await supabase
-          .from('class_types')
-          .select('class_type_id')
-          .eq('name', formData.name)
-          .maybeSingle();
-        classTypeId = newClassType?.class_type_id;
-      }
-
+      // Get the class type ID
+      const { data: newClassType, error: classTypeError } = await supabase
+        .from('class_types')
+        .select('class_type_id')
+        .eq('name', formData.name)
+        .maybeSingle();
+        
+      if (classTypeError) throw classTypeError;
+      
+      const classTypeId = classType?.class_type_id || newClassType?.class_type_id;
+      
       if (classTypeId) {
-        await supabase
+        // Delete existing slots
+        const { error: deleteError } = await supabase
           .from('class_time_slots')
           .delete()
           .eq('class_type_id', classTypeId);
+          
+        if (deleteError) throw deleteError;
 
+        // Insert new slots if there are any
         if (timeSlots.length > 0) {
           const slotsToInsert = timeSlots.map(slot => ({
             class_type_id: classTypeId,
@@ -100,6 +107,9 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
         title: "Success",
         description: `Schedule type ${classType ? 'updated' : 'created'} successfully`,
       });
+      
+      onCancel(); // Close the form after successful save
+      
     } catch (error) {
       console.error('Error saving schedule type:', error);
       toast({
