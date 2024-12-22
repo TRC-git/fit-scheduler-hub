@@ -45,16 +45,18 @@ const TimeSlots = ({
       return;
     }
 
-    operationalDays.forEach(day => {
-      if (day !== fromDay && !copiedFromDay) {
-        slotsFromDay.forEach(slot => {
-          onAddSlot();
-          const newIndex = timeSlots.length;
-          onUpdateSlot(newIndex, 'day_of_week', day);
-          onUpdateSlot(newIndex, 'start_time', slot.start_time);
-          onUpdateSlot(newIndex, 'end_time', slot.end_time);
-        });
-      }
+    // Get the remaining operational days (excluding the source day)
+    const targetDays = operationalDays.filter(day => day !== fromDay);
+
+    // Copy slots to each target day
+    targetDays.forEach(targetDay => {
+      slotsFromDay.forEach(slot => {
+        onAddSlot();
+        const newIndex = timeSlots.length;
+        onUpdateSlot(newIndex, 'day_of_week', targetDay);
+        onUpdateSlot(newIndex, 'start_time', slot.start_time);
+        onUpdateSlot(newIndex, 'end_time', slot.end_time);
+      });
     });
 
     setCopiedFromDay(fromDay);
@@ -63,6 +65,9 @@ const TimeSlots = ({
       description: "Time slots have been copied to other scheduled days.",
     });
   };
+
+  // Get the first selected day
+  const firstSelectedDay = operationalDays[0];
 
   return (
     <div>
@@ -73,15 +78,16 @@ const TimeSlots = ({
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
               <div className="flex gap-2">
-                <Button
-                  type="button"
-                  onClick={() => copyDaySlots(day)}
-                  disabled={!!copiedFromDay}
-                  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy to Other Days
-                </Button>
+                {day === firstSelectedDay && !copiedFromDay && (
+                  <Button
+                    type="button"
+                    onClick={() => copyDaySlots(day)}
+                    className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy to Other Days
+                  </Button>
+                )}
                 <Button
                   type="button"
                   onClick={() => handleAddSlot(day)}
