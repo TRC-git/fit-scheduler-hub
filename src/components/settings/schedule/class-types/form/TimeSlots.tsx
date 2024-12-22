@@ -10,10 +10,10 @@ interface TimeSlotsProps {
   operationalDays: string[];
   onAddSlot: (day: string) => void;
   onRemoveSlot: (index: number) => void;
-  onUpdateSlot: (index: number, field: keyof TimeSlot, value: string) => void;
+  onUpdateSlot: (index: number, field: string, value: any) => void;
 }
 
-const TimeSlots = ({ 
+export const TimeSlots = ({ 
   timeSlots, 
   operationalDays,
   onAddSlot, 
@@ -29,13 +29,7 @@ const TimeSlots = ({
   const getTimeSlotsByDay = (day: string) => {
     return timeSlots
       .map((slot, index) => ({ ...slot, index }))
-      .filter(slot => slot.day_of_week === day)
-      .sort((a, b) => {
-        // Sort by start time
-        const timeA = new Date(`1970/01/01 ${a.start_time}`);
-        const timeB = new Date(`1970/01/01 ${b.start_time}`);
-        return timeA.getTime() - timeB.getTime();
-      });
+      .filter(slot => slot.day_of_week === day);
   };
 
   const handleCopyToAll = (sourceDay: string) => {
@@ -65,7 +59,7 @@ const TimeSlots = ({
         onRemoveSlot(index);
       });
 
-      // Add new slots with the exact same times as source day
+      // Add new slots with the exact same times as source day, maintaining order
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
