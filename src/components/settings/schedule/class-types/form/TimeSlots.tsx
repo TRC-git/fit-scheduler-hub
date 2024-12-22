@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy, Plus, X } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
+import { toast } from "@/components/ui/use-toast";
 
 interface TimeSlotsProps {
   timeSlots: TimeSlot[];
@@ -30,29 +31,47 @@ const TimeSlots = ({
     return acc;
   }, {} as Record<string, TimeSlot[]>);
 
-  const handleCopyToAll = async (sourceDay: string) => {
+  const handleCopyToAll = (sourceDay: string) => {
     const sourceDaySlots = groupedSlots[sourceDay];
-    if (!sourceDaySlots?.length) return;
+    if (!sourceDaySlots?.length) {
+      toast({
+        title: "No slots to copy",
+        description: "Add time slots to the first day before copying.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    // Only copy to days that are checked in operationalDays
-    for (const targetDay of sortedOperationalDays) {
-      // Skip if it's the source day or if the day isn't in operationalDays
-      if (targetDay === sourceDay || !operationalDays.includes(targetDay)) continue;
+    // Get target days (all operational days except the source day)
+    const targetDays = sortedOperationalDays.filter(day => day !== sourceDay);
 
-      // Copy each slot from the source day to the target day
-      for (const sourceSlot of sourceDaySlots) {
-        // First create the new slot
+    // For each target day
+    targetDays.forEach(targetDay => {
+      // Remove existing slots for the target day
+      timeSlots
+        .filter(slot => slot.day_of_week === targetDay)
+        .forEach((_, index) => {
+          const globalIndex = timeSlots.findIndex(
+            slot => slot.day_of_week === targetDay
+          );
+          if (globalIndex !== -1) {
+            onRemoveSlot(globalIndex);
+          }
+        });
+
+      // Copy each slot from source day to target day
+      sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
-        
-        // Set the day_of_week first to avoid null constraint violation
-        onUpdateSlot(newSlotIndex, 'day_of_week', targetDay);
-        
-        // Then update the time values
         onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
         onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
-      }
-    }
+      });
+    });
+
+    toast({
+      title: "Success",
+      description: "Time slots copied to all operational days",
+    });
   };
 
   return (
