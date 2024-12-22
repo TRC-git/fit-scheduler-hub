@@ -48,16 +48,14 @@ const TimeSlots = ({
     // For each target day
     targetDays.forEach(targetDay => {
       // Remove existing slots for the target day
-      timeSlots
-        .filter(slot => slot.day_of_week === targetDay)
-        .forEach((_, index) => {
-          const globalIndex = timeSlots.findIndex(
-            slot => slot.day_of_week === targetDay
-          );
-          if (globalIndex !== -1) {
-            onRemoveSlot(globalIndex);
-          }
-        });
+      const slotsToRemove = timeSlots
+        .map((slot, index) => ({ slot, index }))
+        .filter(({ slot }) => slot.day_of_week === targetDay)
+        .sort((a, b) => b.index - a.index); // Sort in reverse order to avoid index shifting
+
+      slotsToRemove.forEach(({ index }) => {
+        onRemoveSlot(index);
+      });
 
       // Copy each slot from source day to target day
       sourceDaySlots.forEach(sourceSlot => {
