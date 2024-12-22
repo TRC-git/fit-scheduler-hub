@@ -28,11 +28,13 @@ const TimeSlots = ({
   };
 
   const handleAddSlot = (day: string) => {
+    const currentIndex = timeSlots.length;
     onAddSlot();
-    const newIndex = timeSlots.length;
-    onUpdateSlot(newIndex, 'day_of_week', day);
-    onUpdateSlot(newIndex, 'start_time', '09:00');
-    onUpdateSlot(newIndex, 'end_time', '10:00');
+    setTimeout(() => {
+      onUpdateSlot(currentIndex, 'day_of_week', day);
+      onUpdateSlot(currentIndex, 'start_time', '09:00');
+      onUpdateSlot(currentIndex, 'end_time', '10:00');
+    }, 0);
   };
 
   const copyDaySlots = (fromDay: string) => {
@@ -50,11 +52,13 @@ const TimeSlots = ({
       .filter(day => day !== fromDay)
       .forEach(targetDay => {
         slotsFromDay.forEach(slot => {
+          const currentIndex = timeSlots.length;
           onAddSlot();
-          const newIndex = timeSlots.length;
-          onUpdateSlot(newIndex, 'day_of_week', targetDay);
-          onUpdateSlot(newIndex, 'start_time', slot.start_time);
-          onUpdateSlot(newIndex, 'end_time', slot.end_time);
+          setTimeout(() => {
+            onUpdateSlot(currentIndex, 'day_of_week', targetDay);
+            onUpdateSlot(currentIndex, 'start_time', slot.start_time);
+            onUpdateSlot(currentIndex, 'end_time', slot.end_time);
+          }, 0);
         });
       });
 
@@ -82,11 +86,12 @@ const TimeSlots = ({
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
               <div className="flex gap-2">
-                {operationalDays[0] === day && !copiedFromDay && (
+                {operationalDays[0] === day && (
                   <Button
                     type="button"
                     onClick={() => copyDaySlots(day)}
-                    className="bg-transparent text-fitness-text hover:bg-fitness-inner/20"
+                    disabled={!!copiedFromDay}
+                    className="bg-transparent text-white hover:bg-fitness-inner/20"
                   >
                     <Copy className="w-4 h-4 mr-2" />
                     Copy to Other Days
