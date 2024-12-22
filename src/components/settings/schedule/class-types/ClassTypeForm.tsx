@@ -27,12 +27,17 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
   // Initialize time slots when operational days change
   useEffect(() => {
     if (formData.operational_days && formData.operational_days.length > 0) {
-      const initialSlots = formData.operational_days.map(day => ({
-        day_of_week: day,
-        start_time: "09:00",
-        end_time: "10:00"
-      }));
-      setTimeSlots(initialSlots);
+      const existingDays = new Set(timeSlots.map(slot => slot.day_of_week));
+      const newDays = formData.operational_days.filter(day => !existingDays.has(day));
+      
+      if (newDays.length > 0) {
+        const initialSlots = newDays.map(day => ({
+          day_of_week: day,
+          start_time: "09:00",
+          end_time: "10:00"
+        }));
+        setTimeSlots(prev => [...prev, ...initialSlots]);
+      }
     }
   }, [formData.operational_days]);
 
@@ -49,12 +54,14 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
       
       // Update time slots based on selected days
       if (!currentDays.includes(day)) {
+        // Adding a new day - add initial time slot
         setTimeSlots(prev => [...prev, {
           day_of_week: day,
           start_time: "09:00",
           end_time: "10:00"
         }]);
       } else {
+        // Removing a day - remove all slots for that day
         setTimeSlots(prev => prev.filter(slot => slot.day_of_week !== day));
       }
       
