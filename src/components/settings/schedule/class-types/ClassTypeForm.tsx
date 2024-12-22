@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { ClassType, CreateClassTypeData, TimeSlot } from "@/types/schedule/class-types";
+import { ClassType, CreateClassTypeData } from "@/types/schedule/class-types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTimeSlots } from "@/hooks/useTimeSlots";
 import BasicDetails from "./form/BasicDetails";
 import OperationalDays from "./form/OperationalDays";
 import TimeSlots from "./form/TimeSlots";
+import { Button } from "@/components/ui/button";
 
 interface ClassTypeFormProps {
   classType?: ClassType;
@@ -20,36 +21,15 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     duration: classType?.duration || 60,
     operational_days: classType?.operational_days || [],
   });
-
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (classType?.class_type_id) {
-      loadTimeSlots();
-    }
-  }, [classType?.class_type_id]);
-
-  const loadTimeSlots = async () => {
-    if (!classType?.class_type_id) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('class_time_slots')
-        .select('*')
-        .eq('class_type_id', classType.class_type_id);
-
-      if (error) throw error;
-      if (data) setTimeSlots(data);
-    } catch (error) {
-      console.error('Error loading time slots:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load time slots",
-        variant: "destructive",
-      });
-    }
-  };
+  
+  const {
+    timeSlots,
+    addTimeSlot,
+    removeTimeSlot,
+    updateTimeSlot,
+    handleDayToggle
+  } = useTimeSlots(classType?.class_type_id);
 
   useEffect(() => {
     if (formData.operational_days && formData.operational_days.length > 0) {
@@ -57,12 +37,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
       const newDays = formData.operational_days.filter(day => !existingDays.has(day));
       
       if (newDays.length > 0) {
-        const initialSlots = newDays.map(day => ({
-          day_of_week: day,
-          start_time: "09:00",
-          end_time: "10:00"
-        }));
-        setTimeSlots(prev => [...prev, ...initialSlots]);
+        newDays.forEach(day => addTimeSlot(day));
       }
     }
   }, [formData.operational_days]);
@@ -71,23 +46,14 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleDayToggle = (day: string) => {
+  const handleDayToggleWrapper = (day: string) => {
     setFormData(prev => {
       const currentDays = prev.operational_days || [];
       const newDays = currentDays.includes(day)
         ? currentDays.filter(d => d !== day)
         : [...currentDays, day];
       
-      if (!currentDays.includes(day)) {
-        setTimeSlots(prev => [...prev, {
-          day_of_week: day,
-          start_time: "09:00",
-          end_time: "10:00"
-        }]);
-      } else {
-        setTimeSlots(prev => prev.filter(slot => slot.day_of_week !== day));
-      }
-      
+      handleDayToggle(day, currentDays);
       return { ...prev, operational_days: newDays };
     });
   };
@@ -96,10 +62,8 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     e.preventDefault();
     setLoading(true);
     try {
-      // First submit the class type data
       await onSubmit(formData);
       
-      // Get the class type ID (either existing or newly created)
       let classTypeId = classType?.class_type_id;
       if (!classTypeId) {
         const { data: newClassType } = await supabase
@@ -111,24 +75,22 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
       }
 
       if (classTypeId) {
-        // Delete existing time slots
         await supabase
           .from('class_time_slots')
           .delete()
           .eq('class_type_id', classTypeId);
 
-        // Insert new time slots with proper slot_id handling
         if (timeSlots.length > 0) {
+          const slotsToInsert = timeSlots.map(slot => ({
+            class_type_id: classTypeId,
+            day_of_week: slot.day_of_week,
+            start_time: slot.start_time,
+            end_time: slot.end_time
+          }));
+
           const { error: insertError } = await supabase
             .from('class_time_slots')
-            .insert(
-              timeSlots.map(slot => ({
-                class_type_id: classTypeId,
-                day_of_week: slot.day_of_week,
-                start_time: slot.start_time,
-                end_time: slot.end_time
-              }))
-            );
+            .insert(slotsToInsert);
 
           if (insertError) throw insertError;
         }
@@ -160,29 +122,15 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
 
       <OperationalDays
         selectedDays={formData.operational_days || []}
-        onDayToggle={handleDayToggle}
+        onDayToggle={handleDayToggleWrapper}
       />
 
       <TimeSlots
         timeSlots={timeSlots}
         operationalDays={formData.operational_days || []}
-        onAddSlot={(day) => {
-          setTimeSlots(prev => [...prev, {
-            day_of_week: day,
-            start_time: "09:00",
-            end_time: "10:00"
-          }]);
-        }}
-        onRemoveSlot={(index) => {
-          setTimeSlots(prev => prev.filter((_, i) => i !== index));
-        }}
-        onUpdateSlot={(index, field, value) => {
-          setTimeSlots(prev => {
-            const newSlots = [...prev];
-            newSlots[index] = { ...newSlots[index], [field]: value };
-            return newSlots;
-          });
-        }}
+        onAddSlot={addTimeSlot}
+        onRemoveSlot={removeTimeSlot}
+        onUpdateSlot={updateTimeSlot}
       />
 
       <div className="flex justify-end gap-2">
