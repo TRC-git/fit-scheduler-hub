@@ -29,9 +29,10 @@ const TimeSlots = ({
 
   const handleAddSlot = (day: string) => {
     onAddSlot();
-    onUpdateSlot(timeSlots.length, 'day_of_week', day);
-    onUpdateSlot(timeSlots.length, 'start_time', '09:00');
-    onUpdateSlot(timeSlots.length, 'end_time', '10:00');
+    const newIndex = timeSlots.length;
+    onUpdateSlot(newIndex, 'day_of_week', day);
+    onUpdateSlot(newIndex, 'start_time', '09:00');
+    onUpdateSlot(newIndex, 'end_time', '10:00');
   };
 
   const copyDaySlots = (fromDay: string) => {
@@ -45,7 +46,6 @@ const TimeSlots = ({
       return;
     }
 
-    // Copy slots to each target day (excluding the source day)
     operationalDays
       .filter(day => day !== fromDay)
       .forEach(targetDay => {
@@ -82,15 +82,16 @@ const TimeSlots = ({
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
               <div className="flex gap-2">
-                <Button
-                  type="button"
-                  onClick={() => copyDaySlots(day)}
-                  disabled={!!copiedFromDay}
-                  className="bg-transparent text-fitness-text hover:bg-fitness-inner/20"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy to Other Days
-                </Button>
+                {operationalDays[0] === day && !copiedFromDay && (
+                  <Button
+                    type="button"
+                    onClick={() => copyDaySlots(day)}
+                    className="bg-transparent text-fitness-text hover:bg-fitness-inner/20"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy to Other Days
+                  </Button>
+                )}
                 <Button
                   type="button"
                   onClick={() => handleAddSlot(day)}
