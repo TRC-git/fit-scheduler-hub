@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 
 interface NewAppointmentDialogProps {
   timeSlot: string;
@@ -24,6 +25,8 @@ export const NewAppointmentDialog = ({
   day,
   onAdd,
 }: NewAppointmentDialogProps) => {
+  const { classTypes, isLoading } = useClassTypes();
+
   return (
     <DialogContent className="bg-[#171717] border-0">
       <DialogHeader>
@@ -47,15 +50,25 @@ export const NewAppointmentDialog = ({
           </Select>
         </div>
         <div>
-          <label className="text-sm font-medium text-fitness-text">Class Type</label>
+          <label className="text-sm font-medium text-fitness-text">Schedule Type</label>
           <Select>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent className="bg-[#333333] border-[#d1d1d1]">
-              <SelectItem value="CrossFit" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">CrossFit</SelectItem>
-              <SelectItem value="Yoga" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">Yoga</SelectItem>
-              <SelectItem value="HIIT" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">HIIT</SelectItem>
+              {isLoading ? (
+                <SelectItem value="loading" className="text-fitness-text">Loading...</SelectItem>
+              ) : (
+                classTypes?.map((type) => (
+                  <SelectItem 
+                    key={type.class_type_id} 
+                    value={type.name}
+                    className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]"
+                  >
+                    {type.name}
+                  </SelectItem>
+                ))
+              )}
             </SelectContent>
           </Select>
         </div>

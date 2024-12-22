@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Appointment } from "./types";
+import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 
 interface EditAppointmentDialogProps {
   appointment: Appointment;
@@ -20,6 +21,8 @@ interface EditAppointmentDialogProps {
 export const EditAppointmentDialog = ({
   appointment,
 }: EditAppointmentDialogProps) => {
+  const { classTypes, isLoading } = useClassTypes();
+
   return (
     <DialogContent className="bg-[#171717] border-0 w-[calc(100%-2rem)] max-w-[32rem]">
       <DialogHeader>
@@ -43,15 +46,25 @@ export const EditAppointmentDialog = ({
           </Select>
         </div>
         <div>
-          <label className="text-sm font-medium text-fitness-text">Class Type</label>
+          <label className="text-sm font-medium text-fitness-text">Schedule Type</label>
           <Select defaultValue={appointment.type}>
             <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent className="bg-[#333333] border-[#d1d1d1]">
-              <SelectItem value="CrossFit" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">CrossFit</SelectItem>
-              <SelectItem value="Yoga" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">Yoga</SelectItem>
-              <SelectItem value="HIIT" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">HIIT</SelectItem>
+              {isLoading ? (
+                <SelectItem value="loading" className="text-fitness-text">Loading...</SelectItem>
+              ) : (
+                classTypes?.map((type) => (
+                  <SelectItem 
+                    key={type.class_type_id} 
+                    value={type.name}
+                    className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]"
+                  >
+                    {type.name}
+                  </SelectItem>
+                ))
+              )}
             </SelectContent>
           </Select>
         </div>
