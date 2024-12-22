@@ -12,7 +12,7 @@ const ClassTypes = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-end mb-4">
         <ClassTypeDialog onSubmit={(data) => createClassType.mutateAsync(data)} />
       </div>
 
