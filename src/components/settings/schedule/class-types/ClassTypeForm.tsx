@@ -24,6 +24,34 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Load existing time slots when editing
+  useEffect(() => {
+    if (classType?.class_type_id) {
+      loadTimeSlots();
+    }
+  }, [classType?.class_type_id]);
+
+  const loadTimeSlots = async () => {
+    if (!classType?.class_type_id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('class_time_slots')
+        .select('*')
+        .eq('class_type_id', classType.class_type_id);
+
+      if (error) throw error;
+      if (data) setTimeSlots(data);
+    } catch (error) {
+      console.error('Error loading time slots:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load time slots",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Initialize time slots when operational days change
   useEffect(() => {
     if (formData.operational_days && formData.operational_days.length > 0) {
@@ -70,6 +98,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
   };
 
   const addTimeSlot = (day: string) => {
+    if (!day) return; // Prevent adding slots without a day
     setTimeSlots([...timeSlots, {
       day_of_week: day,
       start_time: "09:00",
@@ -91,26 +120,40 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     e.preventDefault();
     setLoading(true);
     try {
+      // First submit the class type data
       await onSubmit(formData);
       
-      if (classType?.class_type_id) {
+      // Get the class type ID (either existing or newly created)
+      let classTypeId = classType?.class_type_id;
+      if (!classTypeId) {
+        const { data: newClassType } = await supabase
+          .from('class_types')
+          .select('class_type_id')
+          .eq('name', formData.name)
+          .single();
+        classTypeId = newClassType?.class_type_id;
+      }
+
+      if (classTypeId) {
+        // Delete existing time slots
         await supabase
           .from('class_time_slots')
           .delete()
-          .eq('class_type_id', classType.class_type_id);
-      }
+          .eq('class_type_id', classTypeId);
 
-      if (timeSlots.length > 0) {
-        const { error } = await supabase
-          .from('class_time_slots')
-          .insert(
-            timeSlots.map(slot => ({
-              ...slot,
-              class_type_id: classType?.class_type_id
-            }))
-          );
+        // Insert new time slots
+        if (timeSlots.length > 0) {
+          const { error: insertError } = await supabase
+            .from('class_time_slots')
+            .insert(
+              timeSlots.map(slot => ({
+                ...slot,
+                class_type_id: classTypeId
+              }))
+            );
 
-        if (error) throw error;
+          if (insertError) throw insertError;
+        }
       }
 
       toast({
