@@ -46,25 +46,30 @@ const TimeSlots = ({
     // Get target days (all operational days except the source day)
     const targetDays = sortedOperationalDays.filter(day => day !== sourceDay);
 
+    // Store source day slots data
+    const sourceSlotsTimes = sourceDaySlots.map(slot => ({
+      start_time: slot.start_time,
+      end_time: slot.end_time
+    }));
+
     // For each target day
     targetDays.forEach(targetDay => {
-      // First, remove all existing slots for the target day
-      const slotsToRemove = timeSlots
+      // Remove existing slots for the target day (from last to first to maintain correct indices)
+      const existingSlots = timeSlots
         .map((slot, index) => ({ slot, index }))
         .filter(({ slot }) => slot.day_of_week === targetDay)
-        .sort((a, b) => b.index - a.index); // Sort in reverse order to avoid index shifting
+        .sort((a, b) => b.index - a.index);
 
-      // Remove slots from end to start
-      slotsToRemove.forEach(({ index }) => {
+      existingSlots.forEach(({ index }) => {
         onRemoveSlot(index);
       });
 
-      // Then add new slots copied from source day
-      sourceDaySlots.forEach(sourceSlot => {
+      // Add new slots with the same times as source day
+      sourceSlotsTimes.forEach(({ start_time, end_time }) => {
         onAddSlot(targetDay);
-        const newSlotIndex = timeSlots.length;
-        onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
-        onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
+        const newIndex = timeSlots.length;
+        onUpdateSlot(newIndex, 'start_time', start_time);
+        onUpdateSlot(newIndex, 'end_time', end_time);
       });
     });
 
