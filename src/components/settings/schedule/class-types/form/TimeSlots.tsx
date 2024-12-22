@@ -46,12 +46,6 @@ const TimeSlots = ({
     // Get target days (all operational days except the source day)
     const targetDays = sortedOperationalDays.filter(day => day !== sourceDay);
 
-    // Store source day slots data
-    const sourceSlotsTimes = sourceDaySlots.map(slot => ({
-      start_time: slot.start_time,
-      end_time: slot.end_time
-    }));
-
     // For each target day
     targetDays.forEach(targetDay => {
       // Remove existing slots for the target day (from last to first to maintain correct indices)
@@ -64,12 +58,12 @@ const TimeSlots = ({
         onRemoveSlot(index);
       });
 
-      // Add new slots with the same times as source day
-      sourceSlotsTimes.forEach(({ start_time, end_time }) => {
+      // Add new slots with the exact same times as source day
+      sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
-        const newIndex = timeSlots.length;
-        onUpdateSlot(newIndex, 'start_time', start_time);
-        onUpdateSlot(newIndex, 'end_time', end_time);
+        const newSlotIndex = timeSlots.length;
+        onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
+        onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
       });
     });
 
