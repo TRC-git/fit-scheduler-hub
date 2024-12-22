@@ -45,6 +45,7 @@ const TimeSlots = ({
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
+        onUpdateSlot(newSlotIndex, 'day_of_week', targetDay);
         onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
         onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
       });
