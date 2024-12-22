@@ -36,9 +36,10 @@ const TimeSlots = ({
     const sourceDaySlots = groupedSlots[sourceDay];
     if (!sourceDaySlots?.length) return;
 
-    // For each operational day except the source day
+    // Only copy to days that are checked in operationalDays
     sortedOperationalDays.forEach(targetDay => {
-      if (targetDay === sourceDay) return;
+      // Skip if it's the source day or if the day isn't in operationalDays
+      if (targetDay === sourceDay || !operationalDays.includes(targetDay)) return;
 
       // Copy each slot from the source day to the target day
       sourceDaySlots.forEach(sourceSlot => {
