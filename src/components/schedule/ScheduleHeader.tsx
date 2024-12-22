@@ -7,20 +7,20 @@ const ScheduleHeader = () => {
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2">
+        <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[140px]">
           {isLoading ? (
-            <option>Loading...</option>
+            <option className="pl-2">Loading...</option>
           ) : (
             <>
               {classTypes?.map((type) => (
-                <option key={type.class_type_id} value={type.name}>
+                <option key={type.class_type_id} value={type.name} className="pl-2">
                   {type.name}
                 </option>
               ))}
             </>
           )}
         </select>
-        <button className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md">
+        <button className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md w-[140px]">
           Post Schedule
         </button>
       </div>
