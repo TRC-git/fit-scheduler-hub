@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Copy, Plus } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import TimeSlotInputs from "./TimeSlotInputs";
 
@@ -24,9 +24,19 @@ const TimeSlots = ({
   const { toast } = useToast();
   const [copiedFromDay, setCopiedFromDay] = useState<string | null>(null);
 
-  const getSlotsByDay = (day: string) => {
-    return timeSlots.filter(slot => slot.day_of_week === day);
-  };
+  // Effect to add initial time slot when a day is selected
+  useEffect(() => {
+    operationalDays.forEach(day => {
+      const hasSlotForDay = timeSlots.some(slot => slot.day_of_week === day);
+      if (!hasSlotForDay) {
+        onAddSlot();
+        const newIndex = timeSlots.length;
+        onUpdateSlot(newIndex, 'day_of_week', day);
+        onUpdateSlot(newIndex, 'start_time', '09:00');
+        onUpdateSlot(newIndex, 'end_time', '10:00');
+      }
+    });
+  }, [operationalDays]);
 
   const handleAddSlot = (day: string) => {
     onAddSlot();
@@ -37,7 +47,7 @@ const TimeSlots = ({
   };
 
   const copyDaySlots = (fromDay: string) => {
-    const slotsFromDay = getSlotsByDay(fromDay);
+    const slotsFromDay = timeSlots.filter(slot => slot.day_of_week === fromDay);
     if (slotsFromDay.length === 0) {
       toast({
         title: "No slots to copy",
@@ -50,6 +60,20 @@ const TimeSlots = ({
     operationalDays
       .filter(day => day !== fromDay)
       .forEach(targetDay => {
+        // Remove existing slots for the target day
+        const targetDaySlots = timeSlots.filter(slot => slot.day_of_week === targetDay);
+        targetDaySlots.forEach(slot => {
+          const index = timeSlots.findIndex(s => 
+            s.day_of_week === slot.day_of_week && 
+            s.start_time === slot.start_time && 
+            s.end_time === slot.end_time
+          );
+          if (index !== -1) {
+            onRemoveSlot(index);
+          }
+        });
+
+        // Copy slots from the source day
         slotsFromDay.forEach(slot => {
           onAddSlot();
           const newIndex = timeSlots.length;
@@ -69,8 +93,8 @@ const TimeSlots = ({
   const getSlotIndex = (slot: TimeSlot) => {
     return timeSlots.findIndex(
       s => s.day_of_week === slot.day_of_week && 
-      s.start_time === slot.start_time && 
-      s.end_time === slot.end_time
+           s.start_time === slot.start_time && 
+           s.end_time === slot.end_time
     );
   };
 
