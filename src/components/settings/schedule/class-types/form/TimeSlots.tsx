@@ -20,13 +20,19 @@ const TimeSlots = ({
   onUpdateSlot 
 }: TimeSlotsProps) => {
   const addTimeSlotForDay = (day: string) => {
+    const newSlot: TimeSlot = {
+      day_of_week: day,
+      start_time: '09:00',
+      end_time: '10:00'
+    };
     onAddSlot();
     const newIndex = timeSlots.length;
-    onUpdateSlot(newIndex, 'day_of_week', day);
-    onUpdateSlot(newIndex, 'start_time', '09:00');
-    onUpdateSlot(newIndex, 'end_time', '10:00');
+    onUpdateSlot(newIndex, 'day_of_week', newSlot.day_of_week);
+    onUpdateSlot(newIndex, 'start_time', newSlot.start_time);
+    onUpdateSlot(newIndex, 'end_time', newSlot.end_time);
   };
 
+  // Group time slots by day for easier rendering
   const groupedSlots = operationalDays.reduce((acc, day) => {
     acc[day] = timeSlots.filter(slot => slot.day_of_week === day);
     return acc;
@@ -55,7 +61,7 @@ const TimeSlots = ({
             
             <div className="space-y-4">
               {groupedSlots[day]?.map((slot, index) => (
-                <div key={index} className="flex items-center gap-4 bg-fitness-card p-4 rounded-md">
+                <div key={`${day}-${index}`} className="flex items-center gap-4 bg-fitness-card p-4 rounded-md">
                   <Input
                     type="time"
                     value={slot.start_time}
