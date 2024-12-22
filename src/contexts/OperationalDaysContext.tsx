@@ -29,24 +29,24 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
 
       if (error) throw error;
 
-      // If default class type doesn't exist, create it
+      // If default class type doesn't exist, create it with all days
       if (!settings) {
         const { error: insertError } = await supabase
           .from('class_types')
           .insert({
             name: 'default',
             duration: 60,
-            operational_days: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
+            operational_days: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
           });
 
         if (insertError) throw insertError;
 
-        setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']));
+        setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       } else if (settings.operational_days) {
         setOperationalDays(new Set(settings.operational_days));
       } else {
-        // Default to Mon-Sat if no settings found
-        setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']));
+        // Default to all days if no settings found
+        setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       }
     } catch (error) {
       console.error('Error loading operational days:', error);
