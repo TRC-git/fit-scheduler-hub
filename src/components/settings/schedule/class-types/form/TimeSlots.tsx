@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, X } from "lucide-react";
+import { Copy, Plus, X } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
 
 interface TimeSlotsProps {
@@ -12,8 +12,6 @@ interface TimeSlotsProps {
   onUpdateSlot: (index: number, field: keyof TimeSlot, value: string) => void;
 }
 
-const dayOrder = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
-
 const TimeSlots = ({ 
   timeSlots, 
   operationalDays,
@@ -21,6 +19,8 @@ const TimeSlots = ({
   onRemoveSlot, 
   onUpdateSlot 
 }: TimeSlotsProps) => {
+  const dayOrder = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+  
   // Sort operational days according to the defined order
   const sortedOperationalDays = [...operationalDays].sort(
     (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
@@ -32,14 +32,45 @@ const TimeSlots = ({
     return acc;
   }, {} as Record<string, TimeSlot[]>);
 
+  const handleCopyToAll = (sourceDay: string) => {
+    const sourceDaySlots = groupedSlots[sourceDay];
+    if (!sourceDaySlots?.length) return;
+
+    // For each operational day except the source day
+    sortedOperationalDays.forEach(targetDay => {
+      if (targetDay === sourceDay) return;
+
+      // Copy each slot from the source day to the target day
+      sourceDaySlots.forEach(sourceSlot => {
+        onAddSlot(targetDay);
+        const newSlotIndex = timeSlots.length;
+        onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
+        onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
+      });
+    });
+  };
+
   return (
     <div>
       <Label className="text-fitness-text mb-2 block">Time Slots</Label>
       <div className="space-y-6">
-        {sortedOperationalDays.map((day) => (
+        {sortedOperationalDays.map((day, dayIndex) => (
           <div key={day} className="bg-fitness-inner p-4 rounded-md">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-fitness-text font-medium">{day}</h4>
+              <div className="flex items-center gap-4">
+                <h4 className="text-fitness-text font-medium">{day}</h4>
+                {dayIndex === 0 && groupedSlots[day]?.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => handleCopyToAll(day)}
+                    className="text-[#868686] hover:text-[#868686]/80 hover:bg-transparent"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy to All
+                  </Button>
+                )}
+              </div>
               <Button
                 type="button"
                 onClick={() => onAddSlot(day)}
