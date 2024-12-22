@@ -6,6 +6,7 @@ type OperationalDaysContextType = {
   operationalDays: Set<string>;
   toggleDay: (day: string) => void;
   saveOperationalDays: () => Promise<void>;
+  reloadOperationalDays: () => Promise<void>;
 };
 
 const OperationalDaysContext = createContext<OperationalDaysContextType | undefined>(undefined);
@@ -13,10 +14,6 @@ const OperationalDaysContext = createContext<OperationalDaysContextType | undefi
 export const OperationalDaysProvider = ({ children }: { children: React.ReactNode }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
   const { toast } = useToast();
-
-  useEffect(() => {
-    loadOperationalDays();
-  }, []);
 
   const loadOperationalDays = async () => {
     try {
@@ -29,7 +26,6 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
 
       if (error) {
         if (error.code === 'PGRST116') {
-          // If no default class type exists, create it
           const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
           const { error: insertError } = await supabase
             .from('class_types')
@@ -57,6 +53,10 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
     }
   };
 
+  useEffect(() => {
+    loadOperationalDays();
+  }, []);
+
   const toggleDay = (day: string) => {
     setOperationalDays(prev => {
       const newDays = new Set(prev);
@@ -80,6 +80,9 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
 
       if (error) throw error;
 
+      // Reload the operational days after saving
+      await loadOperationalDays();
+
       toast({
         title: "Success",
         description: "Operational days saved successfully",
@@ -96,7 +99,12 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
   };
 
   return (
-    <OperationalDaysContext.Provider value={{ operationalDays, toggleDay, saveOperationalDays }}>
+    <OperationalDaysContext.Provider value={{ 
+      operationalDays, 
+      toggleDay, 
+      saveOperationalDays,
+      reloadOperationalDays: loadOperationalDays 
+    }}>
       {children}
     </OperationalDaysContext.Provider>
   );
