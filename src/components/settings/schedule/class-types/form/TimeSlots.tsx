@@ -28,13 +28,11 @@ const TimeSlots = ({
   };
 
   const handleAddSlot = (day: string) => {
-    const currentIndex = timeSlots.length;
     onAddSlot();
-    setTimeout(() => {
-      onUpdateSlot(currentIndex, 'day_of_week', day);
-      onUpdateSlot(currentIndex, 'start_time', '09:00');
-      onUpdateSlot(currentIndex, 'end_time', '10:00');
-    }, 0);
+    const newIndex = timeSlots.length;
+    onUpdateSlot(newIndex, 'day_of_week', day);
+    onUpdateSlot(newIndex, 'start_time', '09:00');
+    onUpdateSlot(newIndex, 'end_time', '10:00');
   };
 
   const copyDaySlots = (fromDay: string) => {
@@ -52,13 +50,11 @@ const TimeSlots = ({
       .filter(day => day !== fromDay)
       .forEach(targetDay => {
         slotsFromDay.forEach(slot => {
-          const currentIndex = timeSlots.length;
           onAddSlot();
-          setTimeout(() => {
-            onUpdateSlot(currentIndex, 'day_of_week', targetDay);
-            onUpdateSlot(currentIndex, 'start_time', slot.start_time);
-            onUpdateSlot(currentIndex, 'end_time', slot.end_time);
-          }, 0);
+          const newIndex = timeSlots.length;
+          onUpdateSlot(newIndex, 'day_of_week', targetDay);
+          onUpdateSlot(newIndex, 'start_time', slot.start_time);
+          onUpdateSlot(newIndex, 'end_time', slot.end_time);
         });
       });
 
