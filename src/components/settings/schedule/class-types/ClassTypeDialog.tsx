@@ -18,11 +18,11 @@ const ClassTypeDialog = ({ onSubmit }: ClassTypeDialogProps) => {
           Add Schedule Type
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-fitness-card max-h-[85vh]">
+      <DialogContent className="bg-fitness-card max-h-[90vh] w-[calc(100%+100px)] max-w-[calc(32rem+100px)]">
         <DialogHeader>
           <DialogTitle className="text-fitness-text">Create New Schedule Type</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(85vh-120px)] pr-4" style={{
+        <ScrollArea className="max-h-[calc(90vh-120px)] pr-4" style={{
           '--scrollbar-thumb': '#15e7fb',
           '--scrollbar-track': 'transparent'
         } as React.CSSProperties}>
