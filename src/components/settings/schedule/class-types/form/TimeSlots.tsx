@@ -43,9 +43,14 @@ const TimeSlots = ({
 
       // Copy each slot from the source day to the target day
       sourceDaySlots.forEach(sourceSlot => {
+        // First create the new slot with the correct day
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
+        
+        // Ensure day_of_week is set first
         onUpdateSlot(newSlotIndex, 'day_of_week', targetDay);
+        
+        // Then update other fields
         onUpdateSlot(newSlotIndex, 'start_time', sourceSlot.start_time);
         onUpdateSlot(newSlotIndex, 'end_time', sourceSlot.end_time);
       });
