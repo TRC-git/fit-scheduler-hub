@@ -33,6 +33,7 @@ const TimeSlots = ({
 
   const handleCopyToAll = (sourceDay: string) => {
     const sourceDaySlots = groupedSlots[sourceDay];
+    
     if (!sourceDaySlots?.length) {
       toast({
         title: "No slots to copy",
@@ -48,16 +49,17 @@ const TimeSlots = ({
     // For each target day
     targetDays.forEach(targetDay => {
       // Remove existing slots for the target day
-      const slotsToRemove = timeSlots
+      const existingSlots = timeSlots
         .map((slot, index) => ({ slot, index }))
         .filter(({ slot }) => slot.day_of_week === targetDay)
         .sort((a, b) => b.index - a.index); // Sort in reverse order to avoid index shifting
 
-      slotsToRemove.forEach(({ index }) => {
+      // Remove slots from end to start to avoid index issues
+      existingSlots.forEach(({ index }) => {
         onRemoveSlot(index);
       });
 
-      // Copy each slot from source day to target day
+      // Add new slots for the target day
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
