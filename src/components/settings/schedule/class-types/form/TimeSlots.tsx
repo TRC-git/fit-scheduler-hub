@@ -58,8 +58,10 @@ export const TimeSlots = ({
       existingSlots.forEach(({ index }) => {
         onRemoveSlot(index);
       });
+    });
 
-      // Add new slots with the exact same times as source day, maintaining order
+    // Now add new slots for each target day
+    targetDays.forEach(targetDay => {
       sourceDaySlots.forEach(sourceSlot => {
         onAddSlot(targetDay);
         const newSlotIndex = timeSlots.length;
