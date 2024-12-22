@@ -26,13 +26,20 @@ const TimeSlots = ({
     (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
   );
 
-  const groupedSlots = sortedOperationalDays.reduce((acc, day) => {
-    acc[day] = timeSlots.filter(slot => slot.day_of_week === day);
-    return acc;
-  }, {} as Record<string, TimeSlot[]>);
+  const getTimeSlotsByDay = (day: string) => {
+    return timeSlots
+      .map((slot, index) => ({ ...slot, index }))
+      .filter(slot => slot.day_of_week === day)
+      .sort((a, b) => {
+        // Sort by start time
+        const timeA = new Date(`1970/01/01 ${a.start_time}`);
+        const timeB = new Date(`1970/01/01 ${b.start_time}`);
+        return timeA.getTime() - timeB.getTime();
+      });
+  };
 
   const handleCopyToAll = (sourceDay: string) => {
-    const sourceDaySlots = groupedSlots[sourceDay];
+    const sourceDaySlots = getTimeSlotsByDay(sourceDay);
     
     if (!sourceDaySlots?.length) {
       toast({
@@ -77,68 +84,67 @@ const TimeSlots = ({
     <div>
       <Label className="text-fitness-text mb-2 block">Time Slots</Label>
       <div className="space-y-6">
-        {sortedOperationalDays.map((day, dayIndex) => (
-          <div key={day} className="bg-fitness-inner p-4 rounded-md">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <h4 className="text-fitness-text font-medium">{day}</h4>
-                {dayIndex === 0 && groupedSlots[day]?.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => handleCopyToAll(day)}
-                    className="text-[#868686] hover:text-[#868686]/80 hover:bg-transparent"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy to All
-                  </Button>
-                )}
+        {sortedOperationalDays.map((day, dayIndex) => {
+          const daySlots = getTimeSlotsByDay(day);
+          
+          return (
+            <div key={day} className="bg-fitness-inner p-4 rounded-md">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <h4 className="text-fitness-text font-medium">{day}</h4>
+                  {dayIndex === 0 && daySlots.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => handleCopyToAll(day)}
+                      className="text-[#868686] hover:text-[#868686]/80 hover:bg-transparent"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy to All
+                    </Button>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => onAddSlot(day)}
+                  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Time Slot
+                </Button>
               </div>
-              <Button
-                type="button"
-                onClick={() => onAddSlot(day)}
-                className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Time Slot
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              {groupedSlots[day]?.map((slot, index) => {
-                const globalIndex = timeSlots.findIndex(
-                  s => s === slot
-                );
-                return (
-                  <div key={`${day}-${index}`} className="flex items-center gap-4 bg-fitness-card p-4 rounded-md">
+              
+              <div className="space-y-4">
+                {daySlots.map(({ index, start_time, end_time }) => (
+                  <div key={index} className="flex items-center gap-4 bg-fitness-card p-4 rounded-md">
                     <Input
                       type="time"
-                      value={slot.start_time}
-                      onChange={(e) => onUpdateSlot(globalIndex, 'start_time', e.target.value)}
+                      value={start_time}
+                      onChange={(e) => onUpdateSlot(index, 'start_time', e.target.value)}
                       className="bg-fitness-muted text-fitness-text"
                     />
                     
                     <Input
                       type="time"
-                      value={slot.end_time}
-                      onChange={(e) => onUpdateSlot(globalIndex, 'end_time', e.target.value)}
+                      value={end_time}
+                      onChange={(e) => onUpdateSlot(index, 'end_time', e.target.value)}
                       className="bg-fitness-muted text-fitness-text"
                     />
                     
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={() => onRemoveSlot(globalIndex)}
+                      onClick={() => onRemoveSlot(index)}
                       className="text-fitness-danger hover:text-fitness-danger/80"
                     >
                       <X className="w-4 h-4" />
                     </Button>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
