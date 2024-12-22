@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, X, Copy } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { TimeSlot } from "@/types/schedule/class-types";
 
 interface TimeSlotsProps {
@@ -19,16 +19,12 @@ const TimeSlots = ({
   onRemoveSlot, 
   onUpdateSlot 
 }: TimeSlotsProps) => {
-  const copyToAllDays = (sourceSlot: TimeSlot) => {
-    operationalDays.forEach(day => {
-      if (day !== sourceSlot.day_of_week) {
-        onAddSlot();
-        const newIndex = timeSlots.length;
-        onUpdateSlot(newIndex, 'day_of_week', day);
-        onUpdateSlot(newIndex, 'start_time', sourceSlot.start_time);
-        onUpdateSlot(newIndex, 'end_time', sourceSlot.end_time);
-      }
-    });
+  const addTimeSlotForDay = (day: string) => {
+    onAddSlot();
+    const newIndex = timeSlots.length;
+    onUpdateSlot(newIndex, 'day_of_week', day);
+    onUpdateSlot(newIndex, 'start_time', '09:00');
+    onUpdateSlot(newIndex, 'end_time', '10:00');
   };
 
   const groupedSlots = operationalDays.reduce((acc, day) => {
@@ -47,22 +43,14 @@ const TimeSlots = ({
           <div key={day} className="bg-fitness-inner p-4 rounded-md">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    onAddSlot();
-                    const newIndex = timeSlots.length;
-                    onUpdateSlot(newIndex, 'day_of_week', day);
-                    onUpdateSlot(newIndex, 'start_time', '09:00');
-                    onUpdateSlot(newIndex, 'end_time', '10:00');
-                  }}
-                  className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Time Slot
-                </Button>
-              </div>
+              <Button
+                type="button"
+                onClick={() => addTimeSlotForDay(day)}
+                className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Time Slot
+              </Button>
             </div>
             
             <div className="space-y-4">
@@ -82,26 +70,14 @@ const TimeSlots = ({
                     className="bg-fitness-muted text-fitness-text"
                   />
                   
-                  <div className="flex gap-2">
-                    {index === 0 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => copyToAllDays(slot)}
-                        className="border-[#15e7fb] text-fitness-text hover:bg-[#15e7fb]/10"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => onRemoveSlot(timeSlots.indexOf(slot))}
-                      className="text-fitness-danger hover:text-fitness-danger/80"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => onRemoveSlot(timeSlots.indexOf(slot))}
+                    className="text-fitness-danger hover:text-fitness-danger/80"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
               ))}
             </div>
