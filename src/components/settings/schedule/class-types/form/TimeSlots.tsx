@@ -12,6 +12,8 @@ interface TimeSlotsProps {
   onUpdateSlot: (index: number, field: keyof TimeSlot, value: string) => void;
 }
 
+const dayOrder = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+
 const TimeSlots = ({ 
   timeSlots, 
   operationalDays,
@@ -19,8 +21,13 @@ const TimeSlots = ({
   onRemoveSlot, 
   onUpdateSlot 
 }: TimeSlotsProps) => {
+  // Sort operational days according to the defined order
+  const sortedOperationalDays = [...operationalDays].sort(
+    (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
+  );
+
   // Group time slots by day
-  const groupedSlots = operationalDays.reduce((acc, day) => {
+  const groupedSlots = sortedOperationalDays.reduce((acc, day) => {
     acc[day] = timeSlots.filter(slot => slot.day_of_week === day);
     return acc;
   }, {} as Record<string, TimeSlot[]>);
@@ -29,7 +36,7 @@ const TimeSlots = ({
     <div>
       <Label className="text-fitness-text mb-2 block">Time Slots</Label>
       <div className="space-y-6">
-        {operationalDays.map((day) => (
+        {sortedOperationalDays.map((day) => (
           <div key={day} className="bg-fitness-inner p-4 rounded-md">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-fitness-text font-medium">{day}</h4>
