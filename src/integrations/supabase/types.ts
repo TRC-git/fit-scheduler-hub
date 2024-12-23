@@ -136,6 +136,44 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_bonus_settings: {
+        Row: {
+          commission_rate: number | null
+          created_at: string | null
+          employee_id: number | null
+          enabled: boolean | null
+          id: number
+          performance_bonus_threshold: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          commission_rate?: number | null
+          created_at?: string | null
+          employee_id?: number | null
+          enabled?: boolean | null
+          id?: number
+          performance_bonus_threshold?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          commission_rate?: number | null
+          created_at?: string | null
+          employee_id?: number | null
+          enabled?: boolean | null
+          id?: number
+          performance_bonus_threshold?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_bonus_settings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       compliancelogs: {
         Row: {
           actiontaken: string | null
@@ -215,6 +253,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "direct_deposit_info_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
+      employee_deductions: {
+        Row: {
+          created_at: string | null
+          employee_id: number | null
+          health_insurance_amount: number | null
+          health_insurance_enabled: boolean | null
+          id: number
+          life_insurance_amount: number | null
+          life_insurance_enabled: boolean | null
+          retirement_enabled: boolean | null
+          retirement_percentage: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employee_id?: number | null
+          health_insurance_amount?: number | null
+          health_insurance_enabled?: boolean | null
+          id?: number
+          life_insurance_amount?: number | null
+          life_insurance_enabled?: boolean | null
+          retirement_enabled?: boolean | null
+          retirement_percentage?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employee_id?: number | null
+          health_insurance_amount?: number | null
+          health_insurance_enabled?: boolean | null
+          id?: number
+          life_insurance_amount?: number | null
+          life_insurance_enabled?: boolean | null
+          retirement_enabled?: boolean | null
+          retirement_percentage?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_deductions_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: true
             referencedRelation: "employees"
@@ -418,6 +503,50 @@ export type Database = {
         }
         Relationships: []
       }
+      pto_holiday_settings: {
+        Row: {
+          created_at: string | null
+          current_pto_balance: number | null
+          employee_id: number | null
+          enabled: boolean | null
+          id: number
+          paid_holidays_enabled: boolean | null
+          pto_accrual_rate: number | null
+          pto_days_per_year: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_pto_balance?: number | null
+          employee_id?: number | null
+          enabled?: boolean | null
+          id?: number
+          paid_holidays_enabled?: boolean | null
+          pto_accrual_rate?: number | null
+          pto_days_per_year?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_pto_balance?: number | null
+          employee_id?: number | null
+          enabled?: boolean | null
+          id?: number
+          paid_holidays_enabled?: boolean | null
+          pto_accrual_rate?: number | null
+          pto_days_per_year?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pto_holiday_settings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       reports: {
         Row: {
           generatedby: number | null
@@ -614,6 +743,65 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "schedules"
             referencedColumns: ["scheduleid"]
+          },
+        ]
+      }
+      tax_withholding_settings: {
+        Row: {
+          created_at: string | null
+          employee_id: number | null
+          federal_enabled: boolean | null
+          federal_rate: number | null
+          fica_enabled: boolean | null
+          fica_rate: number | null
+          id: number
+          local_enabled: boolean | null
+          local_rate: number | null
+          social_security_enabled: boolean | null
+          social_security_rate: number | null
+          state_enabled: boolean | null
+          state_rate: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employee_id?: number | null
+          federal_enabled?: boolean | null
+          federal_rate?: number | null
+          fica_enabled?: boolean | null
+          fica_rate?: number | null
+          id?: number
+          local_enabled?: boolean | null
+          local_rate?: number | null
+          social_security_enabled?: boolean | null
+          social_security_rate?: number | null
+          state_enabled?: boolean | null
+          state_rate?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employee_id?: number | null
+          federal_enabled?: boolean | null
+          federal_rate?: number | null
+          fica_enabled?: boolean | null
+          fica_rate?: number | null
+          id?: number
+          local_enabled?: boolean | null
+          local_rate?: number | null
+          social_security_enabled?: boolean | null
+          social_security_rate?: number | null
+          state_enabled?: boolean | null
+          state_rate?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_withholding_settings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
           },
         ]
       }

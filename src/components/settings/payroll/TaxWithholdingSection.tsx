@@ -1,14 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-export const TaxWithholdingSection = () => {
-  const [federalEnabled, setFederalEnabled] = useState(false);
-  const [stateEnabled, setStateEnabled] = useState(false);
-  const [localEnabled, setLocalEnabled] = useState(false);
-  const [socialSecurityEnabled, setSocialSecurityEnabled] = useState(false);
-  const [ficaEnabled, setFicaEnabled] = useState(false);
+interface TaxSettings {
+  federal_enabled?: boolean;
+  federal_rate?: number;
+  state_enabled?: boolean;
+  state_rate?: number;
+  local_enabled?: boolean;
+  local_rate?: number;
+  social_security_enabled?: boolean;
+  social_security_rate?: number;
+  fica_enabled?: boolean;
+  fica_rate?: number;
+}
+
+interface Props {
+  settings?: TaxSettings;
+  onUpdate: (settings: TaxSettings) => void;
+}
+
+export const TaxWithholdingSection = ({ settings, onUpdate }: Props) => {
+  const [localSettings, setLocalSettings] = useState<TaxSettings>(settings || {});
+
+  useEffect(() => {
+    if (settings) {
+      setLocalSettings(settings);
+    }
+  }, [settings]);
+
+  const handleUpdate = () => {
+    onUpdate(localSettings);
+  };
 
   return (
     <div>
@@ -18,14 +43,23 @@ export const TaxWithholdingSection = () => {
           <div className="flex items-center justify-between">
             <Label className="text-fitness-text">Federal Tax Withholding</Label>
             <Switch 
-              checked={federalEnabled}
-              onCheckedChange={setFederalEnabled}
+              checked={localSettings.federal_enabled}
+              onCheckedChange={(checked) => 
+                setLocalSettings(prev => ({ ...prev, federal_enabled: checked }))
+              }
             />
           </div>
-          {federalEnabled && (
+          {localSettings.federal_enabled && (
             <Input 
               type="number"
               placeholder="Enter federal tax rate (%)"
+              value={localSettings.federal_rate || ''}
+              onChange={(e) => 
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  federal_rate: parseFloat(e.target.value) 
+                }))
+              }
               className="bg-fitness-inner text-fitness-text"
             />
           )}
@@ -35,14 +69,23 @@ export const TaxWithholdingSection = () => {
           <div className="flex items-center justify-between">
             <Label className="text-fitness-text">State Tax Withholding</Label>
             <Switch 
-              checked={stateEnabled}
-              onCheckedChange={setStateEnabled}
+              checked={localSettings.state_enabled}
+              onCheckedChange={(checked) => 
+                setLocalSettings(prev => ({ ...prev, state_enabled: checked }))
+              }
             />
           </div>
-          {stateEnabled && (
+          {localSettings.state_enabled && (
             <Input 
               type="number"
               placeholder="Enter state tax rate (%)"
+              value={localSettings.state_rate || ''}
+              onChange={(e) => 
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  state_rate: parseFloat(e.target.value) 
+                }))
+              }
               className="bg-fitness-inner text-fitness-text"
             />
           )}
@@ -52,14 +95,23 @@ export const TaxWithholdingSection = () => {
           <div className="flex items-center justify-between">
             <Label className="text-fitness-text">Local Tax Withholding</Label>
             <Switch 
-              checked={localEnabled}
-              onCheckedChange={setLocalEnabled}
+              checked={localSettings.local_enabled}
+              onCheckedChange={(checked) => 
+                setLocalSettings(prev => ({ ...prev, local_enabled: checked }))
+              }
             />
           </div>
-          {localEnabled && (
+          {localSettings.local_enabled && (
             <Input 
               type="number"
               placeholder="Enter local tax rate (%)"
+              value={localSettings.local_rate || ''}
+              onChange={(e) => 
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  local_rate: parseFloat(e.target.value) 
+                }))
+              }
               className="bg-fitness-inner text-fitness-text"
             />
           )}
@@ -69,14 +121,23 @@ export const TaxWithholdingSection = () => {
           <div className="flex items-center justify-between">
             <Label className="text-fitness-text">Social Security Tax</Label>
             <Switch 
-              checked={socialSecurityEnabled}
-              onCheckedChange={setSocialSecurityEnabled}
+              checked={localSettings.social_security_enabled}
+              onCheckedChange={(checked) => 
+                setLocalSettings(prev => ({ ...prev, social_security_enabled: checked }))
+              }
             />
           </div>
-          {socialSecurityEnabled && (
+          {localSettings.social_security_enabled && (
             <Input 
               type="number"
               placeholder="Enter Social Security tax rate (%)"
+              value={localSettings.social_security_rate || ''}
+              onChange={(e) => 
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  social_security_rate: parseFloat(e.target.value) 
+                }))
+              }
               className="bg-fitness-inner text-fitness-text"
             />
           )}
@@ -86,18 +147,34 @@ export const TaxWithholdingSection = () => {
           <div className="flex items-center justify-between">
             <Label className="text-fitness-text">FICA Medicare Tax</Label>
             <Switch 
-              checked={ficaEnabled}
-              onCheckedChange={setFicaEnabled}
+              checked={localSettings.fica_enabled}
+              onCheckedChange={(checked) => 
+                setLocalSettings(prev => ({ ...prev, fica_enabled: checked }))
+              }
             />
           </div>
-          {ficaEnabled && (
+          {localSettings.fica_enabled && (
             <Input 
               type="number"
               placeholder="Enter FICA Medicare tax rate (%)"
+              value={localSettings.fica_rate || ''}
+              onChange={(e) => 
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  fica_rate: parseFloat(e.target.value) 
+                }))
+              }
               className="bg-fitness-inner text-fitness-text"
             />
           )}
         </div>
+
+        <Button 
+          onClick={handleUpdate}
+          className="w-full bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+        >
+          Save Tax Settings
+        </Button>
       </div>
     </div>
   );
