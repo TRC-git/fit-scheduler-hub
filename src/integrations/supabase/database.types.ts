@@ -1,3 +1,5 @@
+import { Json } from "@/types/database/common";
+
 export interface DirectDepositInfoTable {
   Row: {
     id: number;

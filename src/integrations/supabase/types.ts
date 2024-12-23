@@ -178,6 +178,50 @@ export type Database = {
           },
         ]
       }
+      direct_deposit_info: {
+        Row: {
+          account_number: string
+          account_type: string
+          bank_name: string
+          created_at: string | null
+          employee_id: number | null
+          form_file_path: string | null
+          id: number
+          is_verified: boolean | null
+          routing_number: string
+        }
+        Insert: {
+          account_number: string
+          account_type: string
+          bank_name: string
+          created_at?: string | null
+          employee_id?: number | null
+          form_file_path?: string | null
+          id?: number
+          is_verified?: boolean | null
+          routing_number: string
+        }
+        Update: {
+          account_number?: string
+          account_type?: string
+          bank_name?: string
+          created_at?: string | null
+          employee_id?: number | null
+          form_file_path?: string | null
+          id?: number
+          is_verified?: boolean | null
+          routing_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "direct_deposit_info_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       employeeavailability: {
         Row: {
           availabilityid: number

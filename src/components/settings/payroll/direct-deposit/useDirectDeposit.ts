@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { DirectDepositInfo } from "@/types/direct-deposit";
+import { DirectDepositInfo } from "@/types/database/direct-deposit";
 
 export const useDirectDeposit = () => {
   const { toast } = useToast();
