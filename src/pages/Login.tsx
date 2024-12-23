@@ -11,13 +11,19 @@ const Login = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_UP') {
-        toast({
-          title: "Account created successfully",
-          description: "Please check your email to verify your account",
-        });
-      } else if (event === 'USER_UPDATED' || (event === 'SIGNED_IN' && session)) {
-        navigate("/");
+      switch (event) {
+        case 'SIGNED_UP':
+          toast({
+            title: "Account created successfully",
+            description: "Please check your email to verify your account",
+          });
+          break;
+        case 'USER_UPDATED':
+        case 'SIGNED_IN':
+          if (session) {
+            navigate("/");
+          }
+          break;
       }
     });
 
