@@ -129,7 +129,7 @@ const PermissionSettings = () => {
         />
 
         <Button 
-          className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C] w-full font-medium"
+          className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C] font-medium"
           onClick={() => updateAccessMutation.mutate({
             positionId: selectedPosition,
             access: permissions
