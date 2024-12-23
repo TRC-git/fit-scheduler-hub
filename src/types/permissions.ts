@@ -10,10 +10,10 @@ export interface PermissionSettings {
 export interface Position {
   positionid: number;
   positionname: string;
-  defaultpayrate?: number;
-  description?: string;
-  min_experience_months?: number;
-  paytype?: string;
-  required_certifications?: string[];
-  access_level?: PermissionSettings;
+  defaultpayrate?: number | null;
+  description?: string | null;
+  min_experience_months?: number | null;
+  paytype?: string | null;
+  required_certifications?: string[] | null;
+  access_level?: PermissionSettings | null;
 }
