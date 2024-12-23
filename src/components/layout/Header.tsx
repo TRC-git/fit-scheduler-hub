@@ -23,6 +23,9 @@ const Header = () => {
             <Link to="/">
               <Button variant="ghost">Schedule</Button>
             </Link>
+            <Link to="/staff">
+              <Button variant="ghost">Staff</Button>
+            </Link>
             <Link to="/payroll">
               <Button variant="ghost">Payroll/Hrs</Button>
             </Link>
