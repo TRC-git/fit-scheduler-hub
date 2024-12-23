@@ -3,19 +3,26 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (event === 'SIGNED_UP') {
+        toast({
+          title: "Account created successfully",
+          description: "Please check your email to verify your account",
+        });
+      } else if (event === 'USER_UPDATED' || (event === 'SIGNED_IN' && session)) {
         navigate("/");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4">
@@ -49,6 +56,13 @@ const Login = () => {
             }}
             providers={[]}
             view="sign_up"
+            localization={{
+              variables: {
+                sign_up: {
+                  email_exists_error: "An account with this email already exists. Please sign in instead.",
+                },
+              },
+            }}
           />
         </div>
       </div>
