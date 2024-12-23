@@ -10,8 +10,8 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      switch (event) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      switch (_event) {
         case 'SIGNED_UP':
           toast({
             title: "Account created successfully",
