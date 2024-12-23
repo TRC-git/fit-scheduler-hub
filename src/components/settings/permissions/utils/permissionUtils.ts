@@ -24,11 +24,7 @@ export const convertToJson = (permissions: PermissionSettingsType): Json => {
   }), {});
 };
 
-type PermissionGroups = {
-  [key: string]: Array<keyof PermissionSettingsType>;
-};
-
-export const permissionGroups: PermissionGroups = {
+export const permissionGroups = {
   "Calendar Access": ["calendar_view", "calendar_edit", "calendar_manage"],
   "Employee Management": ["manage_employees", "manage_positions"],
   "Payroll & Finance": ["manage_payroll", "approve_timesheets", "view_reports"],
@@ -36,7 +32,7 @@ export const permissionGroups: PermissionGroups = {
   "System Settings": ["manage_settings", "manage_locations"]
 };
 
-export const getPermissionLabel = (key: keyof PermissionSettingsType): string => {
+export const getPermissionLabel = (key: string): string => {
   return key
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
