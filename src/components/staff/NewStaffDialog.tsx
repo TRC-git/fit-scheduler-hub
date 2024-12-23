@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -13,6 +14,7 @@ interface NewStaffDialogProps {
 
 const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
@@ -26,6 +28,12 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
     setLoading(true);
 
     try {
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData.user) {
+        throw new Error("Not authenticated");
+      }
+
       const { error } = await supabase
         .from("employees")
         .insert([
@@ -36,12 +44,19 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
           },
         ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error creating employee:", error);
+        throw error;
+      }
 
       toast({
         title: "Success",
         description: "Staff member added successfully",
       });
+      
+      // Invalidate and refetch staff list
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      
       onOpenChange(false);
       setFormData({
         firstname: "",
@@ -49,10 +64,11 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
         email: "",
         phonenumber: "",
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Error in handleSubmit:", error);
       toast({
         title: "Error",
-        description: "Failed to add staff member",
+        description: error.message || "Failed to add staff member",
         variant: "destructive",
       });
     } finally {

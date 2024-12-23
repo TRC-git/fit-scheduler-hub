@@ -2,9 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 const StaffList = () => {
-  const { data: staff, isLoading } = useQuery({
+  const { toast } = useToast();
+  
+  const { data: staff, isLoading, error } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -18,10 +21,27 @@ const StaffList = () => {
         .eq("isactive", true)
         .order("firstname");
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching staff:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load staff members",
+          variant: "destructive",
+        });
+        throw error;
+      }
+      
       return data;
     },
   });
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-500 bg-red-100 rounded">
+        Failed to load staff members. Please try again later.
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
