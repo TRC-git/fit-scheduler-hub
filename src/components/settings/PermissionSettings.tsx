@@ -35,7 +35,14 @@ const PermissionSettings = () => {
       // Convert the Json access_level to our PermissionSettings type
       return (data as Position[]).map(position => ({
         ...position,
-        access_level: position.access_level as PermissionSettings | null
+        access_level: position.access_level ? {
+          calendar_view: (position.access_level as any)?.calendar_view ?? false,
+          calendar_edit: (position.access_level as any)?.calendar_edit ?? false,
+          calendar_manage: (position.access_level as any)?.calendar_manage ?? false,
+          manage_employees: (position.access_level as any)?.manage_employees ?? false,
+          manage_positions: (position.access_level as any)?.manage_positions ?? false,
+          manage_payroll: (position.access_level as any)?.manage_payroll ?? false
+        } as PermissionSettings : null
       }));
     }
   });
