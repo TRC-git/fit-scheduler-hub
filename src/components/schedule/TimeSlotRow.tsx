@@ -17,9 +17,23 @@ export const TimeSlotRow = ({
     return appointments.find((apt) => apt.timeSlot === timeSlot && apt.day === day);
   };
 
+  // Format the time slot for better display
+  const formatTimeSlot = (timeSlot: string) => {
+    const [start, end] = timeSlot.split(' - ');
+    return (
+      <div className="flex flex-row items-center justify-start space-x-1 text-xs whitespace-nowrap">
+        <span>{start}</span>
+        <span>-</span>
+        <span>{end}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="grid grid-cols-8 gap-2">
-      <div className="text-fitness-text p-2">{timeSlot}</div>
+      <div className="text-fitness-text p-2 flex items-center">
+        {formatTimeSlot(timeSlot)}
+      </div>
       {days.map((day) => (
         <AppointmentCell
           key={`${timeSlot}-${day}`}
