@@ -12,7 +12,7 @@ export interface AppointmentCellProps {
   day: string;
   onDrop: (timeSlot: string, day: string) => void;
   onDelete: (appointmentId: string) => void;
-  onAdd: (timeSlot: string, day: string) => void;
+  onAdd: (timeSlot: string, day: string, name: string, type: string) => void;
   onDragStart: (appointment: Appointment) => void;
   onCopy: (appointment: Appointment) => void;
   onUpdate?: (updatedAppointment: Appointment) => void;
@@ -25,7 +25,7 @@ export interface TimeSlotRowProps {
   appointments: Appointment[];
   onDrop: (timeSlot: string, day: string) => void;
   onDelete: (appointmentId: string) => void;
-  onAdd: (timeSlot: string, day: string) => void;
+  onAdd: (timeSlot: string, day: string, name: string, type: string) => void;
   onDragStart: (appointment: Appointment) => void;
   onCopy: (appointment: Appointment) => void;
   onUpdate?: (updatedAppointment: Appointment) => void;

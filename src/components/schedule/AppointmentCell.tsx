@@ -49,10 +49,8 @@ export const AppointmentCell = ({
   };
 
   const handleClick = () => {
-    if (!isOperational) return;
-    if (copiedAppointment) {
-      onAdd(timeSlot, day);
-    }
+    if (!isOperational || !copiedAppointment) return;
+    onAdd(timeSlot, day, copiedAppointment.name, copiedAppointment.type);
   };
 
   return (
