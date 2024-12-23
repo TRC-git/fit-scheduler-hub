@@ -41,9 +41,9 @@ export const NewAppointmentDialog = ({
   return (
     <DialogContent className="bg-[#171717] border-0">
       <DialogHeader>
-        <DialogTitle className="text-fitness-text">Add New Appointment</DialogTitle>
+        <DialogTitle className="text-fitness-text">Add New Schedule</DialogTitle>
         <DialogDescription className="text-fitness-text/70">
-          Create a new appointment for {day} at {timeSlot}
+          Create a new schedule for {day} at {timeSlot}
         </DialogDescription>
       </DialogHeader>
       <div className="space-y-4 pt-4">
@@ -88,7 +88,7 @@ export const NewAppointmentDialog = ({
           className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
           disabled={!selectedStaff || !selectedType}
         >
-          Add Appointment
+          Add to Schedule
         </Button>
       </div>
     </DialogContent>
