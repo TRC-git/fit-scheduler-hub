@@ -1,6 +1,6 @@
 import { Json } from "@/types/database/common";
 
-export interface PermissionSettings {
+export interface PermissionSettingsType {
   // Calendar Permissions
   calendar_view: boolean;
   calendar_edit: boolean;
@@ -37,5 +37,5 @@ export interface Position {
 }
 
 export type PositionWithPermissions = Omit<Position, 'access_level'> & {
-  access_level?: PermissionSettings | null;
+  access_level?: PermissionSettingsType | null;
 };

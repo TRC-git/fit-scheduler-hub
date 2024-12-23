@@ -1,7 +1,7 @@
 import type { Json } from "@/types/database/common";
-import type { PermissionSettings } from "@/types/permissions";
+import type { PermissionSettingsType } from "@/types/permissions";
 
-export const defaultPermissions: PermissionSettings = {
+export const defaultPermissions: PermissionSettingsType = {
   calendar_view: false,
   calendar_edit: false,
   calendar_manage: false,
@@ -17,7 +17,7 @@ export const defaultPermissions: PermissionSettings = {
   manage_locations: false
 };
 
-export const convertToJson = (permissions: PermissionSettings): Json => {
+export const convertToJson = (permissions: PermissionSettingsType): Json => {
   return Object.entries(permissions).reduce((acc, [key, value]) => ({
     ...acc,
     [key]: value

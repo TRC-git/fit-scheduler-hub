@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, X, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { PositionWithPermissions, PermissionSettings } from "@/types/permissions";
+import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 import { useState } from "react";
 import { permissionGroups, getPermissionLabel } from "./utils/permissionUtils";
 
@@ -10,7 +10,7 @@ interface PermissionListProps {
   positions: PositionWithPermissions[];
   onEdit: (position: PositionWithPermissions) => void;
   onDelete: (positionId: number) => void;
-  onSave: (positionId: string, permissions: PermissionSettings) => void;
+  onSave: (positionId: string, permissions: PermissionSettingsType) => void;
   isLoading?: boolean;
 }
 
@@ -21,7 +21,7 @@ export const PermissionList = ({
   isLoading 
 }: PermissionListProps) => {
   const [editingPosition, setEditingPosition] = useState<string | null>(null);
-  const [editingPermissions, setEditingPermissions] = useState<PermissionSettings | null>(null);
+  const [editingPermissions, setEditingPermissions] = useState<PermissionSettingsType | null>(null);
 
   const handleEdit = (position: PositionWithPermissions) => {
     setEditingPosition(position.positionid.toString());
@@ -41,7 +41,7 @@ export const PermissionList = ({
     }
   };
 
-  const handlePermissionChange = (key: keyof PermissionSettings, value: boolean) => {
+  const handlePermissionChange = (key: keyof PermissionSettingsType, value: boolean) => {
     setEditingPermissions((prev) => prev ? {
       ...prev,
       [key]: value,
@@ -134,16 +134,16 @@ export const PermissionList = ({
                         <div 
                           className={`w-2 h-2 rounded-full ${getIndicatorColor(
                             editingPosition === position.positionid.toString()
-                              ? editingPermissions?.[key as keyof PermissionSettings] ?? false
-                              : position.access_level?.[key as keyof PermissionSettings] ?? false
+                              ? editingPermissions?.[key as keyof PermissionSettingsType] ?? false
+                              : position.access_level?.[key as keyof PermissionSettingsType] ?? false
                           )}`} 
                         />
                         {getPermissionLabel(key)}
                       </div>
                       {editingPosition === position.positionid.toString() && (
                         <Switch
-                          checked={editingPermissions?.[key as keyof PermissionSettings] ?? false}
-                          onCheckedChange={(checked) => handlePermissionChange(key as keyof PermissionSettings, checked)}
+                          checked={editingPermissions?.[key as keyof PermissionSettingsType] ?? false}
+                          onCheckedChange={(checked) => handlePermissionChange(key as keyof PermissionSettingsType, checked)}
                           className="data-[state=checked]:bg-[#15e7fb]"
                         />
                       )}

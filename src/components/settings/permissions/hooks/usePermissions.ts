@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import type { Position, PermissionSettings, PositionWithPermissions } from "@/types/permissions";
+import type { Position, PermissionSettingsType, PositionWithPermissions } from "@/types/permissions";
 import { defaultPermissions, convertToJson } from "../utils/permissionUtils";
 
 export const usePermissions = () => {
@@ -21,14 +21,14 @@ export const usePermissions = () => {
         ...position,
         access_level: position.access_level ? {
           ...defaultPermissions,
-          ...(position.access_level as unknown as PermissionSettings)
+          ...(position.access_level as unknown as PermissionSettingsType)
         } : defaultPermissions
       }));
     }
   });
 
   const updateAccessMutation = useMutation({
-    mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettings }) => {
+    mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettingsType }) => {
       const { data, error } = await supabase
         .from('positions')
         .update({
