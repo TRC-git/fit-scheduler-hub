@@ -1,13 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DirectDepositInfo } from "@/types/direct-deposit";
 
 interface BankingFormProps {
-  defaultValues?: {
-    bank_name?: string;
-    account_type?: string;
-    routing_number?: string;
-    account_number?: string;
-  };
+  defaultValues?: Partial<DirectDepositInfo>;
 }
 
 export const BankingForm = ({ defaultValues }: BankingFormProps) => {
