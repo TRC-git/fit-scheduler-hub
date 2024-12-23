@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { DirectDepositInfo } from "@/types/database/direct-deposit";
+import { DirectDepositInfo, DirectDepositInfoInsert } from "@/types/database/direct-deposit";
 
 export const useDirectDeposit = () => {
   const { toast } = useToast();
@@ -54,17 +54,19 @@ export const useDirectDeposit = () => {
         if (uploadError) throw uploadError;
       }
 
+      const insertData: DirectDepositInfoInsert = {
+        employee_id: employeeData.employeeid,
+        bank_name: formData.get('bankName') as string,
+        account_type: formData.get('accountType') as string,
+        routing_number: formData.get('routingNumber') as string,
+        account_number: formData.get('accountNumber') as string,
+        form_file_path: filePath,
+        is_verified: false
+      };
+
       const { error: dbError } = await supabase
         .from('direct_deposit_info')
-        .upsert({
-          employee_id: employeeData.employeeid,
-          bank_name: formData.get('bankName'),
-          account_type: formData.get('accountType'),
-          routing_number: formData.get('routingNumber'),
-          account_number: formData.get('accountNumber'),
-          form_file_path: filePath,
-          is_verified: false
-        });
+        .upsert(insertData);
 
       if (dbError) throw dbError;
     },
