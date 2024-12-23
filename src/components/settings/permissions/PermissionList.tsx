@@ -37,7 +37,7 @@ export const PermissionList = ({ positions, onEdit, onDelete }: PermissionListPr
           <div className="grid grid-cols-2 gap-2 text-sm text-fitness-text/70">
             {Object.entries(position.access_level).map(([key, value]) => (
               <div key={key} className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${value === true ? 'bg-[#00f127]' : 'bg-[#ff0101]'}`} />
+                <div className={`w-2 h-2 rounded-full ${Boolean(value) === true ? 'bg-[#00f127]' : 'bg-[#ff0101]'}`} />
                 {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
               </div>
             ))}
