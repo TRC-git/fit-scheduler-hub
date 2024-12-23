@@ -6,7 +6,7 @@ import { NewAppointmentDialog } from "./NewAppointmentDialog";
 interface AddAppointmentButtonProps {
   timeSlot: string;
   day: string;
-  onAdd: (timeSlot: string, day: string) => void;
+  onAdd: (timeSlot: string, day: string, name: string, type: string) => void;
 }
 
 export const AddAppointmentButton = ({ timeSlot, day, onAdd }: AddAppointmentButtonProps) => (

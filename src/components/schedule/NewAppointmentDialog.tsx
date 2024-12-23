@@ -3,6 +3,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -18,7 +19,7 @@ import { useState } from "react";
 interface NewAppointmentDialogProps {
   timeSlot: string;
   day: string;
-  onAdd: (timeSlot: string, day: string) => void;
+  onAdd: (timeSlot: string, day: string, name: string, type: string) => void;
 }
 
 export const NewAppointmentDialog = ({
@@ -32,10 +33,9 @@ export const NewAppointmentDialog = ({
 
   const handleSubmit = () => {
     if (!selectedStaff || !selectedType) {
-      // You might want to show an error message here
       return;
     }
-    onAdd(timeSlot, day);
+    onAdd(timeSlot, day, selectedStaff, selectedType);
   };
 
   return (
@@ -83,13 +83,15 @@ export const NewAppointmentDialog = ({
             </SelectContent>
           </Select>
         </div>
-        <Button 
-          onClick={handleSubmit}
-          className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
-          disabled={!selectedStaff || !selectedType}
-        >
-          Add to Schedule
-        </Button>
+        <DialogClose asChild>
+          <Button 
+            onClick={handleSubmit}
+            className="bg-[#15e7fb] text-[#1A1F2C] hover:bg-[#15e7fb]/80"
+            disabled={!selectedStaff || !selectedType}
+          >
+            Add to Schedule
+          </Button>
+        </DialogClose>
       </div>
     </DialogContent>
   );

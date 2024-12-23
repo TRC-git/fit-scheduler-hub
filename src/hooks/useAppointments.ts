@@ -29,8 +29,8 @@ export const useAppointments = () => {
 
     if (existingAppointment) {
       toast({
-        title: "Cannot move appointment",
-        description: "There is already an appointment in this time slot",
+        title: "Cannot move schedule",
+        description: "There is already a schedule in this time slot",
         variant: "destructive",
       });
       return;
@@ -44,28 +44,28 @@ export const useAppointments = () => {
     setAppointments(updatedAppointments);
     setDraggedAppointment(null);
     toast({
-      title: "Appointment moved",
-      description: `${draggedAppointment.name}'s appointment has been moved to ${day} ${timeSlot}`,
+      title: "Schedule moved",
+      description: `${draggedAppointment.name}'s schedule has been moved to ${day} ${timeSlot}`,
     });
   };
 
   const handleDelete = (appointmentId: string) => {
     setAppointments(appointments.filter((apt) => apt.id !== appointmentId));
     toast({
-      title: "Appointment deleted",
-      description: "The appointment has been removed from the schedule",
+      title: "Schedule deleted",
+      description: "The schedule has been removed",
     });
   };
 
-  const handleAdd = (timeSlot: string, day: string) => {
+  const handleAdd = (timeSlot: string, day: string, name: string, type: string) => {
     const existingAppointment = appointments.find(
       apt => apt.timeSlot === timeSlot && apt.day === day
     );
 
     if (existingAppointment) {
       toast({
-        title: "Cannot add appointment",
-        description: "There is already an appointment in this time slot",
+        title: "Cannot add schedule",
+        description: "There is already a schedule in this time slot",
         variant: "destructive",
       });
       return;
@@ -77,11 +77,13 @@ export const useAppointments = () => {
           id: Math.random().toString(),
           timeSlot,
           day,
+          name,
+          type,
         }
       : {
           id: Math.random().toString(),
-          name: "Heath Graham",
-          type: "CrossFit",
+          name,
+          type,
           timeSlot,
           day,
         };
@@ -89,8 +91,8 @@ export const useAppointments = () => {
     setAppointments([...appointments, newAppointment]);
     setCopiedAppointment(null);
     toast({
-      title: "Appointment added",
-      description: `${newAppointment.name}'s appointment has been added to ${day} ${timeSlot}`,
+      title: "Schedule added",
+      description: `${newAppointment.name}'s schedule has been added to ${day} ${timeSlot}`,
     });
   };
 
@@ -101,8 +103,8 @@ export const useAppointments = () => {
   const handleCopy = (appointment: Appointment) => {
     setCopiedAppointment(appointment);
     toast({
-      title: "Appointment copied",
-      description: "Click any empty slot to paste the appointment",
+      title: "Schedule copied",
+      description: "Click any empty slot to paste the schedule",
     });
   };
 
