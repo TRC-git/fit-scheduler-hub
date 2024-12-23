@@ -17,7 +17,7 @@ export const PermissionList = ({ positions, onDelete, onSave }: PermissionListPr
 
   const handleEdit = (position: PositionWithPermissions) => {
     setEditingPosition(position.positionid.toString());
-    setEditingPermissions(position.access_level);
+    setEditingPermissions({...position.access_level});
   };
 
   const handleCancel = () => {
@@ -39,7 +39,7 @@ export const PermissionList = ({ positions, onDelete, onSave }: PermissionListPr
   };
 
   const getIndicatorColor = (value: boolean): string => {
-    return value ? 'bg-[#00f127]' : 'bg-[#ff0101]';
+    return value === true ? 'bg-[#00f127]' : 'bg-[#ff0101]';
   };
 
   return (
