@@ -1,14 +1,14 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { PermissionCheckbox } from "./PermissionCheckbox";
-import type { PositionWithPermissions, PermissionSettings } from "@/types/permissions";
+import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 
 interface PermissionFormProps {
   positions: PositionWithPermissions[];
   selectedPosition: string;
-  permissions: PermissionSettings;
+  permissions: PermissionSettingsType;
   onPositionChange: (value: string) => void;
-  onPermissionChange: (key: keyof PermissionSettings, value: boolean) => void;
+  onPermissionChange: (key: keyof PermissionSettingsType, value: boolean) => void;
 }
 
 export const PermissionForm = ({
