@@ -3,7 +3,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-export const OvertimeSection = ({ overtimeRules }: { overtimeRules: any[] }) => {
+interface OvertimeSectionProps {
+  settings?: any[];
+  onUpdate: (overtime: any) => void;
+}
+
+export const OvertimeSection = ({ settings, onUpdate }: OvertimeSectionProps) => {
   const [enabled, setEnabled] = useState(false);
 
   return (
@@ -24,7 +29,7 @@ export const OvertimeSection = ({ overtimeRules }: { overtimeRules: any[] }) => 
               className="bg-fitness-inner text-fitness-text min-h-[100px]"
             />
           </div>
-          {overtimeRules?.map((rule: any) => (
+          {settings?.map((rule: any) => (
             <div key={rule.ruleid} className="p-4 bg-fitness-inner rounded-md">
               <h4 className="text-fitness-text font-medium">{rule.description}</h4>
               <p className="text-fitness-text/70 text-sm mt-1">
