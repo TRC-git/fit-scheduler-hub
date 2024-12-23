@@ -49,7 +49,7 @@ export const PermissionList = ({
   };
 
   const getIndicatorColor = (value: boolean): string => {
-    return value === true ? 'bg-[#00f127]' : 'bg-[#ff0101]';
+    return value ? 'bg-[#00f127]' : 'bg-[#ff0101]';
   };
 
   if (isLoading) {
@@ -128,27 +128,30 @@ export const PermissionList = ({
               <div key={groupName} className="space-y-4">
                 <h5 className="text-lg font-medium text-fitness-text/90 border-b border-fitness-muted pb-2">{groupName}</h5>
                 <div className="space-y-3">
-                  {permissions.map((key) => (
-                    <div key={key} className="flex items-center justify-between gap-2 p-1">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={`w-2 h-2 rounded-full ${getIndicatorColor(
-                            editingPosition === position.positionid.toString()
-                              ? editingPermissions?.[key as keyof PermissionSettingsType] ?? false
-                              : position.access_level?.[key as keyof PermissionSettingsType] ?? false
-                          )}`} 
-                        />
-                        <span className="text-sm">{getPermissionLabel(key)}</span>
+                  {permissions.map((key) => {
+                    const isEditing = editingPosition === position.positionid.toString();
+                    const permissionValue = isEditing
+                      ? editingPermissions?.[key as keyof PermissionSettingsType] ?? false
+                      : position.access_level?.[key as keyof PermissionSettingsType] ?? false;
+
+                    return (
+                      <div key={key} className="flex items-center justify-between gap-2 p-1">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className={`w-2 h-2 rounded-full ${getIndicatorColor(permissionValue)}`} 
+                          />
+                          <span className="text-sm">{getPermissionLabel(key)}</span>
+                        </div>
+                        {isEditing && (
+                          <Switch
+                            checked={permissionValue}
+                            onCheckedChange={(checked) => handlePermissionChange(key as keyof PermissionSettingsType, checked)}
+                            className="data-[state=checked]:bg-[#15e7fb]"
+                          />
+                        )}
                       </div>
-                      {editingPosition === position.positionid.toString() && (
-                        <Switch
-                          checked={editingPermissions?.[key as keyof PermissionSettingsType] ?? false}
-                          onCheckedChange={(checked) => handlePermissionChange(key as keyof PermissionSettingsType, checked)}
-                          className="data-[state=checked]:bg-[#15e7fb]"
-                        />
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
