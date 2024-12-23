@@ -47,9 +47,9 @@ export const EditAppointmentDialog = ({
   return (
     <DialogContent className="bg-[#171717] border-0 w-[calc(100%-2rem)] max-w-[32rem]">
       <DialogHeader>
-        <DialogTitle className="text-fitness-text">Edit Appointment</DialogTitle>
+        <DialogTitle className="text-fitness-text">Edit Schedule</DialogTitle>
         <DialogDescription className="text-fitness-text/70">
-          Edit appointment details for {appointment.name}
+          Edit schedule details for {appointment.name}
         </DialogDescription>
       </DialogHeader>
       <div className="space-y-4 pt-4">
