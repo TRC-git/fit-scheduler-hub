@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import { Position } from "@/types/permissions";
+import type { PositionWithPermissions } from "@/types/permissions";
 
 interface PermissionListProps {
-  positions: Position[];
-  onEdit: (position: Position) => void;
+  positions: PositionWithPermissions[];
+  onEdit: (position: PositionWithPermissions) => void;
   onDelete: (positionId: number) => void;
 }
 

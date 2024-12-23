@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { PermissionForm } from "./permissions/PermissionForm";
 import { PermissionList } from "./permissions/PermissionList";
-import { Position, PermissionSettings, PositionWithPermissions } from "@/types/permissions";
+import type { Position, PermissionSettings, PositionWithPermissions } from "@/types/permissions";
+import type { Json } from "@/types/database/common";
 
 const PermissionSettings = () => {
   const { toast } = useToast();
@@ -44,7 +45,7 @@ const PermissionSettings = () => {
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: access as Json
+          access_level: access as unknown as Json
         })
         .eq('positionid', positionId);
       
@@ -90,7 +91,7 @@ const PermissionSettings = () => {
     },
   });
 
-  const handleEdit = (position: Position) => {
+  const handleEdit = (position: PositionWithPermissions) => {
     setSelectedPosition(position.positionid.toString());
     setPermissions(position.access_level || {
       calendar_view: false,
