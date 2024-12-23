@@ -11,6 +11,7 @@ export const usePermissions = () => {
   const { data: positions, isLoading } = useQuery({
     queryKey: ['positions'],
     queryFn: async () => {
+      console.log("Fetching positions...");
       const { data, error } = await supabase
         .from('positions')
         .select('*');
@@ -20,6 +21,7 @@ export const usePermissions = () => {
         throw error;
       }
       
+      console.log("Positions fetched:", data);
       return (data as Position[]).map(position => ({
         ...position,
         access_level: position.access_level ? {
