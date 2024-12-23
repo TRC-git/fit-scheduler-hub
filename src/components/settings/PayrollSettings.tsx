@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +47,7 @@ const PayrollSettings = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid gap-4">
+          {/* Pay Period Settings */}
           <div>
             <Label className="text-fitness-text">Pay Period</Label>
             <Select>
@@ -56,10 +58,50 @@ const PayrollSettings = () => {
                 <SelectItem value="weekly">Weekly</SelectItem>
                 <SelectItem value="biweekly">Bi-weekly</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="semimonthly">Semi-monthly (15th & Last day)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
+          {/* Tax Settings */}
+          <div>
+            <Label className="text-fitness-text">Tax Withholding Settings</Label>
+            <div className="space-y-4 mt-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Federal Tax Withholding</Label>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">State Tax Withholding</Label>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Local Tax Withholding</Label>
+                <Switch />
+              </div>
+            </div>
+          </div>
+
+          {/* Deductions & Benefits */}
+          <div>
+            <Label className="text-fitness-text">Deductions & Benefits</Label>
+            <div className="space-y-4 mt-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Health Insurance</Label>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">401(k)</Label>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Life Insurance</Label>
+                <Switch />
+              </div>
+            </div>
+          </div>
+
+          {/* Overtime Rules */}
           <div>
             <Label className="text-fitness-text">Overtime Rules</Label>
             <div className="space-y-4 mt-2">
@@ -74,42 +116,67 @@ const PayrollSettings = () => {
             </div>
           </div>
 
+          {/* Holiday & PTO Settings */}
           <div>
-            <Label className="text-fitness-text">Default Overtime Threshold (hours/week)</Label>
-            <Input 
-              type="number" 
-              placeholder="40" 
-              className="bg-fitness-inner text-fitness-text"
-            />
-          </div>
-
-          <div>
-            <Label className="text-fitness-text">Overtime Rate Multiplier</Label>
-            <Input 
-              type="number" 
-              placeholder="1.5" 
-              className="bg-fitness-inner text-fitness-text"
-            />
-          </div>
-
-          <div>
-            <Label className="text-fitness-text">Break Duration Rules</Label>
-            <div className="grid grid-cols-2 gap-4">
+            <Label className="text-fitness-text">Holiday & PTO Settings</Label>
+            <div className="space-y-4 mt-2">
               <div>
-                <Label className="text-fitness-text text-sm">Minimum Break (minutes)</Label>
+                <Label className="text-fitness-text text-sm">Default PTO Days/Year</Label>
                 <Input 
                   type="number" 
-                  placeholder="30" 
+                  placeholder="15" 
                   className="bg-fitness-inner text-fitness-text"
                 />
               </div>
               <div>
-                <Label className="text-fitness-text text-sm">Break Frequency (hours)</Label>
+                <Label className="text-fitness-text text-sm">PTO Accrual Rate (hours/pay period)</Label>
                 <Input 
                   type="number" 
-                  placeholder="4" 
+                  placeholder="4.62" 
                   className="bg-fitness-inner text-fitness-text"
                 />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Paid Holidays</Label>
+                <Switch />
+              </div>
+            </div>
+          </div>
+
+          {/* Commission & Bonus Settings */}
+          <div>
+            <Label className="text-fitness-text">Commission & Bonus Settings</Label>
+            <div className="space-y-4 mt-2">
+              <div>
+                <Label className="text-fitness-text text-sm">Default Commission Rate (%)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="5" 
+                  className="bg-fitness-inner text-fitness-text"
+                />
+              </div>
+              <div>
+                <Label className="text-fitness-text text-sm">Performance Bonus Threshold ($)</Label>
+                <Input 
+                  type="number" 
+                  placeholder="5000" 
+                  className="bg-fitness-inner text-fitness-text"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Direct Deposit Settings */}
+          <div>
+            <Label className="text-fitness-text">Direct Deposit Settings</Label>
+            <div className="space-y-4 mt-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Enable Direct Deposit</Label>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-fitness-text">Allow Split Payments</Label>
+                <Switch />
               </div>
             </div>
           </div>
