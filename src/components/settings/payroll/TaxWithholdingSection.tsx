@@ -171,7 +171,7 @@ export const TaxWithholdingSection = ({ settings, onUpdate }: Props) => {
 
         <Button 
           onClick={handleUpdate}
-          className="w-full bg-[#15e7fb] hover:bg-[#15e7fb]/80"
+          className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
         >
           Save Tax Settings
         </Button>
