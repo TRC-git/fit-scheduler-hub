@@ -34,10 +34,13 @@ export const usePermissions = () => {
     mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettingsType }) => {
       console.log("Updating permissions for position:", positionId, "with access:", access);
       
+      const jsonAccess = convertToJson(access);
+      console.log("Converted access to JSON:", jsonAccess);
+      
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: convertToJson(access)
+          access_level: jsonAccess
         })
         .eq('positionid', positionId)
         .select();

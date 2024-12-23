@@ -39,15 +39,12 @@ export const PermissionList = ({
   };
 
   const handlePermissionChange = (positionId: string, key: keyof PermissionSettingsType, value: boolean) => {
-    const updatedPermissions = editingPermissions ? {
-      ...editingPermissions,
-      [key]: value,
-    } : null;
-    
-    setEditingPermissions(updatedPermissions);
-    
-    if (updatedPermissions) {
-      onSave(positionId, updatedPermissions);
+    if (editingPermissions) {
+      const updatedPermissions = {
+        ...editingPermissions,
+        [key]: value,
+      };
+      setEditingPermissions(updatedPermissions);
     }
   };
 

@@ -18,10 +18,11 @@ export const defaultPermissions: PermissionSettingsType = {
 };
 
 export const convertToJson = (permissions: PermissionSettingsType): Json => {
-  return Object.entries(permissions).reduce<Record<string, boolean>>((acc, [key, value]) => {
-    acc[key] = value;
-    return acc;
-  }, {});
+  const jsonObject: Record<string, boolean> = {};
+  Object.entries(permissions).forEach(([key, value]) => {
+    jsonObject[key] = value;
+  });
+  return jsonObject;
 };
 
 export const permissionGroups = {
