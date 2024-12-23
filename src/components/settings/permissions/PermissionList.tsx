@@ -9,6 +9,14 @@ interface PermissionListProps {
 }
 
 export const PermissionList = ({ positions, onEdit, onDelete }: PermissionListProps) => {
+  const getIndicatorColor = (value: any): string => {
+    // Explicitly check for truthy value and ensure it's not undefined/null
+    if (value && value !== null && value !== undefined) {
+      return 'bg-[#00f127]';
+    }
+    return 'bg-[#ff0101]';
+  };
+
   return (
     <div className="space-y-4">
       {positions?.map((position) => position.access_level && (
@@ -37,7 +45,7 @@ export const PermissionList = ({ positions, onEdit, onDelete }: PermissionListPr
           <div className="grid grid-cols-2 gap-2 text-sm text-fitness-text/70">
             {Object.entries(position.access_level).map(([key, value]) => (
               <div key={key} className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${Boolean(value) === true ? 'bg-[#00f127]' : 'bg-[#ff0101]'}`} />
+                <div className={`w-2 h-2 rounded-full ${getIndicatorColor(value)}`} />
                 {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
               </div>
             ))}
