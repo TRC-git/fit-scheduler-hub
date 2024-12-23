@@ -11,12 +11,12 @@ const Login = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_UP') {
+      if (event === "SIGNED_UP") {
         toast({
           title: "Account created successfully",
           description: "Please check your email to verify your account",
         });
-      } else if (event === 'USER_UPDATED' || (event === 'SIGNED_IN' && session)) {
+      } else if (event === "USER_UPDATED" || (event === "SIGNED_IN" && session)) {
         navigate("/");
       }
     });
@@ -59,7 +59,10 @@ const Login = () => {
             localization={{
               variables: {
                 sign_up: {
-                  email_exists_error: "An account with this email already exists. Please sign in instead.",
+                  button_label: "Sign up",
+                  password_label: "Create a Password",
+                  email_label: "Email",
+                  link_text: "Already have an account? Sign in",
                 },
               },
             }}
