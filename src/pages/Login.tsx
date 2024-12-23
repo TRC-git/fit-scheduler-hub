@@ -4,20 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import type { AuthChangeEvent } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
-      if (event === "SIGNED_UP") {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_UP') {
         toast({
           title: "Account created successfully",
           description: "Please check your email to verify your account",
         });
-      } else if (event === "USER_UPDATED" || (event === "SIGNED_IN" && session)) {
+      } else if (event === 'USER_UPDATED' || (event === 'SIGNED_IN' && session)) {
         navigate("/");
       }
     });
