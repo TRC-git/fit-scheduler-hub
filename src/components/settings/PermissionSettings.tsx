@@ -6,13 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const PermissionSettings = () => {
   const { toast } = useToast();
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
 
-  const { data: employees } = useQuery({
+  const { data: employees, isLoading, error } = useQuery({
     queryKey: ['employees'],
     queryFn: async () => {
+      console.log("Fetching employees...");
       const { data, error } = await supabase
         .from('employees')
         .select(`
@@ -22,9 +25,14 @@ const PermissionSettings = () => {
             positions (*)
           ),
           calendar_access (*)
-        `);
+        `)
+        .eq('isactive', true);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching employees:", error);
+        throw error;
+      }
+      console.log("Fetched employees:", data);
       return data;
     }
   });
@@ -49,6 +57,29 @@ const PermissionSettings = () => {
     },
   });
 
+  if (isLoading) {
+    return (
+      <Card className="bg-fitness-card">
+        <CardHeader>
+          <CardTitle className="text-fitness-text">Loading permissions...</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-fitness-card">
+        <CardHeader>
+          <CardTitle className="text-fitness-text">Error loading permissions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-fitness-text">Failed to load staff members. Please try again later.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-fitness-card">
       <CardHeader>
@@ -58,7 +89,7 @@ const PermissionSettings = () => {
         <div className="grid gap-4">
           <div>
             <Label className="text-fitness-text">Select Employee</Label>
-            <Select>
+            <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
               <SelectTrigger className="bg-fitness-inner text-fitness-text">
                 <SelectValue placeholder="Select employee" />
               </SelectTrigger>
@@ -67,6 +98,7 @@ const PermissionSettings = () => {
                   <SelectItem 
                     key={employee.employeeid} 
                     value={employee.employeeid.toString()}
+                    className="text-fitness-text"
                   >
                     {employee.firstname} {employee.lastname}
                   </SelectItem>
@@ -75,69 +107,75 @@ const PermissionSettings = () => {
             </Select>
           </div>
 
-          <div>
-            <Label className="text-fitness-text mb-2">Calendar Access</Label>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id="view-schedule"
-                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
-                />
-                <Label htmlFor="view-schedule" className="text-fitness-text">
-                  View Schedule
-                </Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id="edit-schedule"
-                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
-                />
-                <Label htmlFor="edit-schedule" className="text-fitness-text">
-                  Edit Schedule
-                </Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id="manage-schedule"
-                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
-                />
-                <Label htmlFor="manage-schedule" className="text-fitness-text">
-                  Manage Schedule Templates
-                </Label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <Label className="text-fitness-text mb-2">Position Access</Label>
-            <div className="space-y-2">
-              {employees?.[0]?.employeepositions?.map((position: any) => (
-                <div key={position.employeepositionid} className="p-4 bg-fitness-inner rounded-md">
-                  <h4 className="text-fitness-text font-medium">
-                    {position.positions.positionname}
-                  </h4>
-                  <p className="text-fitness-text/70 text-sm mt-1">
-                    Access Level: {position.access_level}
-                  </p>
+          {selectedEmployee && (
+            <>
+              <div>
+                <Label className="text-fitness-text mb-2">Calendar Access</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Checkbox 
+                      id="view-schedule"
+                      className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                    />
+                    <Label htmlFor="view-schedule" className="text-fitness-text">
+                      View Schedule
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox 
+                      id="edit-schedule"
+                      className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                    />
+                    <Label htmlFor="edit-schedule" className="text-fitness-text">
+                      Edit Schedule
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox 
+                      id="manage-schedule"
+                      className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                    />
+                    <Label htmlFor="manage-schedule" className="text-fitness-text">
+                      Manage Schedule Templates
+                    </Label>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          <Button 
-            className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
-            onClick={() => updateAccessMutation.mutate({
-              employeeId: 1,
-              access: {
-                calendar_type: "main",
-                can_view: true,
-                can_edit: true,
-                can_manage: false
-              }
-            })}
-          >
-            Save Permissions
-          </Button>
+              <div>
+                <Label className="text-fitness-text mb-2">Position Access</Label>
+                <div className="space-y-2">
+                  {employees
+                    ?.find((e: any) => e.employeeid.toString() === selectedEmployee)
+                    ?.employeepositions?.map((position: any) => (
+                      <div key={position.employeepositionid} className="p-4 bg-fitness-inner rounded-md">
+                        <h4 className="text-fitness-text font-medium">
+                          {position.positions.positionname}
+                        </h4>
+                        <p className="text-fitness-text/70 text-sm mt-1">
+                          Access Level: {position.access_level}
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <Button 
+                className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
+                onClick={() => updateAccessMutation.mutate({
+                  employeeId: selectedEmployee,
+                  access: {
+                    calendar_type: "main",
+                    can_view: true,
+                    can_edit: true,
+                    can_manage: false
+                  }
+                })}
+              >
+                Save Permissions
+              </Button>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>
