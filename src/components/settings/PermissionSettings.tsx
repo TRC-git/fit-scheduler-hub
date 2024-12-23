@@ -7,11 +7,27 @@ import { PermissionList } from "./permissions/PermissionList";
 import type { Position, PermissionSettings, PositionWithPermissions } from "@/types/permissions";
 import type { Json } from "@/types/database/common";
 
+const defaultPermissions: PermissionSettings = {
+  calendar_view: false,
+  calendar_edit: false,
+  calendar_manage: false,
+  manage_employees: false,
+  manage_positions: false,
+  manage_payroll: false,
+  approve_timesheets: false,
+  view_reports: false,
+  create_schedules: false,
+  modify_schedules: false,
+  approve_swaps: false,
+  manage_settings: false,
+  manage_locations: false
+};
+
 const PermissionSettings = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: positions } = useQuery<PositionWithPermissions[]>({
+  const { data: positions, isLoading } = useQuery<PositionWithPermissions[]>({
     queryKey: ['positions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,13 +39,9 @@ const PermissionSettings = () => {
       return (data as Position[]).map(position => ({
         ...position,
         access_level: position.access_level ? {
-          calendar_view: (position.access_level as any)?.calendar_view ?? false,
-          calendar_edit: (position.access_level as any)?.calendar_edit ?? false,
-          calendar_manage: (position.access_level as any)?.calendar_manage ?? false,
-          manage_employees: (position.access_level as any)?.manage_employees ?? false,
-          manage_positions: (position.access_level as any)?.manage_positions ?? false,
-          manage_payroll: (position.access_level as any)?.manage_payroll ?? false
-        } as PermissionSettings : null
+          ...defaultPermissions,
+          ...(position.access_level as PermissionSettings)
+        } : defaultPermissions
       }));
     }
   });
@@ -53,6 +65,14 @@ const PermissionSettings = () => {
       });
       queryClient.invalidateQueries({ queryKey: ['positions'] });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update permissions. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Error updating permissions:", error);
+    }
   });
 
   const deletePermissionsMutation = useMutation({
@@ -60,7 +80,7 @@ const PermissionSettings = () => {
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: null
+          access_level: defaultPermissions
         })
         .eq('positionid', positionId);
       
@@ -70,10 +90,18 @@ const PermissionSettings = () => {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Position permissions removed successfully",
+        description: "Position permissions reset successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['positions'] });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to reset permissions. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Error resetting permissions:", error);
+    }
   });
 
   const handleSavePermissions = (positionId: string, permissions: PermissionSettings) => {
@@ -95,6 +123,7 @@ const PermissionSettings = () => {
             onEdit={() => {}}
             onDelete={(positionId) => deletePermissionsMutation.mutate(positionId)}
             onSave={handleSavePermissions}
+            isLoading={isLoading}
           />
         </div>
       </CardContent>

@@ -1,12 +1,28 @@
 import { Json } from "@/types/database/common";
 
 export interface PermissionSettings {
+  // Calendar Permissions
   calendar_view: boolean;
   calendar_edit: boolean;
   calendar_manage: boolean;
+  
+  // Employee Management
   manage_employees: boolean;
   manage_positions: boolean;
+  
+  // Payroll & Finance
   manage_payroll: boolean;
+  approve_timesheets: boolean;
+  view_reports: boolean;
+  
+  // Schedule Management
+  create_schedules: boolean;
+  modify_schedules: boolean;
+  approve_swaps: boolean;
+  
+  // System Settings
+  manage_settings: boolean;
+  manage_locations: boolean;
 }
 
 export interface Position {
