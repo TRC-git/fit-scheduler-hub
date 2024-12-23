@@ -41,11 +41,18 @@ export const PermissionList = ({
     }
   };
 
-  const handlePermissionChange = (key: keyof PermissionSettingsType, value: boolean) => {
-    setEditingPermissions((prev) => prev ? {
-      ...prev,
+  const handlePermissionChange = (positionId: string, key: keyof PermissionSettingsType, value: boolean) => {
+    const updatedPermissions = editingPermissions ? {
+      ...editingPermissions,
       [key]: value,
-    } : null);
+    } : null;
+    
+    setEditingPermissions(updatedPermissions);
+    
+    if (updatedPermissions) {
+      // Save immediately when toggling
+      onSave(positionId, updatedPermissions);
+    }
   };
 
   const getIndicatorColor = (value: boolean): string => {
@@ -145,7 +152,9 @@ export const PermissionList = ({
                         {isEditing && (
                           <Switch
                             checked={permissionValue}
-                            onCheckedChange={(checked) => handlePermissionChange(key as keyof PermissionSettingsType, checked)}
+                            onCheckedChange={(checked) => 
+                              handlePermissionChange(position.positionid.toString(), key as keyof PermissionSettingsType, checked)
+                            }
                             className="data-[state=checked]:bg-[#15e7fb]"
                           />
                         )}
