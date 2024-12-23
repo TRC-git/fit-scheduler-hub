@@ -40,7 +40,7 @@ const PermissionSettings = () => {
         ...position,
         access_level: position.access_level ? {
           ...defaultPermissions,
-          ...(position.access_level as PermissionSettings)
+          ...(position.access_level as unknown as PermissionSettings)
         } : defaultPermissions
       }));
     }
@@ -48,10 +48,15 @@ const PermissionSettings = () => {
 
   const updateAccessMutation = useMutation({
     mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettings }) => {
+      const jsonAccess: Json = Object.entries(access).reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value
+      }), {});
+
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: access as unknown as Json
+          access_level: jsonAccess
         })
         .eq('positionid', positionId);
       
@@ -77,10 +82,15 @@ const PermissionSettings = () => {
 
   const deletePermissionsMutation = useMutation({
     mutationFn: async (positionId: number) => {
+      const jsonDefaultPermissions: Json = Object.entries(defaultPermissions).reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value
+      }), {});
+
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: defaultPermissions
+          access_level: jsonDefaultPermissions
         })
         .eq('positionid', positionId);
       
