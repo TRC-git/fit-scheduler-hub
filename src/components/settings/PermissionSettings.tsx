@@ -7,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { PermissionForm } from "./permissions/PermissionForm";
 import { PermissionList } from "./permissions/PermissionList";
-import { Position, PermissionSettings as PermissionSettingsType } from "@/types/permissions";
+import { Position, PermissionSettings, PositionWithPermissions } from "@/types/permissions";
 
 const PermissionSettings = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedPosition, setSelectedPosition] = useState<string>("");
-  const [permissions, setPermissions] = useState<PermissionSettingsType>({
+  const [permissions, setPermissions] = useState<PermissionSettings>({
     calendar_view: false,
     calendar_edit: false,
     calendar_manage: false,
@@ -22,7 +22,7 @@ const PermissionSettings = () => {
     manage_payroll: false
   });
 
-  const { data: positions } = useQuery<Position[]>({
+  const { data: positions } = useQuery<PositionWithPermissions[]>({
     queryKey: ['positions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -30,16 +30,21 @@ const PermissionSettings = () => {
         .select('*');
       
       if (error) throw error;
-      return data as Position[];
+      
+      // Convert the Json access_level to our PermissionSettings type
+      return (data as Position[]).map(position => ({
+        ...position,
+        access_level: position.access_level as PermissionSettings | null
+      }));
     }
   });
 
   const updateAccessMutation = useMutation({
-    mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettingsType }) => {
+    mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettings }) => {
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: access
+          access_level: access as Json
         })
         .eq('positionid', positionId);
       
@@ -97,7 +102,7 @@ const PermissionSettings = () => {
     });
   };
 
-  const handlePermissionChange = (key: keyof PermissionSettingsType, value: boolean) => {
+  const handlePermissionChange = (key: keyof PermissionSettings, value: boolean) => {
     setPermissions(prev => ({ ...prev, [key]: value }));
   };
 

@@ -1,3 +1,5 @@
+import { Json } from "@/types/database/common";
+
 export interface PermissionSettings {
   calendar_view: boolean;
   calendar_edit: boolean;
@@ -15,5 +17,9 @@ export interface Position {
   min_experience_months?: number | null;
   paytype?: string | null;
   required_certifications?: string[] | null;
-  access_level?: PermissionSettings | null;
+  access_level?: Json | null;
 }
+
+export type PositionWithPermissions = Omit<Position, 'access_level'> & {
+  access_level?: PermissionSettings | null;
+};
