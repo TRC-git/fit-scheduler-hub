@@ -18,10 +18,7 @@ export const defaultPermissions: PermissionSettingsType = {
 };
 
 export const convertToJson = (permissions: PermissionSettingsType): Json => {
-  return Object.entries(permissions).reduce((acc, [key, value]) => ({
-    ...acc,
-    [key]: value
-  }), {});
+  return permissions;
 };
 
 export const permissionGroups = {
