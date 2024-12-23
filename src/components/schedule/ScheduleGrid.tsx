@@ -12,6 +12,7 @@ const ScheduleGrid = () => {
     handleAdd,
     handleDragStart,
     handleCopy,
+    handleUpdate,
   } = useAppointments();
 
   return (
@@ -35,6 +36,7 @@ const ScheduleGrid = () => {
             onAdd={handleAdd}
             onDragStart={handleDragStart}
             onCopy={handleCopy}
+            onUpdate={handleUpdate}
             copiedAppointment={copiedAppointment}
           />
         ))}

@@ -71,22 +71,13 @@ export const useAppointments = () => {
       return;
     }
 
-    const newAppointment: Appointment = copiedAppointment
-      ? {
-          ...copiedAppointment,
-          id: Math.random().toString(),
-          timeSlot,
-          day,
-          name,
-          type,
-        }
-      : {
-          id: Math.random().toString(),
-          name,
-          type,
-          timeSlot,
-          day,
-        };
+    const newAppointment: Appointment = {
+      id: Math.random().toString(),
+      name,
+      type,
+      timeSlot,
+      day,
+    };
 
     setAppointments([...appointments, newAppointment]);
     setCopiedAppointment(null);
@@ -108,6 +99,17 @@ export const useAppointments = () => {
     });
   };
 
+  const handleUpdate = (updatedAppointment: Appointment) => {
+    const updatedAppointments = appointments.map((apt) =>
+      apt.id === updatedAppointment.id ? updatedAppointment : apt
+    );
+    setAppointments(updatedAppointments);
+    toast({
+      title: "Schedule updated",
+      description: `${updatedAppointment.name}'s schedule has been updated`,
+    });
+  };
+
   return {
     appointments,
     copiedAppointment,
@@ -116,5 +118,6 @@ export const useAppointments = () => {
     handleAdd,
     handleDragStart,
     handleCopy,
+    handleUpdate,
   };
 };
