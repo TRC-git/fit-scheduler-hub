@@ -37,7 +37,7 @@ export const usePermissions = () => {
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: access
+          access_level: convertToJson(access)
         })
         .eq('positionid', positionId)
         .select();
@@ -74,7 +74,7 @@ export const usePermissions = () => {
       const { data, error } = await supabase
         .from('positions')
         .update({
-          access_level: defaultPermissions
+          access_level: convertToJson(defaultPermissions)
         })
         .eq('positionid', positionId)
         .select();
