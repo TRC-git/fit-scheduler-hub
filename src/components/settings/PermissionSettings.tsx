@@ -10,18 +10,16 @@ import { supabase } from "@/integrations/supabase/client";
 const PermissionSettings = () => {
   const { toast } = useToast();
 
-  const { data: employees } = useQuery({
-    queryKey: ['employees'],
+  const { data: positions } = useQuery({
+    queryKey: ['positions'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('employees')
+        .from('positions')
         .select(`
           *,
           employeepositions (
-            *,
-            positions (*)
-          ),
-          calendar_access (*)
+            access_level
+          )
         `);
       
       if (error) throw error;
@@ -30,13 +28,13 @@ const PermissionSettings = () => {
   });
 
   const updateAccessMutation = useMutation({
-    mutationFn: async ({ employeeId, access }: any) => {
+    mutationFn: async ({ positionId, access }: any) => {
       const { data, error } = await supabase
-        .from('calendar_access')
-        .upsert([{
-          employeeid: employeeId,
-          ...access
-        }]);
+        .from('positions')
+        .update({
+          access_level: access
+        })
+        .eq('positionid', positionId);
       
       if (error) throw error;
       return data;
@@ -44,7 +42,7 @@ const PermissionSettings = () => {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Permissions updated successfully",
+        description: "Position permissions updated successfully",
       });
     },
   });
@@ -57,18 +55,18 @@ const PermissionSettings = () => {
       <CardContent className="space-y-6">
         <div className="grid gap-4">
           <div>
-            <Label className="text-fitness-text">Select Employee</Label>
+            <Label className="text-fitness-text">Select Position</Label>
             <Select>
               <SelectTrigger className="bg-fitness-inner text-fitness-text">
-                <SelectValue placeholder="Select employee" />
+                <SelectValue placeholder="Select position" />
               </SelectTrigger>
               <SelectContent>
-                {employees?.map((employee: any) => (
+                {positions?.map((position: any) => (
                   <SelectItem 
-                    key={employee.employeeid} 
-                    value={employee.employeeid.toString()}
+                    key={position.positionid} 
+                    value={position.positionid.toString()}
                   >
-                    {employee.firstname} {employee.lastname}
+                    {position.positionname}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -109,30 +107,49 @@ const PermissionSettings = () => {
           </div>
 
           <div>
-            <Label className="text-fitness-text mb-2">Position Access</Label>
+            <Label className="text-fitness-text mb-2">System Access</Label>
             <div className="space-y-2">
-              {employees?.[0]?.employeepositions?.map((position: any) => (
-                <div key={position.employeepositionid} className="p-4 bg-fitness-inner rounded-md">
-                  <h4 className="text-fitness-text font-medium">
-                    {position.positions.positionname}
-                  </h4>
-                  <p className="text-fitness-text/70 text-sm mt-1">
-                    Access Level: {position.access_level}
-                  </p>
-                </div>
-              ))}
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="manage-employees"
+                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                />
+                <Label htmlFor="manage-employees" className="text-fitness-text">
+                  Manage Employees
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="manage-positions"
+                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                />
+                <Label htmlFor="manage-positions" className="text-fitness-text">
+                  Manage Positions
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="manage-payroll"
+                  className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
+                />
+                <Label htmlFor="manage-payroll" className="text-fitness-text">
+                  Manage Payroll
+                </Label>
+              </div>
             </div>
           </div>
 
           <Button 
             className="bg-[#15e7fb] hover:bg-[#15e7fb]/80"
             onClick={() => updateAccessMutation.mutate({
-              employeeId: 1,
+              positionId: 1,
               access: {
-                calendar_type: "main",
-                can_view: true,
-                can_edit: true,
-                can_manage: false
+                calendar_view: true,
+                calendar_edit: true,
+                calendar_manage: false,
+                manage_employees: false,
+                manage_positions: false,
+                manage_payroll: false
               }
             })}
           >
