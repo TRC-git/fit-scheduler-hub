@@ -475,6 +475,7 @@ export type Database = {
       }
       positions: {
         Row: {
+          access_level: Json | null
           defaultpayrate: number | null
           description: string | null
           min_experience_months: number | null
@@ -484,6 +485,7 @@ export type Database = {
           required_certifications: string[] | null
         }
         Insert: {
+          access_level?: Json | null
           defaultpayrate?: number | null
           description?: string | null
           min_experience_months?: number | null
@@ -493,6 +495,7 @@ export type Database = {
           required_certifications?: string[] | null
         }
         Update: {
+          access_level?: Json | null
           defaultpayrate?: number | null
           description?: string | null
           min_experience_months?: number | null
