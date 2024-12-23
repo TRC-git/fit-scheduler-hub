@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PositionWithPermissions, PermissionSettings } from "@/types/permissions";
 import { useState } from "react";
+import { permissionGroups, getPermissionLabel } from "./utils/permissionUtils";
 
 interface PermissionListProps {
   positions: PositionWithPermissions[];
@@ -67,21 +68,6 @@ export const PermissionList = ({
       </div>
     );
   }
-
-  const permissionGroups = {
-    "Calendar Access": ["calendar_view", "calendar_edit", "calendar_manage"],
-    "Employee Management": ["manage_employees", "manage_positions"],
-    "Payroll & Finance": ["manage_payroll", "approve_timesheets", "view_reports"],
-    "Schedule Management": ["create_schedules", "modify_schedules", "approve_swaps"],
-    "System Settings": ["manage_settings", "manage_locations"]
-  };
-
-  const getPermissionLabel = (key: string): string => {
-    return key
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
 
   return (
     <div className="space-y-4">
