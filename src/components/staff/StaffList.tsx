@@ -10,6 +10,7 @@ const StaffList = () => {
   const { data: staff, isLoading, error } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
+      console.log("Fetching staff members...");
       const { data, error } = await supabase
         .from("employees")
         .select(`
@@ -31,6 +32,7 @@ const StaffList = () => {
         throw error;
       }
       
+      console.log("Staff data:", data);
       return data;
     },
   });
