@@ -43,13 +43,13 @@ const PayrollSettings = () => {
   return (
     <Card className="bg-fitness-card">
       <CardHeader>
-        <CardTitle className="text-fitness-text">Payroll Settings</CardTitle>
+        <CardTitle className="text-fitness-text text-3xl">Payroll Settings</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid gap-4">
+      <CardContent className="space-y-8">
+        <div className="grid gap-6">
           {/* Pay Period Settings */}
           <div>
-            <Label className="text-fitness-text">Pay Period</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Pay Period</h2>
             <Select>
               <SelectTrigger className="bg-fitness-inner text-fitness-text">
                 <SelectValue placeholder="Select pay period" />
@@ -65,7 +65,7 @@ const PayrollSettings = () => {
 
           {/* Tax Settings */}
           <div>
-            <Label className="text-fitness-text">Tax Withholding Settings</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Tax Withholding Settings</h2>
             <div className="space-y-4 mt-2">
               <div className="flex items-center justify-between">
                 <Label className="text-fitness-text">Federal Tax Withholding</Label>
@@ -84,7 +84,7 @@ const PayrollSettings = () => {
 
           {/* Deductions & Benefits */}
           <div>
-            <Label className="text-fitness-text">Deductions & Benefits</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Deductions & Benefits</h2>
             <div className="space-y-4 mt-2">
               <div className="flex items-center justify-between">
                 <Label className="text-fitness-text">Health Insurance</Label>
@@ -103,7 +103,7 @@ const PayrollSettings = () => {
 
           {/* Overtime Rules */}
           <div>
-            <Label className="text-fitness-text">Overtime Rules</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Overtime Rules</h2>
             <div className="space-y-4 mt-2">
               {overtimeRules?.map((rule: any) => (
                 <div key={rule.ruleid} className="p-4 bg-fitness-inner rounded-md">
@@ -118,7 +118,7 @@ const PayrollSettings = () => {
 
           {/* Holiday & PTO Settings */}
           <div>
-            <Label className="text-fitness-text">Holiday & PTO Settings</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Holiday & PTO Settings</h2>
             <div className="space-y-4 mt-2">
               <div>
                 <Label className="text-fitness-text text-sm">Default PTO Days/Year</Label>
@@ -145,7 +145,7 @@ const PayrollSettings = () => {
 
           {/* Commission & Bonus Settings */}
           <div>
-            <Label className="text-fitness-text">Commission & Bonus Settings</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Commission & Bonus Settings</h2>
             <div className="space-y-4 mt-2">
               <div>
                 <Label className="text-fitness-text text-sm">Default Commission Rate (%)</Label>
@@ -168,7 +168,7 @@ const PayrollSettings = () => {
 
           {/* Direct Deposit Settings */}
           <div>
-            <Label className="text-fitness-text">Direct Deposit Settings</Label>
+            <h2 className="text-fitness-text text-2xl font-semibold mb-4">Direct Deposit Settings</h2>
             <div className="space-y-4 mt-2">
               <div className="flex items-center justify-between">
                 <Label className="text-fitness-text">Enable Direct Deposit</Label>
