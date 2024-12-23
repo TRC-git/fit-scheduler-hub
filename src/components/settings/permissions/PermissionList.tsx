@@ -70,12 +70,12 @@ export const PermissionList = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {positions?.map((position) => position.access_level && (
-        <div key={position.positionid} className="bg-fitness-inner p-4 rounded-lg">
-          <div className="flex justify-between items-start mb-4">
+        <div key={position.positionid} className="bg-fitness-inner p-6 rounded-lg">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h4 className="text-fitness-text font-medium">{position.positionname}</h4>
+              <h4 className="text-fitness-text font-medium text-2xl mb-2">{position.positionname}</h4>
               {position.description && (
                 <p className="text-sm text-fitness-text/70 mt-1">{position.description}</p>
               )}
@@ -123,11 +123,11 @@ export const PermissionList = ({
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-8">
             {Object.entries(permissionGroups).map(([groupName, permissions]) => (
-              <div key={groupName} className="space-y-2">
-                <h5 className="text-sm font-medium text-fitness-text/80">{groupName}</h5>
-                <div className="grid grid-cols-2 gap-2">
+              <div key={groupName} className="space-y-4">
+                <h5 className="text-lg font-medium text-fitness-text/90 border-b border-fitness-muted pb-2">{groupName}</h5>
+                <div className="space-y-3">
                   {permissions.map((key) => (
                     <div key={key} className="flex items-center justify-between gap-2 p-1">
                       <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export const PermissionList = ({
                               : position.access_level?.[key as keyof PermissionSettingsType] ?? false
                           )}`} 
                         />
-                        {getPermissionLabel(key)}
+                        <span className="text-sm">{getPermissionLabel(key)}</span>
                       </div>
                       {editingPosition === position.positionid.toString() && (
                         <Switch
