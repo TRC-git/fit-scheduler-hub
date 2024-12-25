@@ -35,7 +35,9 @@ const PositionSettings = () => {
       console.log('Creating position:', positionData);
       const { data, error } = await supabase
         .from('positions')
-        .insert([positionData]);
+        .insert([positionData])
+        .select()
+        .single();
       
       if (error) {
         console.error('Error creating position:', error);
@@ -64,10 +66,13 @@ const PositionSettings = () => {
   const updatePositionMutation = useMutation({
     mutationFn: async (positionData: any) => {
       console.log('Updating position:', positionData);
+      const { positionid, ...updateData } = positionData;
       const { data, error } = await supabase
         .from('positions')
-        .update(positionData)
-        .eq('positionid', selectedPosition.positionid);
+        .update(updateData)
+        .eq('positionid', positionid)
+        .select()
+        .single();
       
       if (error) {
         console.error('Error updating position:', error);
@@ -127,7 +132,10 @@ const PositionSettings = () => {
   const handleSubmit = (positionData: any) => {
     console.log('Handling submit with data:', positionData);
     if (selectedPosition) {
-      updatePositionMutation.mutate(positionData);
+      updatePositionMutation.mutate({
+        ...positionData,
+        positionid: selectedPosition.positionid
+      });
     } else {
       createPositionMutation.mutate(positionData);
     }

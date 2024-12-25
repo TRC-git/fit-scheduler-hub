@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { useState, useEffect } from "react";
 
 interface PositionFormProps {
   position?: any;
@@ -11,24 +12,46 @@ interface PositionFormProps {
 
 export const PositionForm = ({ position, onSubmit }: PositionFormProps) => {
   const [formData, setFormData] = useState({
-    positionname: position?.positionname || '',
-    paytype: position?.paytype || '',
-    defaultpayrate: position?.defaultpayrate || '',
-    required_certifications: position?.required_certifications?.join(', ') || '',
-    min_experience_months: position?.min_experience_months || ''
+    positionname: '',
+    paytype: '',
+    defaultpayrate: '',
+    description: '',
+    required_certifications: '',
+    min_experience_months: ''
   });
+
+  useEffect(() => {
+    if (position) {
+      setFormData({
+        positionname: position.positionname || '',
+        paytype: position.paytype || '',
+        defaultpayrate: position.defaultpayrate?.toString() || '',
+        description: position.description || '',
+        required_certifications: position.required_certifications?.join(', ') || '',
+        min_experience_months: position.min_experience_months?.toString() || ''
+      });
+    }
+  }, [position]);
 
   const handleSubmit = () => {
     const certifications = formData.required_certifications
       ? formData.required_certifications.split(',').map(cert => cert.trim())
       : [];
 
-    onSubmit({
-      ...formData,
+    const submissionData = {
+      positionname: formData.positionname,
+      paytype: formData.paytype || null,
+      defaultpayrate: formData.defaultpayrate ? Number(formData.defaultpayrate) : null,
+      description: formData.description || null,
       required_certifications: certifications,
-      defaultpayrate: Number(formData.defaultpayrate),
-      min_experience_months: Number(formData.min_experience_months)
-    });
+      min_experience_months: formData.min_experience_months ? Number(formData.min_experience_months) : 0
+    };
+
+    if (position?.positionid) {
+      submissionData.positionid = position.positionid;
+    }
+
+    onSubmit(submissionData);
   };
 
   return (
@@ -68,6 +91,16 @@ export const PositionForm = ({ position, onSubmit }: PositionFormProps) => {
           className="bg-fitness-inner text-fitness-text"
           value={formData.defaultpayrate}
           onChange={(e) => setFormData(prev => ({ ...prev, defaultpayrate: e.target.value }))}
+        />
+      </div>
+
+      <div>
+        <Label className="text-fitness-text">Description</Label>
+        <Textarea 
+          placeholder="Enter position description" 
+          className="bg-fitness-inner text-fitness-text"
+          value={formData.description}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
         />
       </div>
 
