@@ -18,7 +18,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
   const loadOperationalDays = async () => {
     try {
       const { data: settings, error } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .select('operational_days')
         .eq('name', 'default')
         .limit(1)
@@ -28,7 +28,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         if (error.code === 'PGRST116') {
           const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
           const { error: insertError } = await supabase
-            .from('class_types')
+            .from('schedule_types')
             .insert({
               name: 'default',
               duration: 60,
@@ -53,10 +53,6 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
     }
   };
 
-  useEffect(() => {
-    loadOperationalDays();
-  }, []);
-
   const toggleDay = (day: string) => {
     setOperationalDays(prev => {
       const newDays = new Set(prev);
@@ -72,16 +68,13 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
   const saveOperationalDays = async () => {
     try {
       const { error } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .update({ 
           operational_days: Array.from(operationalDays) 
         })
         .eq('name', 'default');
 
       if (error) throw error;
-
-      // Reload the operational days after saving
-      await loadOperationalDays();
 
       toast({
         title: "Success",
@@ -98,12 +91,16 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
     }
   };
 
+  useEffect(() => {
+    loadOperatingHours();
+  }, []);
+
   return (
     <OperationalDaysContext.Provider value={{ 
       operationalDays, 
       toggleDay, 
       saveOperationalDays,
-      reloadOperationalDays: loadOperationalDays 
+      reloadOperationalDays: loadOperatingHours 
     }}>
       {children}
     </OperationalDaysContext.Provider>
