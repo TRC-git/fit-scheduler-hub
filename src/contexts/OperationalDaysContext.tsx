@@ -92,7 +92,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
   };
 
   useEffect(() => {
-    loadOperatingHours();
+    loadOperationalDays();
   }, []);
 
   return (
@@ -100,7 +100,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
       operationalDays, 
       toggleDay, 
       saveOperationalDays,
-      reloadOperationalDays: loadOperatingHours 
+      reloadOperationalDays: loadOperationalDays 
     }}>
       {children}
     </OperationalDaysContext.Provider>

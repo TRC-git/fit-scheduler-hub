@@ -29,7 +29,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     removeTimeSlot,
     updateTimeSlot,
     handleDayToggle
-  } = useTimeSlots(classType?.class_type_id);
+  } = useTimeSlots(classType?.schedule_type_id);
 
   useEffect(() => {
     if (formData.operational_days && formData.operational_days.length > 0) {
@@ -63,30 +63,26 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
     setLoading(true);
     
     try {
-      // First submit the class type data
       await onSubmit(formData);
       
-      // Get the class type ID
       const { data: newClassType, error: classTypeError } = await supabase
-        .from('class_types')
-        .select('class_type_id')
+        .from('schedule_types')
+        .select('schedule_type_id')
         .eq('name', formData.name)
         .maybeSingle();
         
       if (classTypeError) throw classTypeError;
       
-      const classTypeId = classType?.class_type_id || newClassType?.class_type_id;
+      const classTypeId = classType?.schedule_type_id || newClassType?.schedule_type_id;
       
       if (classTypeId) {
-        // Delete existing slots
         const { error: deleteError } = await supabase
-          .from('class_time_slots')
+          .from('schedule_time_slots')
           .delete()
-          .eq('class_type_id', classTypeId);
+          .eq('schedule_type_id', classTypeId);
           
         if (deleteError) throw deleteError;
 
-        // Filter out any invalid time slots before inserting
         const validTimeSlots = timeSlots.filter(slot => 
           slot && 
           slot.day_of_week && 
@@ -94,17 +90,16 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
           slot.end_time
         );
 
-        // Insert new slots if there are any valid ones
         if (validTimeSlots.length > 0) {
           const slotsToInsert = validTimeSlots.map(slot => ({
-            class_type_id: classTypeId,
+            schedule_type_id: classTypeId,
             day_of_week: slot.day_of_week,
             start_time: slot.start_time,
             end_time: slot.end_time
           }));
 
           const { error: insertError } = await supabase
-            .from('class_time_slots')
+            .from('schedule_time_slots')
             .insert(slotsToInsert);
 
           if (insertError) throw insertError;
@@ -116,7 +111,7 @@ const ClassTypeForm = ({ classType, onSubmit, onCancel }: ClassTypeFormProps) =>
         description: `Schedule type ${classType ? 'updated' : 'created'} successfully`,
       });
       
-      onCancel(); // Close the form after successful save
+      onCancel();
       
     } catch (error) {
       console.error('Error saving schedule type:', error);
