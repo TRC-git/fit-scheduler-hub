@@ -1,42 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
+import { Position } from "./types";
+import { formatPayType, formatPayRate } from "./utils/formatters";
 
 interface PositionCardProps {
-  position: any;
+  position: Position;
   onEdit: () => void;
   onDelete: () => void;
 }
 
 export const PositionCard = ({ position, onEdit, onDelete }: PositionCardProps) => {
-  const formatPayType = (type: string) => {
-    switch (type) {
-      case 'hourly':
-        return 'per hour';
-      case 'salary':
-        return 'per year';
-      case 'session':
-        return 'per session';
-      default:
-        return '';
-    }
-  };
-
-  const formatPayRate = (rate: number | null | undefined) => {
-    if (rate === null || rate === undefined) return '0';
-    try {
-      return rate.toLocaleString();
-    } catch (error) {
-      console.error('Error formatting pay rate:', error);
-      return '0';
-    }
-  };
-
   return (
     <div className="p-4 bg-fitness-inner rounded-md flex justify-between items-center">
       <div>
         <h4 className="text-fitness-text font-medium">{position.positionname}</h4>
         <p className="text-fitness-text/70 text-sm mt-1">
-          Pay Rate: ${formatPayRate(position.defaultpayrate)} {formatPayType(position.paytype)}
+          Pay Rate: ${formatPayRate(position.defaultpayrate)} {formatPayType(position.paytype || '')}
         </p>
       </div>
       <div className="flex gap-2">

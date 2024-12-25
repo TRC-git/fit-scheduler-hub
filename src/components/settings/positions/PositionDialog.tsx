@@ -1,11 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PositionForm } from "./PositionForm";
+import { Position } from "./types";
 
 interface PositionDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedPosition: any;
-  onSubmit: (positionData: any) => void;
+  selectedPosition: Position | null;
+  onSubmit: (positionData: Position) => void;
 }
 
 export const PositionDialog = ({ 
@@ -23,7 +24,7 @@ export const PositionDialog = ({
           </DialogTitle>
         </DialogHeader>
         <PositionForm 
-          position={selectedPosition} 
+          position={selectedPosition || undefined} 
           onSubmit={onSubmit}
         />
       </DialogContent>
