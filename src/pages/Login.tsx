@@ -48,6 +48,7 @@ const Login = () => {
               },
             }}
             providers={[]}
+            redirectTo={window.location.origin}
             view="sign_up"
           />
         </div>
