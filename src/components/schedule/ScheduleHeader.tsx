@@ -14,7 +14,7 @@ const ScheduleHeader = () => {
             <>
               <option value="all" className="pl-2">All Schedules</option>
               {classTypes?.map((type) => (
-                <option key={type.class_type_id} value={type.name} className="pl-2">
+                <option key={type.schedule_type_id} value={type.name} className="pl-2">
                   {type.name}
                 </option>
               ))}

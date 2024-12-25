@@ -39,7 +39,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
                 <ClassTypeForm
                   classType={classType}
                   onSubmit={async (data) => {
-                    await onUpdate(classType.class_type_id, data);
+                    await onUpdate(classType.schedule_type_id, data);
                   }}
                   onCancel={() => {}}
                 />
@@ -49,7 +49,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onDelete(classType.class_type_id)}
+            onClick={() => onDelete(classType.schedule_type_id)}
           >
             <Trash2 className="h-4 w-4 text-fitness-danger" />
           </Button>

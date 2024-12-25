@@ -72,7 +72,7 @@ export const NewAppointmentDialog = ({
               ) : (
                 classTypes?.map((type) => (
                   <SelectItem 
-                    key={type.class_type_id} 
+                    key={type.schedule_type_id} 
                     value={type.name}
                     className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]"
                   >

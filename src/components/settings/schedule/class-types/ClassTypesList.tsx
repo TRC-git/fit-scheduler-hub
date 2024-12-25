@@ -12,7 +12,7 @@ const ClassTypesList = ({ classTypes, onUpdate, onDelete }: ClassTypesListProps)
     <div className="grid gap-4">
       {classTypes?.map((classType) => (
         <ClassTypeItem
-          key={classType.class_type_id}
+          key={classType.schedule_type_id}
           classType={classType}
           onUpdate={onUpdate}
           onDelete={onDelete}
