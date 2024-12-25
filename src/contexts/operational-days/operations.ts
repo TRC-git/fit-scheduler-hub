@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 export const loadOperationalDays = async () => {
   try {
     const { data: settings, error } = await supabase
-      .from('class_types')
+      .from('schedule_types')
       .select('operational_days')
       .eq('name', 'default')
       .limit(1)
@@ -15,7 +15,7 @@ export const loadOperationalDays = async () => {
     if (!settings) {
       const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
       const { error: insertError } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .insert({
           name: 'default',
           duration: 60,
@@ -36,7 +36,7 @@ export const loadOperationalDays = async () => {
 export const saveOperationalDays = async (operationalDays: Set<string>) => {
   try {
     const { error } = await supabase
-      .from('class_types')
+      .from('schedule_types')
       .update({ 
         operational_days: Array.from(operationalDays) 
       })
