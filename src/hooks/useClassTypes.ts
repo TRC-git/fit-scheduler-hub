@@ -12,7 +12,10 @@ export const useClassTypes = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('schedule_types')
-        .select('*');
+        .select(`
+          *,
+          schedule_time_slots (*)
+        `);
       
       if (error) throw error;
       return data as ClassType[];

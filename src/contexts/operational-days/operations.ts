@@ -33,12 +33,12 @@ export const loadOperationalDays = async () => {
   }
 };
 
-export const saveOperationalDays = async (operationalDays: Set<string>) => {
+export const saveOperationalDays = async (days: Set<string>) => {
   try {
     const { error } = await supabase
       .from('schedule_types')
       .update({ 
-        operational_days: Array.from(operationalDays) 
+        operational_days: Array.from(days) 
       })
       .eq('name', 'default');
 
