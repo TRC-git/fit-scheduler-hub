@@ -71,6 +71,71 @@ export type Database = {
           },
         ]
       }
+      class_time_slots: {
+        Row: {
+          class_type_id: number | null
+          created_at: string | null
+          day_of_week: string
+          end_time: string
+          slot_id: number
+          start_time: string
+        }
+        Insert: {
+          class_type_id?: number | null
+          created_at?: string | null
+          day_of_week: string
+          end_time: string
+          slot_id?: number
+          start_time: string
+        }
+        Update: {
+          class_type_id?: number | null
+          created_at?: string | null
+          day_of_week?: string
+          end_time?: string
+          slot_id?: number
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_time_slots_class_type_id_fkey"
+            columns: ["class_type_id"]
+            isOneToOne: false
+            referencedRelation: "class_types"
+            referencedColumns: ["class_type_id"]
+          },
+        ]
+      }
+      class_types: {
+        Row: {
+          class_type_id: number
+          closing_time: string | null
+          created_at: string | null
+          duration: number
+          name: string
+          opening_time: string | null
+          operational_days: string[] | null
+        }
+        Insert: {
+          class_type_id?: number
+          closing_time?: string | null
+          created_at?: string | null
+          duration?: number
+          name: string
+          opening_time?: string | null
+          operational_days?: string[] | null
+        }
+        Update: {
+          class_type_id?: number
+          closing_time?: string | null
+          created_at?: string | null
+          duration?: number
+          name?: string
+          opening_time?: string | null
+          operational_days?: string[] | null
+        }
+        Relationships: []
+      }
       commission_bonus_settings: {
         Row: {
           commission_rate: number | null
@@ -519,71 +584,6 @@ export type Database = {
             referencedColumns: ["employeeid"]
           },
         ]
-      }
-      schedule_time_slots: {
-        Row: {
-          created_at: string | null
-          day_of_week: string
-          end_time: string
-          schedule_type_id: number | null
-          slot_id: number
-          start_time: string
-        }
-        Insert: {
-          created_at?: string | null
-          day_of_week: string
-          end_time: string
-          schedule_type_id?: number | null
-          slot_id?: number
-          start_time: string
-        }
-        Update: {
-          created_at?: string | null
-          day_of_week?: string
-          end_time?: string
-          schedule_type_id?: number | null
-          slot_id?: number
-          start_time?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "schedule_time_slots_schedule_type_id_fkey"
-            columns: ["schedule_type_id"]
-            isOneToOne: false
-            referencedRelation: "schedule_types"
-            referencedColumns: ["schedule_type_id"]
-          },
-        ]
-      }
-      schedule_types: {
-        Row: {
-          closing_time: string | null
-          created_at: string | null
-          duration: number
-          name: string
-          opening_time: string | null
-          operational_days: string[] | null
-          schedule_type_id: number
-        }
-        Insert: {
-          closing_time?: string | null
-          created_at?: string | null
-          duration?: number
-          name: string
-          opening_time?: string | null
-          operational_days?: string[] | null
-          schedule_type_id?: number
-        }
-        Update: {
-          closing_time?: string | null
-          created_at?: string | null
-          duration?: number
-          name?: string
-          opening_time?: string | null
-          operational_days?: string[] | null
-          schedule_type_id?: number
-        }
-        Relationships: []
       }
       schedules: {
         Row: {

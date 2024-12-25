@@ -1,5 +1,5 @@
 export interface ClassType {
-  schedule_type_id: number;
+  class_type_id: number;
   name: string;
   duration: number;
   created_at?: string;
@@ -26,7 +26,7 @@ export interface UpdateClassTypeData {
 
 export interface TimeSlot {
   slot_id?: number;
-  schedule_type_id?: number;
+  class_type_id?: number;
   day_of_week: string;
   start_time: string;
   end_time: string;

@@ -79,21 +79,13 @@ const PayrollSettings = () => {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (updates: any) => {
-      if (!employeeId) {
-        throw new Error('No employee ID found');
-      }
-
       const promises = [];
       
       if (updates.tax) {
         promises.push(
           supabase
             .from('tax_withholding_settings')
-            .upsert({ 
-              ...updates.tax, 
-              employee_id: employeeId,
-              updated_at: new Date().toISOString()
-            })
+            .upsert({ ...updates.tax, employee_id: employeeId })
         );
       }
       
@@ -101,11 +93,7 @@ const PayrollSettings = () => {
         promises.push(
           supabase
             .from('employee_deductions')
-            .upsert({ 
-              ...updates.deductions, 
-              employee_id: employeeId,
-              updated_at: new Date().toISOString()
-            })
+            .upsert({ ...updates.deductions, employee_id: employeeId })
         );
       }
       
@@ -113,11 +101,7 @@ const PayrollSettings = () => {
         promises.push(
           supabase
             .from('pto_holiday_settings')
-            .upsert({ 
-              ...updates.pto, 
-              employee_id: employeeId,
-              updated_at: new Date().toISOString()
-            })
+            .upsert({ ...updates.pto, employee_id: employeeId })
         );
       }
       
@@ -125,11 +109,7 @@ const PayrollSettings = () => {
         promises.push(
           supabase
             .from('commission_bonus_settings')
-            .upsert({ 
-              ...updates.commission, 
-              employee_id: employeeId,
-              updated_at: new Date().toISOString()
-            })
+            .upsert({ ...updates.commission, employee_id: employeeId })
         );
       }
 

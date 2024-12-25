@@ -8,13 +8,13 @@ export const useClassTypes = () => {
   const queryClient = useQueryClient();
 
   const { data: classTypes, isLoading } = useQuery({
-    queryKey: ['scheduleTypes'],
+    queryKey: ['classTypes'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .select(`
           *,
-          schedule_time_slots (*)
+          class_time_slots (*)
         `);
       
       if (error) throw error;
@@ -25,16 +25,16 @@ export const useClassTypes = () => {
   const createClassType = useMutation({
     mutationFn: async (classTypeData: CreateClassTypeData) => {
       const { error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .insert([classTypeData]);
       
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['scheduleTypes'] });
+      queryClient.invalidateQueries({ queryKey: ['classTypes'] });
       toast({
         title: "Success",
-        description: "Schedule type created successfully",
+        description: "Class type created successfully",
       });
     },
   });
@@ -42,17 +42,17 @@ export const useClassTypes = () => {
   const updateClassType = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateClassTypeData }) => {
       const { error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .update(data)
-        .eq('schedule_type_id', id);
+        .eq('class_type_id', id);
       
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['scheduleTypes'] });
+      queryClient.invalidateQueries({ queryKey: ['classTypes'] });
       toast({
         title: "Success",
-        description: "Schedule type updated successfully",
+        description: "Class type updated successfully",
       });
     },
   });
@@ -60,17 +60,17 @@ export const useClassTypes = () => {
   const deleteClassType = useMutation({
     mutationFn: async (id: number) => {
       const { error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .delete()
-        .eq('schedule_type_id', id);
+        .eq('class_type_id', id);
       
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['scheduleTypes'] });
+      queryClient.invalidateQueries({ queryKey: ['classTypes'] });
       toast({
         title: "Success",
-        description: "Schedule type deleted successfully",
+        description: "Class type deleted successfully",
       });
     },
   });

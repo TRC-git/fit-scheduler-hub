@@ -17,7 +17,7 @@ const OperatingHours = () => {
   const loadOperatingHours = async () => {
     try {
       const { data, error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .select('opening_time, closing_time')
         .eq('name', 'default')
         .limit(1);  // Get only the first record
@@ -42,7 +42,7 @@ const OperatingHours = () => {
     try {
       // Update all default records to maintain consistency
       const { error } = await supabase
-        .from('schedule_types')
+        .from('class_types')
         .update({ 
           opening_time: openingTime,
           closing_time: closingTime

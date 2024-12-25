@@ -2,20 +2,20 @@ import { useState, useEffect } from "react";
 import { TimeSlot } from "@/types/schedule/class-types";
 import { supabase } from "@/integrations/supabase/client";
 
-export const useTimeSlots = (scheduleTypeId?: number) => {
+export const useTimeSlots = (classTypeId?: number) => {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
   const loadTimeSlots = async () => {
-    if (!scheduleTypeId) return;
+    if (!classTypeId) return;
 
     try {
       const { data, error } = await supabase
-        .from('schedule_time_slots')
+        .from('class_time_slots')
         .select('*')
-        .eq('schedule_type_id', scheduleTypeId);
+        .eq('class_type_id', classTypeId);
 
       if (error) throw error;
-      if (data) setTimeSlots(data as TimeSlot[]);
+      if (data) setTimeSlots(data);
     } catch (error) {
       console.error('Error loading time slots:', error);
       throw error;
@@ -52,10 +52,10 @@ export const useTimeSlots = (scheduleTypeId?: number) => {
   };
 
   useEffect(() => {
-    if (scheduleTypeId) {
+    if (classTypeId) {
       loadTimeSlots();
     }
-  }, [scheduleTypeId]);
+  }, [classTypeId]);
 
   return {
     timeSlots,
