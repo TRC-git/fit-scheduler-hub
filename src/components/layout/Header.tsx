@@ -1,9 +1,9 @@
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Header = () => {
-  const { toggleSidebar } = useMobile();
+  const { toggleSidebar } = useIsMobile();
 
   return (
     <header className="bg-fitness-card border-b border-fitness-border">
