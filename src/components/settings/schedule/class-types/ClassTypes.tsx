@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { useClassTypes } from "@/hooks/useClassTypes";
 import ClassTypeForm from "./ClassTypeForm";
 import ClassTypesList from "./ClassTypesList";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ClassTypes = () => {
   const { 
@@ -24,14 +25,19 @@ const ClassTypes = () => {
               Add Schedule Type
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-fitness-card">
+          <DialogContent className="bg-fitness-card max-h-[90vh]">
             <DialogHeader>
               <DialogTitle className="text-fitness-text">Create New Schedule Type</DialogTitle>
             </DialogHeader>
-            <ClassTypeForm
-              onSubmit={(data) => createClassType.mutateAsync(data)}
-              onCancel={() => {}}
-            />
+            <ScrollArea className="h-[calc(90vh-8rem)] pr-4" style={{
+              '--scrollbar-thumb': '#15e7fb',
+              '--scrollbar-track': 'transparent'
+            } as React.CSSProperties}>
+              <ClassTypeForm
+                onSubmit={(data) => createClassType.mutateAsync(data)}
+                onCancel={() => {}}
+              />
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       </div>
