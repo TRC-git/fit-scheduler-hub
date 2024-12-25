@@ -5,9 +5,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 
+interface Position {
+  positionid?: number;
+  positionname: string;
+  paytype: string | null;
+  defaultpayrate: number | null;
+  description: string | null;
+  required_certifications: string[];
+  min_experience_months: number;
+}
+
 interface PositionFormProps {
-  position?: any;
-  onSubmit: (positionData: any) => void;
+  position?: Position;
+  onSubmit: (positionData: Position) => void;
 }
 
 export const PositionForm = ({ position, onSubmit }: PositionFormProps) => {
@@ -38,7 +48,7 @@ export const PositionForm = ({ position, onSubmit }: PositionFormProps) => {
       ? formData.required_certifications.split(',').map(cert => cert.trim())
       : [];
 
-    const submissionData = {
+    const submissionData: Position = {
       positionname: formData.positionname,
       paytype: formData.paytype || null,
       defaultpayrate: formData.defaultpayrate ? Number(formData.defaultpayrate) : null,
