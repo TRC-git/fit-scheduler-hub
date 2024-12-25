@@ -8,12 +8,25 @@ interface PositionCardProps {
 }
 
 export const PositionCard = ({ position, onEdit, onDelete }: PositionCardProps) => {
+  const formatPayType = (type: string) => {
+    switch (type) {
+      case 'hourly':
+        return 'per hour';
+      case 'salary':
+        return 'per year';
+      case 'session':
+        return 'per session';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="p-4 bg-fitness-inner rounded-md flex justify-between items-center">
       <div>
         <h4 className="text-fitness-text font-medium">{position.positionname}</h4>
         <p className="text-fitness-text/70 text-sm mt-1">
-          Default Rate: ${position.defaultpayrate}/{position.paytype}
+          Pay Rate: ${position.defaultpayrate?.toLocaleString() || '0'} {formatPayType(position.paytype)}
         </p>
       </div>
       <div className="flex gap-2">
