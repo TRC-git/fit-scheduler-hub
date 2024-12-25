@@ -11,8 +11,11 @@ export const useClassTypes = () => {
     queryKey: ['classTypes'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('class_types')
-        .select('*');
+        .from('schedule_types')
+        .select(`
+          *,
+          schedule_time_slots (*)
+        `);
       
       if (error) throw error;
       return data as ClassType[];
@@ -22,7 +25,7 @@ export const useClassTypes = () => {
   const createClassType = useMutation({
     mutationFn: async (classTypeData: CreateClassTypeData) => {
       const { error } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .insert([classTypeData]);
       
       if (error) throw error;
@@ -39,9 +42,9 @@ export const useClassTypes = () => {
   const updateClassType = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateClassTypeData }) => {
       const { error } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .update(data)
-        .eq('class_type_id', id);
+        .eq('schedule_type_id', id);
       
       if (error) throw error;
     },
@@ -57,9 +60,9 @@ export const useClassTypes = () => {
   const deleteClassType = useMutation({
     mutationFn: async (id: number) => {
       const { error } = await supabase
-        .from('class_types')
+        .from('schedule_types')
         .delete()
-        .eq('class_type_id', id);
+        .eq('schedule_type_id', id);
       
       if (error) throw error;
     },
