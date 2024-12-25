@@ -16,7 +16,7 @@ const ClassTypes = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-fitness-text">Class Types</h3>
+        <h3 className="text-fitness-text">Schedule Type</h3>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]">
