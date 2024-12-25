@@ -21,12 +21,12 @@ const ClassTypes = () => {
           <DialogTrigger asChild>
             <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]">
               <Plus className="w-4 h-4 mr-2" />
-              Add Class Type
+              Add Schedule Type
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-fitness-card">
             <DialogHeader>
-              <DialogTitle className="text-fitness-text">Create New Class Type</DialogTitle>
+              <DialogTitle className="text-fitness-text">Create New Schedule Type</DialogTitle>
             </DialogHeader>
             <ClassTypeForm
               onSubmit={(data) => createClassType.mutateAsync(data)}
