@@ -17,15 +17,15 @@ const ClassTypes = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-fitness-text">Schedule Type</h3>
+        <h3 className="text-fitness-text">Schedule Types</h3>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]">
+            <Button className="bg-[#15e7fb] hover:bg-[#15e7fb]/80">
               <Plus className="w-4 h-4 mr-2" />
               Add Schedule Type
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-fitness-card max-h-[90vh]">
+          <DialogContent className="bg-fitness-card max-h-[90vh] w-[calc(100%+100px)] max-w-[calc(32rem+100px)]">
             <DialogHeader>
               <DialogTitle className="text-fitness-text">Create New Schedule Type</DialogTitle>
             </DialogHeader>
