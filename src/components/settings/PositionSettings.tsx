@@ -13,25 +13,34 @@ const PositionSettings = () => {
   const [selectedPosition, setSelectedPosition] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: positions, refetch } = useQuery({
+  const { data: positions, refetch, error: queryError } = useQuery({
     queryKey: ['positions'],
     queryFn: async () => {
+      console.log('Fetching positions...');
       const { data, error } = await supabase
         .from('positions')
         .select('*');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching positions:', error);
+        throw error;
+      }
+      console.log('Positions fetched:', data);
       return data;
     }
   });
 
   const createPositionMutation = useMutation({
     mutationFn: async (positionData: any) => {
+      console.log('Creating position:', positionData);
       const { data, error } = await supabase
         .from('positions')
         .insert([positionData]);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating position:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -42,16 +51,28 @@ const PositionSettings = () => {
       refetch();
       setIsDialogOpen(false);
     },
+    onError: (error) => {
+      console.error('Mutation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create position. Please try again.",
+        variant: "destructive",
+      });
+    }
   });
 
   const updatePositionMutation = useMutation({
     mutationFn: async (positionData: any) => {
+      console.log('Updating position:', positionData);
       const { data, error } = await supabase
         .from('positions')
         .update(positionData)
         .eq('positionid', selectedPosition.positionid);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating position:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -63,16 +84,28 @@ const PositionSettings = () => {
       setIsDialogOpen(false);
       setSelectedPosition(null);
     },
+    onError: (error) => {
+      console.error('Update mutation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update position. Please try again.",
+        variant: "destructive",
+      });
+    }
   });
 
   const deletePositionMutation = useMutation({
     mutationFn: async (positionId: number) => {
+      console.log('Deleting position:', positionId);
       const { error } = await supabase
         .from('positions')
         .delete()
         .eq('positionid', positionId);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting position:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({
@@ -81,15 +114,35 @@ const PositionSettings = () => {
       });
       refetch();
     },
+    onError: (error) => {
+      console.error('Delete mutation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete position. Please try again.",
+        variant: "destructive",
+      });
+    }
   });
 
   const handleSubmit = (positionData: any) => {
+    console.log('Handling submit with data:', positionData);
     if (selectedPosition) {
       updatePositionMutation.mutate(positionData);
     } else {
       createPositionMutation.mutate(positionData);
     }
   };
+
+  if (queryError) {
+    console.error('Query error:', queryError);
+    return (
+      <Card className="bg-fitness-card">
+        <CardContent className="p-6">
+          <p className="text-red-500">Error loading positions. Please try again later.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-fitness-card">
