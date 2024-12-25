@@ -21,12 +21,22 @@ export const PositionCard = ({ position, onEdit, onDelete }: PositionCardProps) 
     }
   };
 
+  const formatPayRate = (rate: number | null | undefined) => {
+    if (rate === null || rate === undefined) return '0';
+    try {
+      return rate.toLocaleString();
+    } catch (error) {
+      console.error('Error formatting pay rate:', error);
+      return '0';
+    }
+  };
+
   return (
     <div className="p-4 bg-fitness-inner rounded-md flex justify-between items-center">
       <div>
         <h4 className="text-fitness-text font-medium">{position.positionname}</h4>
         <p className="text-fitness-text/70 text-sm mt-1">
-          Pay Rate: ${position.defaultpayrate?.toLocaleString() || '0'} {formatPayType(position.paytype)}
+          Pay Rate: ${formatPayRate(position.defaultpayrate)} {formatPayType(position.paytype)}
         </p>
       </div>
       <div className="flex gap-2">
