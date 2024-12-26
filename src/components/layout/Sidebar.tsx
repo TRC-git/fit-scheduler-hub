@@ -21,7 +21,7 @@ const Sidebar = () => {
       <div>
         <h2 className="text-xl font-semibold text-fitness-text mb-4">Staff</h2>
         <ScrollArea 
-          className="h-[280px] pr-4" 
+          className="h-[300px] pr-4" 
           style={{
             '--scrollbar-thumb': '#15e7fb',
             '--scrollbar-track': 'transparent'
