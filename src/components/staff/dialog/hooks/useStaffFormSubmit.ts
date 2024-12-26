@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PositionWithPayRate } from "../../positions/types";
+import { TimeSlot } from "../types/availability";
 
 interface StaffFormData {
   firstname: string;
   lastname: string;
   email: string;
   phonenumber: string;
-}
-
-interface TimeSlot {
-  dayofweek: string;
-  starttime: string;
-  endtime: string;
-  ispreferred?: boolean;
 }
 
 export const useStaffFormSubmit = (
