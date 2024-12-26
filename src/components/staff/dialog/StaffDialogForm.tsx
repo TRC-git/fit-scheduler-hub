@@ -5,10 +5,11 @@ import { DialogActions } from "./DialogActions";
 import { PositionWithPayRate } from "../positions/types";
 import { AvailabilitySection } from "./AvailabilitySection";
 import { supabase } from "@/integrations/supabase/client";
+import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
 
 interface StaffDialogFormProps {
   initialData?: any;
-  onSubmit: (formData: any, positions: PositionWithPayRate[]) => void;
+  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<any>;
   onCancel: () => void;
   loading: boolean;
 }
@@ -16,8 +17,8 @@ interface StaffDialogFormProps {
 export const StaffDialogForm = ({ 
   initialData, 
   onSubmit, 
-  onCancel, 
-  loading 
+  onCancel,
+  loading: parentLoading 
 }: StaffDialogFormProps) => {
   const [selectedPositions, setSelectedPositions] = useState<PositionWithPayRate[]>([]);
   const [availability, setAvailability] = useState<any[]>([]);
@@ -27,6 +28,8 @@ export const StaffDialogForm = ({
     email: "",
     phonenumber: "",
   });
+
+  const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
 
   useEffect(() => {
     if (initialData) {
@@ -71,15 +74,6 @@ export const StaffDialogForm = ({
       if (initialData.employeeid) {
         fetchAvailability(initialData.employeeid);
       }
-    } else {
-      setFormData({
-        firstname: "",
-        lastname: "",
-        email: "",
-        phonenumber: "",
-      });
-      setSelectedPositions([]);
-      setAvailability([]);
     }
   }, [initialData]);
 
@@ -96,34 +90,7 @@ export const StaffDialogForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // First submit the form data and get the employee ID
-    const success = await onSubmit(formData, selectedPositions);
-    
-    if (success && (initialData?.employeeid || success.employeeid)) {
-      const employeeId = initialData?.employeeid || success.employeeid;
-      
-      // Delete existing availability
-      await supabase
-        .from('employeeavailability')
-        .delete()
-        .eq('employeeid', employeeId);
-      
-      // Insert new availability
-      if (availability.length > 0) {
-        const availabilityData = availability.map(slot => ({
-          employeeid: employeeId,
-          dayofweek: slot.dayofweek,
-          starttime: slot.starttime,
-          endtime: slot.endtime,
-          ispreferred: slot.ispreferred || false
-        }));
-        
-        await supabase
-          .from('employeeavailability')
-          .insert(availabilityData);
-      }
-    }
+    await submitForm(formData, selectedPositions, availability);
   };
 
   const handleFormChange = (field: keyof typeof formData, value: string) => {
@@ -147,7 +114,7 @@ export const StaffDialogForm = ({
       />
       <DialogActions 
         onCancel={onCancel}
-        loading={loading}
+        loading={loading || parentLoading}
         isEditing={!!initialData}
       />
     </form>
