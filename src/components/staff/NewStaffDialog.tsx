@@ -47,17 +47,17 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
         // Insert updated positions
         if (selectedPositions.length > 0) {
+          const positionsToInsert = selectedPositions.map((position, index) => ({
+            employeeid: initialData.employeeid,
+            positionid: position.positionid,
+            payrate: position.payrate || position.defaultpayrate || 0,
+            is_primary: index === 0,
+            access_level: position.access_level ? JSON.stringify(position.access_level) : 'basic'
+          }));
+
           const { error: positionsError } = await supabase
             .from("employeepositions")
-            .insert(
-              selectedPositions.map((position, index) => ({
-                employeeid: initialData.employeeid,
-                positionid: position.positionid,
-                payrate: position.payrate || position.defaultpayrate || 0,
-                is_primary: index === 0,
-                access_level: position.access_level || 'basic'
-              }))
-            );
+            .insert(positionsToInsert);
 
           if (positionsError) {
             console.error("Error inserting positions:", positionsError);
@@ -90,17 +90,17 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
         }
 
         if (selectedPositions.length > 0) {
+          const positionsToInsert = selectedPositions.map((position, index) => ({
+            employeeid: employeeData.employeeid,
+            positionid: position.positionid,
+            payrate: position.payrate || position.defaultpayrate || 0,
+            is_primary: index === 0,
+            access_level: position.access_level ? JSON.stringify(position.access_level) : 'basic'
+          }));
+
           const { error: positionsError } = await supabase
             .from("employeepositions")
-            .insert(
-              selectedPositions.map((position, index) => ({
-                employeeid: employeeData.employeeid,
-                positionid: position.positionid,
-                payrate: position.payrate || position.defaultpayrate || 0,
-                is_primary: index === 0,
-                access_level: position.access_level || 'basic'
-              }))
-            );
+            .insert(positionsToInsert);
 
           if (positionsError) {
             console.error("Error inserting positions:", positionsError);

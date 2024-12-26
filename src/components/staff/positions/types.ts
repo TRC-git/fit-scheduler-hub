@@ -1,19 +1,7 @@
-import type { PermissionSettingsType } from "@/types/permissions";
-
-export interface Position {
-  positionid: number;
-  positionname: string;
-  defaultpayrate?: number | null;
-  description?: string | null;
-  min_experience_months?: number | null;
-  paytype?: string | null;
-  required_certifications?: string[] | null;
-  access_level?: PermissionSettingsType | null;
-  payrate?: number;
-}
+import type { Position } from "@/types/permissions";
 
 export interface PositionWithPayRate extends Position {
-  payrate?: number;
+  payrate: number;
 }
 
 export interface FormData {

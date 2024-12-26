@@ -28,15 +28,13 @@ export interface PermissionSettingsType {
 export interface Position {
   positionid: number;
   positionname: string;
-  defaultpayrate?: number | null;
+  defaultpayrate: number | null;
   description?: string | null;
   min_experience_months?: number | null;
   paytype?: string | null;
   required_certifications?: string[] | null;
-  access_level?: PermissionSettingsType | null;
+  access_level: PermissionSettingsType | null;
   payrate?: number;
 }
 
-export type PositionWithPermissions = Position & {
-  access_level: PermissionSettingsType | null;
-};
+export type PositionWithPermissions = Position;
