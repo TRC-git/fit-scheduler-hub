@@ -28,7 +28,7 @@ const StaffList = () => {
     queryFn: async () => {
       console.log("Fetching staff members...");
       try {
-        const { data, error } = await supabase
+        const { data: staffData, error: staffError } = await supabase
           .from("employees")
           .select(`
             *,
@@ -49,18 +49,19 @@ const StaffList = () => {
           .eq("isactive", true)
           .order("firstname");
         
-        if (error) {
-          console.error("Error fetching staff:", error);
-          throw error;
+        if (staffError) {
+          console.error("Error fetching staff:", staffError);
+          throw staffError;
         }
         
-        console.log("Staff data:", data);
-        return data;
+        console.log("Staff data:", staffData);
+        return staffData;
       } catch (error) {
         console.error("Error in staff query:", error);
         throw error;
       }
     },
+    retry: 1,
   });
 
   const suspendMutation = useMutation({
@@ -79,6 +80,14 @@ const StaffList = () => {
         description: `Staff member ${suspend ? 'suspended' : 'resumed'} successfully`,
       });
     },
+    onError: (error) => {
+      console.error("Error in suspend mutation:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update staff member status",
+        variant: "destructive",
+      });
+    }
   });
 
   const deleteMutation = useMutation({
@@ -98,6 +107,14 @@ const StaffList = () => {
       });
       setStaffToDelete(null);
     },
+    onError: (error) => {
+      console.error("Error in delete mutation:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete staff member",
+        variant: "destructive",
+      });
+    }
   });
 
   const handleEdit = (member: any) => {
