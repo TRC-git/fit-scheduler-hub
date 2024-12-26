@@ -28,7 +28,13 @@ export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorPro
         <SelectValue placeholder={label} />
       </SelectTrigger>
       <SelectContent className="bg-fitness-card border-fitness-muted">
-        <ScrollArea className="h-[200px]">
+        <ScrollArea 
+          className="h-[200px] pr-4" 
+          style={{
+            '--scrollbar-thumb': '#15e7fb',
+            '--scrollbar-track': 'transparent'
+          } as React.CSSProperties}
+        >
           {timeSlots.map(({ display, value }) => (
             <SelectItem
               key={value}
