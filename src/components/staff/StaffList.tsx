@@ -24,6 +24,11 @@ const StaffList = () => {
     updatePayRateMutation.mutate({ employeeId, positionId, payRate });
   };
 
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedStaff(null);
+  };
+
   if (error) {
     console.error("Staff list error:", error);
     return (
@@ -65,7 +70,7 @@ const StaffList = () => {
 
       <NewStaffDialog 
         open={dialogOpen} 
-        onOpenChange={setDialogOpen}
+        onOpenChange={handleDialogClose}
         initialData={selectedStaff}
       />
     </>

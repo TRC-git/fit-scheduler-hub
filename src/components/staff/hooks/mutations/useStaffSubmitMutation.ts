@@ -20,7 +20,20 @@ export const useStaffSubmitMutation = () => {
     employeeId: number,
     selectedPositions: PositionWithPayRate[]
   ) => {
+    console.log("Handling employee positions for:", employeeId, selectedPositions);
+    
     if (selectedPositions.length === 0) return;
+
+    // Delete existing positions first
+    const { error: deleteError } = await supabase
+      .from("employeepositions")
+      .delete()
+      .eq("employeeid", employeeId);
+
+    if (deleteError) {
+      console.error("Error deleting positions:", deleteError);
+      throw deleteError;
+    }
 
     const positionsToInsert = selectedPositions.map((position, index) => ({
       employeeid: employeeId,
@@ -44,6 +57,8 @@ export const useStaffSubmitMutation = () => {
     formData: StaffFormData,
     selectedPositions: PositionWithPayRate[]
   ) => {
+    console.log("Creating staff member:", formData);
+    
     const primaryPosition = selectedPositions[0]?.positionid || null;
 
     const { data: employeeData, error: employeeError } = await supabase
@@ -73,25 +88,22 @@ export const useStaffSubmitMutation = () => {
     formData: StaffFormData,
     selectedPositions: PositionWithPayRate[]
   ) => {
+    console.log("Updating staff member:", employeeId, formData);
+    
     const primaryPosition = selectedPositions[0]?.positionid || null;
 
     const { error: employeeError } = await supabase
       .from("employees")
       .update({
         ...formData,
-        isactive: true,
         position_id: primaryPosition,
       })
       .eq("employeeid", employeeId);
 
-    if (employeeError) throw employeeError;
-
-    const { error: deleteError } = await supabase
-      .from("employeepositions")
-      .delete()
-      .eq("employeeid", employeeId);
-
-    if (deleteError) throw deleteError;
+    if (employeeError) {
+      console.error("Error updating employee:", employeeError);
+      throw employeeError;
+    }
 
     await handleEmployeePositions(employeeId, selectedPositions);
   };
@@ -101,7 +113,9 @@ export const useStaffSubmitMutation = () => {
     selectedPositions: PositionWithPayRate[],
     initialData?: any
   ) => {
+    console.log("Submitting staff form:", { formData, selectedPositions, initialData });
     setLoading(true);
+    
     try {
       if (initialData) {
         await updateStaffMember(initialData.employeeid, formData, selectedPositions);
@@ -116,7 +130,9 @@ export const useStaffSubmitMutation = () => {
           description: "Staff member added successfully",
         });
       }
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      
+      // Invalidate and refetch staff data
+      await queryClient.invalidateQueries({ queryKey: ["staff"] });
       return true;
     } catch (error: any) {
       console.error("Error in submitStaffForm:", error);

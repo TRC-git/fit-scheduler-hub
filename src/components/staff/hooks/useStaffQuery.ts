@@ -17,7 +17,8 @@ export const useStaffQuery = () => {
               positions (
                 positionid,
                 positionname,
-                access_level
+                access_level,
+                defaultpayrate
               )
             ),
             positions:employees_position_id_fkey (
@@ -40,6 +41,7 @@ export const useStaffQuery = () => {
         throw error;
       }
     },
-    retry: 1,
+    staleTime: 1000, // Consider data stale after 1 second
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 };
