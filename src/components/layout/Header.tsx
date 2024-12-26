@@ -16,8 +16,8 @@ const Header = () => {
     <header className="bg-fitness-card border-b border-fitness-border">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-fitness-text text-xl font-bold">
-            Fitness Schedule
+          <Link to="/" className="text-fitness-text text-xl font-bold font-['Cousine'] tracking-wider">
+            ScheduleFor
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/">
