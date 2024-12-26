@@ -1,12 +1,7 @@
 import { Plus, Check, X } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-
-const staffMembers = [
-  { id: 1, name: "Heath Graham", role: "Coach", avatar: "HG" },
-  { id: 2, name: "Ted Gonder", role: "Coach", avatar: "TG" },
-  { id: 3, name: "Jay Duquette", role: "Coach", avatar: "JD" },
-  { id: 4, name: "Jane Doe", role: "Personal Trainer", avatar: "JD" },
-];
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useStaffQuery } from "../staff/hooks/useStaffQuery";
 
 const approvedTimeOff = [
   { name: "Heath Graham", approver: "Manager Name" },
@@ -19,31 +14,45 @@ const timeOffRequests = [
 ];
 
 const Sidebar = () => {
+  const { data: staff } = useStaffQuery();
+
   return (
     <aside className="w-72 bg-fitness-card border-r border-fitness-muted p-4 flex flex-col gap-6">
       <div>
         <h2 className="text-xl font-semibold text-fitness-text mb-4">Staff</h2>
-        <div className="space-y-3">
-          {staffMembers.map((staff) => (
-            <div
-              key={staff.id}
-              className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
-            >
-              <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10">
-                  <div className="w-full h-full bg-fitness-accent flex items-center justify-center text-white font-semibold">
-                    {staff.avatar}
+        <ScrollArea 
+          className="h-[280px] pr-4" 
+          style={{
+            '--scrollbar-thumb': '#15e7fb',
+            '--scrollbar-track': 'transparent'
+          } as React.CSSProperties}
+        >
+          <div className="space-y-3">
+            {staff?.map((member) => (
+              <div
+                key={member.employeeid}
+                className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-10 h-10">
+                    <div className="w-full h-full bg-fitness-accent flex items-center justify-center text-white font-semibold">
+                      {member.firstname[0]}{member.lastname[0]}
+                    </div>
+                  </Avatar>
+                  <div>
+                    <p className="text-fitness-text font-medium">
+                      {member.firstname} {member.lastname}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      {member.positions?.positionname || "No Position"}
+                    </p>
                   </div>
-                </Avatar>
-                <div>
-                  <p className="text-fitness-text font-medium">{staff.name}</p>
-                  <p className="text-sm text-gray-400">{staff.role}</p>
                 </div>
+                <Plus className="w-5 h-5 text-fitness-accent cursor-pointer" />
               </div>
-              <Plus className="w-5 h-5 text-fitness-accent cursor-pointer" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
 
       <div>
