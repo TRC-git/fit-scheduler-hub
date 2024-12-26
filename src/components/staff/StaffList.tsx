@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,13 +12,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Ban, Unlock, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { StaffCard } from "./StaffCard";
+import NewStaffDialog from "./NewStaffDialog";
 
 const StaffList = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [staffToDelete, setStaffToDelete] = useState<any>(null);
+  const [selectedStaff, setSelectedStaff] = useState<any>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   
   const { data: staff, isLoading, error } = useQuery({
     queryKey: ["staff"],
@@ -92,6 +93,11 @@ const StaffList = () => {
     },
   });
 
+  const handleEdit = (member: any) => {
+    setSelectedStaff(member);
+    setDialogOpen(true);
+  };
+
   if (error) {
     return (
       <div className="p-4 text-red-500 bg-red-100 rounded">
@@ -114,75 +120,15 @@ const StaffList = () => {
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {staff?.map((member) => (
-          <Card key={member.employeeid} className="p-4 bg-fitness-card">
-            <div className="flex items-start gap-4">
-              <Avatar className="w-12 h-12">
-                <div className="w-full h-full bg-fitness-accent flex items-center justify-center text-white font-semibold">
-                  {member.firstname[0]}{member.lastname[0]}
-                </div>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-fitness-text font-medium">
-                    {member.firstname} {member.lastname}
-                  </h3>
-                  {member.suspended && (
-                    <span className="text-xs bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">
-                      Suspended
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-400">{member.email}</p>
-                <p className="text-sm text-gray-400">{member.phonenumber}</p>
-                <div className="mt-2 space-y-1">
-                  {member.employeepositions?.map((position: any, index: number) => (
-                    <p key={index} className="text-xs text-fitness-accent">
-                      {position.positions.positionname}
-                      {position.is_primary && " (Primary)"}
-                    </p>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-[#15e7fb]"
-                  onClick={() => {
-                    toast({
-                      title: "Edit",
-                      description: "Edit functionality coming soon",
-                    });
-                  }}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={member.suspended ? "text-green-500" : "text-yellow-500"}
-                  onClick={() => suspendMutation.mutate({ 
-                    employeeId: member.employeeid, 
-                    suspend: !member.suspended 
-                  })}
-                >
-                  {member.suspended ? (
-                    <Unlock className="h-4 w-4" />
-                  ) : (
-                    <Ban className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-fitness-danger"
-                  onClick={() => setStaffToDelete(member)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </Card>
+          <StaffCard
+            key={member.employeeid}
+            member={member}
+            onEdit={handleEdit}
+            onSuspend={(employeeId, suspend) => 
+              suspendMutation.mutate({ employeeId, suspend })
+            }
+            onDelete={setStaffToDelete}
+          />
         ))}
       </div>
 
@@ -206,6 +152,12 @@ const StaffList = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <NewStaffDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen}
+        initialData={selectedStaff}
+      />
     </>
   );
 };
