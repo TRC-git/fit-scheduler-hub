@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, X, DollarSign } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -18,9 +19,13 @@ interface Position {
   access_level: any;
 }
 
+interface PositionWithPayRate extends Position {
+  payrate?: number;
+}
+
 interface PositionSelectProps {
-  selectedPositions: Position[];
-  onPositionsChange: (positions: Position[]) => void;
+  selectedPositions: PositionWithPayRate[];
+  onPositionsChange: (positions: PositionWithPayRate[]) => void;
 }
 
 export const PositionSelect = ({ selectedPositions, onPositionsChange }: PositionSelectProps) => {
@@ -42,13 +47,26 @@ export const PositionSelect = ({ selectedPositions, onPositionsChange }: Positio
   const handleAddPosition = () => {
     const position = positions?.find(p => p.positionid.toString() === currentPosition);
     if (position && !selectedPositions.find(p => p.positionid === position.positionid)) {
-      onPositionsChange([...selectedPositions, position]);
+      onPositionsChange([...selectedPositions, { ...position, payrate: position.defaultpayrate || 0 }]);
       setCurrentPosition("");
     }
   };
 
   const handleRemovePosition = (positionId: number) => {
     onPositionsChange(selectedPositions.filter(p => p.positionid !== positionId));
+  };
+
+  const handlePayRateChange = (positionId: number, newPayRate: string) => {
+    const numericPayRate = parseFloat(newPayRate);
+    if (!isNaN(numericPayRate)) {
+      onPositionsChange(
+        selectedPositions.map(p => 
+          p.positionid === positionId 
+            ? { ...p, payrate: numericPayRate } 
+            : p
+        )
+      );
+    }
   };
 
   return (
@@ -90,15 +108,28 @@ export const PositionSelect = ({ selectedPositions, onPositionsChange }: Positio
             className="flex items-center justify-between p-2 bg-fitness-inner rounded-md"
           >
             <span className="text-fitness-text">{position.positionname}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => handleRemovePosition(position.positionid)}
-              className="text-red-500 hover:text-red-600"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <DollarSign className="w-4 h-4 text-fitness-text" />
+                <Input
+                  type="number"
+                  value={position.payrate || 0}
+                  onChange={(e) => handlePayRateChange(position.positionid, e.target.value)}
+                  className="w-24 h-8 bg-fitness-card text-fitness-text"
+                  step="0.01"
+                  min="0"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => handleRemovePosition(position.positionid)}
+                className="text-red-500 hover:text-red-600"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>

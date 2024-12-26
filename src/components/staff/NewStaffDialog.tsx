@@ -11,6 +11,7 @@ interface Position {
   positionid: number;
   positionname: string;
   defaultpayrate: number | null;
+  payrate?: number;
   access_level: any;
 }
 
@@ -45,7 +46,8 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
       const positions = initialData.employeepositions?.map((ep: any) => ({
         positionid: ep.positions.positionid,
         positionname: ep.positions.positionname,
-        defaultpayrate: ep.payrate,
+        defaultpayrate: ep.positions.defaultpayrate,
+        payrate: ep.payrate,
         access_level: ep.positions.access_level
       })) || [];
       setSelectedPositions(positions);
@@ -99,7 +101,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
               selectedPositions.map((position, index) => ({
                 employeeid: initialData.employeeid,
                 positionid: position.positionid,
-                payrate: position.defaultpayrate || 0,
+                payrate: position.payrate || position.defaultpayrate || 0,
                 is_primary: index === 0,
                 access_level: position.access_level
               }))
@@ -135,7 +137,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
               selectedPositions.map((position, index) => ({
                 employeeid: employeeData.employeeid,
                 positionid: position.positionid,
-                payrate: position.defaultpayrate || 0,
+                payrate: position.payrate || position.defaultpayrate || 0,
                 is_primary: index === 0,
                 access_level: position.access_level
               }))
