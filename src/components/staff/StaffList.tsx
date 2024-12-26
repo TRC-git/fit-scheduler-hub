@@ -41,7 +41,7 @@ const StaffList = () => {
                 access_level
               )
             ),
-            positions!employees_position_id_fkey (
+            positions:employees_position_id_fkey (
               positionid,
               positionname
             )
