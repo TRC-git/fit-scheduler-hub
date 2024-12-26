@@ -35,6 +35,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
   useEffect(() => {
     if (initialData) {
+      console.log("Setting initial data:", initialData);
       setFormData({
         firstname: initialData.firstname,
         lastname: initialData.lastname,
@@ -50,6 +51,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
         access_level: ep.positions.access_level
       })) || [];
       setSelectedPositions(positions);
+      console.log("Set selected positions:", positions);
     } else {
       // Reset form when adding new staff
       setFormData({
@@ -65,6 +67,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Submitting form with positions:", selectedPositions);
 
     try {
       if (initialData) {

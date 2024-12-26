@@ -32,7 +32,10 @@ const StaffList = () => {
         .select(`
           *,
           employeepositions (
+            payrate,
+            is_primary,
             positions (
+              positionid,
               positionname,
               access_level
             )
@@ -94,6 +97,7 @@ const StaffList = () => {
   });
 
   const handleEdit = (member: any) => {
+    console.log("Editing member:", member); // Add this for debugging
     setSelectedStaff(member);
     setDialogOpen(true);
   };
