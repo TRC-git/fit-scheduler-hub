@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const Router = () => {
+const Router = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -67,3 +67,5 @@ export const Router = () => {
     </Routes>
   );
 };
+
+export default Router;
