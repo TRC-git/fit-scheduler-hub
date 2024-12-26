@@ -17,8 +17,6 @@ const Login = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const redirectUrl = new URL(window.location.origin).toString().replace(/\/$/, '');
-
   return (
     <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4 font-['Cousine']">
       <div className="w-full max-w-md">
@@ -51,8 +49,8 @@ const Login = () => {
               },
             }}
             providers={[]}
-            redirectTo={redirectUrl}
-            view="sign_up"
+            redirectTo={window.location.origin}
+            view="sign_in"
           />
         </div>
       </div>
