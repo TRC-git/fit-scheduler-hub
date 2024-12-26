@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { StaffFormFields } from "./StaffFormFields";
 import { PositionSelect } from "../positions/PositionSelect";
 import { DialogActions } from "./DialogActions";
-import { Position, PositionWithPayRate } from "../positions/types";
+import { PositionWithPayRate } from "../positions/types";
 
 interface StaffDialogFormProps {
   initialData?: any;
