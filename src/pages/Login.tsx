@@ -24,7 +24,7 @@ const Login = () => {
       <div className="w-full max-w-md">
         <div className="bg-fitness-card rounded-lg p-8">
           <h1 className="text-2xl font-bold text-fitness-text mb-2 text-center font-['Cousine'] tracking-wider tracking-wider">ScheduleFor</h1>
-          <p className="text-fitness-text text-center mb-6 font-['Cousine']">Sign in to your account or create a new one</p>
+          <p className="text-fitness-text text-center mb-6 font-['Cousine'] text-sm">Sign in to your account or create a new one</p>
           <Auth
             supabaseClient={supabase}
             appearance={{
