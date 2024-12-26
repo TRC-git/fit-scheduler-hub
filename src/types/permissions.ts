@@ -33,7 +33,7 @@ export interface Position {
   min_experience_months?: number | null;
   paytype?: string | null;
   required_certifications?: string[] | null;
-  access_level?: Json | null;
+  access_level?: PermissionSettingsType | null;
 }
 
 export type PositionWithPermissions = Omit<Position, 'access_level'> & {

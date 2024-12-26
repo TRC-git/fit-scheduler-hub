@@ -11,5 +11,13 @@ export interface Position {
 
 export interface PositionWithPayRate extends Position {
   payrate?: number;
-  access_level?: any;
+}
+
+export interface FormData {
+  positionname: string;
+  paytype: string;
+  defaultpayrate: string;
+  description: string;
+  required_certifications: string;
+  min_experience_months: string;
 }
