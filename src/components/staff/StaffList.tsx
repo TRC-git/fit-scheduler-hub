@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Pause, Trash2 } from "lucide-react";
+import { Pencil, Ban, Unlock, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const StaffList = () => {
@@ -53,19 +53,19 @@ const StaffList = () => {
   });
 
   const suspendMutation = useMutation({
-    mutationFn: async (employeeId: number) => {
+    mutationFn: async ({ employeeId, suspend }: { employeeId: number, suspend: boolean }) => {
       const { error } = await supabase
         .from("employees")
-        .update({ isactive: false })
+        .update({ suspended: suspend })
         .eq("employeeid", employeeId);
       
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, { suspend }) => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
       toast({
         title: "Success",
-        description: "Staff member suspended successfully",
+        description: `Staff member ${suspend ? 'suspended' : 'resumed'} successfully`,
       });
     },
   });
@@ -119,9 +119,16 @@ const StaffList = () => {
                 </div>
               </Avatar>
               <div className="flex-1">
-                <h3 className="text-fitness-text font-medium">
-                  {member.firstname} {member.lastname}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-fitness-text font-medium">
+                    {member.firstname} {member.lastname}
+                  </h3>
+                  {member.suspended && (
+                    <span className="text-xs bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">
+                      Suspended
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-gray-400">{member.email}</p>
                 <p className="text-sm text-gray-400">{member.phonenumber}</p>
                 {member.employeepositions?.[0]?.positions?.positionname && (
@@ -147,10 +154,17 @@ const StaffList = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-yellow-500"
-                  onClick={() => suspendMutation.mutate(member.employeeid)}
+                  className={member.suspended ? "text-green-500" : "text-yellow-500"}
+                  onClick={() => suspendMutation.mutate({ 
+                    employeeId: member.employeeid, 
+                    suspend: !member.suspended 
+                  })}
                 >
-                  <Pause className="h-4 w-4" />
+                  {member.suspended ? (
+                    <Unlock className="h-4 w-4" />
+                  ) : (
+                    <Ban className="h-4 w-4" />
+                  )}
                 </Button>
                 <Button
                   variant="ghost"

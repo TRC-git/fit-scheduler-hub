@@ -331,6 +331,7 @@ export type Database = {
           isactive: boolean | null
           lastname: string
           phonenumber: string | null
+          suspended: boolean | null
         }
         Insert: {
           email: string
@@ -340,6 +341,7 @@ export type Database = {
           isactive?: boolean | null
           lastname: string
           phonenumber?: string | null
+          suspended?: boolean | null
         }
         Update: {
           email?: string
@@ -349,6 +351,7 @@ export type Database = {
           isactive?: boolean | null
           lastname?: string
           phonenumber?: string | null
+          suspended?: boolean | null
         }
         Relationships: []
       }

@@ -5,6 +5,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface StaffSelectProps {
   value: string;
@@ -12,6 +14,21 @@ interface StaffSelectProps {
 }
 
 export const StaffSelect = ({ value, onChange }: StaffSelectProps) => {
+  const { data: staff } = useQuery({
+    queryKey: ["staff"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("employees")
+        .select("*")
+        .eq("isactive", true)
+        .eq("suspended", false)
+        .order("firstname");
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   return (
     <div>
       <label className="text-sm font-medium text-fitness-text">Staff Name</label>
@@ -20,9 +37,15 @@ export const StaffSelect = ({ value, onChange }: StaffSelectProps) => {
           <SelectValue placeholder="Select staff" />
         </SelectTrigger>
         <SelectContent className="bg-[#333333] border-[#d1d1d1]">
-          <SelectItem value="Heath Graham" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">Heath Graham</SelectItem>
-          <SelectItem value="John Doe" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">John Doe</SelectItem>
-          <SelectItem value="Jane Smith" className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]">Jane Smith</SelectItem>
+          {staff?.map((member) => (
+            <SelectItem 
+              key={member.employeeid}
+              value={`${member.firstname} ${member.lastname}`}
+              className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]"
+            >
+              {member.firstname} {member.lastname}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
