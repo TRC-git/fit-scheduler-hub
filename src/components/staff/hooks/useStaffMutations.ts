@@ -1,106 +1,138 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { PositionWithPayRate } from "../positions/types";
+
+interface StaffFormData {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phonenumber: string;
+}
 
 export const useStaffMutations = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
 
-  const updatePayRateMutation = useMutation({
-    mutationFn: async ({ 
-      employeeId, 
-      positionId, 
-      payRate 
-    }: { 
-      employeeId: number; 
-      positionId: number; 
-      payRate: number 
-    }) => {
-      console.log('Updating pay rate:', { employeeId, positionId, payRate });
-      const { data, error } = await supabase
-        .from('employeepositions')
-        .update({ 
-          payrate: payRate,
-          custom_payrate: payRate 
-        })
-        .eq('employeeid', employeeId)
-        .eq('positionid', positionId);
+  const handleEmployeePositions = async (
+    employeeId: number,
+    selectedPositions: PositionWithPayRate[]
+  ) => {
+    if (selectedPositions.length === 0) return;
 
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['staff'] });
-      toast({
-        title: "Success",
-        description: "Pay rate updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error('Error updating pay rate:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update pay rate",
-        variant: "destructive",
-      });
+    const positionsToInsert = selectedPositions.map((position, index) => ({
+      employeeid: employeeId,
+      positionid: position.positionid,
+      payrate: position.payrate || position.defaultpayrate || 0,
+      is_primary: index === 0,
+      access_level: position.access_level ? JSON.stringify(position.access_level) : 'basic'
+    }));
+
+    const { error: positionsError } = await supabase
+      .from("employeepositions")
+      .insert(positionsToInsert);
+
+    if (positionsError) {
+      console.error("Error inserting positions:", positionsError);
+      throw positionsError;
     }
-  });
+  };
 
-  const suspendMutation = useMutation({
-    mutationFn: async ({ employeeId, suspend }: { employeeId: number, suspend: boolean }) => {
-      const { error } = await supabase
-        .from("employees")
-        .update({ suspended: suspend })
-        .eq("employeeid", employeeId);
-      
-      if (error) throw error;
-    },
-    onSuccess: (_, { suspend }) => {
+  const createStaffMember = async (
+    formData: StaffFormData,
+    selectedPositions: PositionWithPayRate[]
+  ) => {
+    const primaryPosition = selectedPositions[0]?.positionid || null;
+
+    const { data: employeeData, error: employeeError } = await supabase
+      .from("employees")
+      .insert([
+        {
+          ...formData,
+          hiredate: new Date().toISOString(),
+          isactive: true,
+          position_id: primaryPosition,
+        },
+      ])
+      .select()
+      .single();
+
+    if (employeeError) {
+      console.error("Error creating employee:", employeeError);
+      throw employeeError;
+    }
+
+    await handleEmployeePositions(employeeData.employeeid, selectedPositions);
+    return employeeData;
+  };
+
+  const updateStaffMember = async (
+    employeeId: number,
+    formData: StaffFormData,
+    selectedPositions: PositionWithPayRate[]
+  ) => {
+    const primaryPosition = selectedPositions[0]?.positionid || null;
+
+    const { error: employeeError } = await supabase
+      .from("employees")
+      .update({
+        ...formData,
+        isactive: true,
+        position_id: primaryPosition,
+      })
+      .eq("employeeid", employeeId);
+
+    if (employeeError) throw employeeError;
+
+    const { error: deleteError } = await supabase
+      .from("employeepositions")
+      .delete()
+      .eq("employeeid", employeeId);
+
+    if (deleteError) throw deleteError;
+
+    await handleEmployeePositions(employeeId, selectedPositions);
+  };
+
+  const submitStaffForm = async (
+    formData: StaffFormData,
+    selectedPositions: PositionWithPayRate[],
+    initialData?: any
+  ) => {
+    setLoading(true);
+    try {
+      if (initialData) {
+        await updateStaffMember(initialData.employeeid, formData, selectedPositions);
+        toast({
+          title: "Success",
+          description: "Staff member updated successfully",
+        });
+      } else {
+        await createStaffMember(formData, selectedPositions);
+        toast({
+          title: "Success",
+          description: "Staff member added successfully",
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["staff"] });
-      toast({
-        title: "Success",
-        description: `Staff member ${suspend ? 'suspended' : 'resumed'} successfully`,
-      });
-    },
-    onError: (error) => {
-      console.error("Error in suspend mutation:", error);
+      return true;
+    } catch (error: any) {
+      console.error("Error in submitStaffForm:", error);
       toast({
         title: "Error",
-        description: "Failed to update staff member status",
+        description: error.message || `Failed to ${initialData ? 'update' : 'add'} staff member`,
         variant: "destructive",
       });
+      return false;
+    } finally {
+      setLoading(false);
     }
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (employeeId: number) => {
-      const { error } = await supabase
-        .from("employees")
-        .delete()
-        .eq("employeeid", employeeId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
-      toast({
-        title: "Success",
-        description: "Staff member deleted successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Error in delete mutation:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete staff member",
-        variant: "destructive",
-      });
-    }
-  });
+  };
 
   return {
-    updatePayRateMutation,
-    suspendMutation,
-    deleteMutation
+    submitStaffForm,
+    loading
   };
 };
