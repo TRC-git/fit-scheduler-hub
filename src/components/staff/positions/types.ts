@@ -11,7 +11,6 @@ export interface Position {
 }
 
 export interface PositionWithPayRate extends Position {
-  defaultpayrate: number | null;
   payrate?: number;
   access_level?: any;
 }
