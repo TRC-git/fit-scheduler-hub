@@ -20,11 +20,11 @@ const Login = () => {
   const redirectUrl = new URL(window.location.origin).toString().replace(/\/$/, '');
 
   return (
-    <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4 font-['Cousine']">
       <div className="w-full max-w-md">
         <div className="bg-fitness-card rounded-lg p-8">
           <h1 className="text-2xl font-bold text-fitness-text mb-2 text-center font-['Cousine'] tracking-wider tracking-wider">ScheduleFor</h1>
-          <p className="text-fitness-text text-center mb-6">Sign in to your account or create a new one</p>
+          <p className="text-fitness-text text-center mb-6 font-['Cousine']">Sign in to your account or create a new one</p>
           <Auth
             supabaseClient={supabase}
             appearance={{
@@ -38,14 +38,15 @@ const Login = () => {
                 },
               },
               className: {
-                container: 'auth-container',
-                button: 'auth-button',
-                anchor: 'auth-anchor',
-                input: 'text-white',
+                container: 'auth-container font-[Cousine]',
+                button: 'auth-button font-[Cousine]',
+                anchor: 'auth-anchor font-[Cousine]',
+                input: 'text-white font-[Cousine]',
               },
               style: {
                 input: {
                   color: '#FFFFFF',
+                  fontFamily: 'Cousine',
                 },
               },
             }}
