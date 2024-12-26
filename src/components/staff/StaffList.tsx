@@ -39,6 +39,10 @@ const StaffList = () => {
               positionname,
               access_level
             )
+          ),
+          positions:position_id (
+            positionid,
+            positionname
           )
         `)
         .eq("isactive", true)

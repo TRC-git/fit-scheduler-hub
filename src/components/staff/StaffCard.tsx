@@ -2,7 +2,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Pencil, Ban, Unlock, Trash2 } from "lucide-react";
-import { Position } from "../settings/positions/types";
 
 interface StaffCardProps {
   member: any;
@@ -33,6 +32,13 @@ export const StaffCard = ({ member, onEdit, onSuspend, onDelete }: StaffCardProp
           </div>
           <p className="text-sm text-gray-400">{member.email}</p>
           <p className="text-sm text-gray-400">{member.phonenumber}</p>
+          {member.positions && (
+            <div className="mt-1">
+              <span className="text-xs text-fitness-accent">
+                Primary Position: {member.positions.positionname}
+              </span>
+            </div>
+          )}
           <div className="mt-2 space-y-1">
             {member.employeepositions?.map((position: any, index: number) => (
               <div key={index} className="flex items-center justify-between text-xs">

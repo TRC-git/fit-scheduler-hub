@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { PositionSelect } from "./positions/PositionSelect";
+import { StaffFormFields } from "./dialog/StaffFormFields";
+import { DialogActions } from "./dialog/DialogActions";
 
 interface Position {
   positionid: number;
@@ -43,7 +42,6 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
         phonenumber: initialData.phonenumber || "",
       });
       
-      // Set selected positions from initialData
       const positions = initialData.employeepositions?.map((ep: any) => ({
         positionid: ep.positions.positionid,
         positionname: ep.positions.positionname,
@@ -53,7 +51,6 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
       setSelectedPositions(positions);
       console.log("Set selected positions:", positions);
     } else {
-      // Reset form when adding new staff
       setFormData({
         firstname: "",
         lastname: "",
@@ -64,25 +61,30 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
     }
   }, [initialData, open]);
 
+  const handleFormChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     console.log("Submitting form with positions:", selectedPositions);
 
     try {
+      const primaryPosition = selectedPositions[0]?.positionid || null;
+
       if (initialData) {
-        // Update existing employee
         const { error: employeeError } = await supabase
           .from("employees")
           .update({
             ...formData,
             isactive: true,
+            position_id: primaryPosition,
           })
           .eq("employeeid", initialData.employeeid);
 
         if (employeeError) throw employeeError;
 
-        // Delete existing positions
         const { error: deleteError } = await supabase
           .from("employeepositions")
           .delete()
@@ -90,7 +92,6 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
         if (deleteError) throw deleteError;
 
-        // Insert updated positions
         if (selectedPositions.length > 0) {
           const { error: positionsError } = await supabase
             .from("employeepositions")
@@ -112,7 +113,6 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
           description: "Staff member updated successfully",
         });
       } else {
-        // Insert new employee
         const { data: employeeData, error: employeeError } = await supabase
           .from("employees")
           .insert([
@@ -120,6 +120,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
               ...formData,
               hiredate: new Date().toISOString(),
               isactive: true,
+              position_id: primaryPosition,
             },
           ])
           .select()
@@ -127,7 +128,6 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
         if (employeeError) throw employeeError;
 
-        // Insert employee positions
         if (selectedPositions.length > 0) {
           const { error: positionsError } = await supabase
             .from("employeepositions")
@@ -173,72 +173,16 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstname" className="text-fitness-text">First Name</Label>
-              <Input
-                id="firstname"
-                value={formData.firstname}
-                onChange={(e) => setFormData(prev => ({ ...prev, firstname: e.target.value }))}
-                className="bg-fitness-inner text-fitness-text"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastname" className="text-fitness-text">Last Name</Label>
-              <Input
-                id="lastname"
-                value={formData.lastname}
-                onChange={(e) => setFormData(prev => ({ ...prev, lastname: e.target.value }))}
-                className="bg-fitness-inner text-fitness-text"
-                required
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-fitness-text">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="bg-fitness-inner text-fitness-text"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-fitness-text">Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phonenumber}
-              onChange={(e) => setFormData(prev => ({ ...prev, phonenumber: e.target.value }))}
-              className="bg-fitness-inner text-fitness-text"
-            />
-          </div>
-          
+          <StaffFormFields formData={formData} onChange={handleFormChange} />
           <PositionSelect 
             selectedPositions={selectedPositions}
             onPositionsChange={setSelectedPositions}
           />
-
-          <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="text-fitness-text"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
-            >
-              {loading ? (initialData ? "Updating..." : "Adding...") : (initialData ? "Update Staff Member" : "Add Staff Member")}
-            </Button>
-          </div>
+          <DialogActions 
+            onCancel={() => onOpenChange(false)}
+            loading={loading}
+            isEditing={!!initialData}
+          />
         </form>
       </DialogContent>
     </Dialog>

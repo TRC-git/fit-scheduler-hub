@@ -331,6 +331,7 @@ export type Database = {
           isactive: boolean | null
           lastname: string
           phonenumber: string | null
+          position_id: number | null
           suspended: boolean | null
         }
         Insert: {
@@ -341,6 +342,7 @@ export type Database = {
           isactive?: boolean | null
           lastname: string
           phonenumber?: string | null
+          position_id?: number | null
           suspended?: boolean | null
         }
         Update: {
@@ -351,9 +353,25 @@ export type Database = {
           isactive?: boolean | null
           lastname?: string
           phonenumber?: string | null
+          position_id?: number | null
           suspended?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "employees_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["positionid"]
+          },
+          {
+            foreignKeyName: "fk_employee_position"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["positionid"]
+          },
+        ]
       }
       notifications: {
         Row: {
