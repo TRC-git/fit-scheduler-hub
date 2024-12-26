@@ -1,19 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { PositionSelect } from "./positions/PositionSelect";
-import { StaffFormFields } from "./dialog/StaffFormFields";
-import { DialogActions } from "./dialog/DialogActions";
-
-interface Position {
-  positionid: number;
-  positionname: string;
-  defaultpayrate: number | null;
-  payrate?: number;
-  access_level: any;
-}
+import { StaffDialogForm } from "./dialog/StaffDialogForm";
+import { Position } from "./positions/types";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -25,63 +16,8 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [selectedPositions, setSelectedPositions] = useState<Position[]>([]);
-  const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    phonenumber: "",
-  });
 
-  useEffect(() => {
-    if (initialData) {
-      console.log("Setting initial data:", initialData);
-      setFormData({
-        firstname: initialData.firstname || "",
-        lastname: initialData.lastname || "",
-        email: initialData.email || "",
-        phonenumber: initialData.phonenumber || "",
-      });
-      
-      // Transform employee positions data
-      const positions = initialData.employeepositions?.map((ep: any) => ({
-        positionid: ep.positions.positionid,
-        positionname: ep.positions.positionname,
-        defaultpayrate: ep.positions.defaultpayrate,
-        payrate: ep.payrate || ep.positions.defaultpayrate,
-        access_level: ep.positions.access_level
-      })) || [];
-
-      // Also include the primary position if it exists and isn't already included
-      if (initialData.positions && !positions.some(p => p.positionid === initialData.positions.positionid)) {
-        positions.push({
-          positionid: initialData.positions.positionid,
-          positionname: initialData.positions.positionname,
-          defaultpayrate: initialData.positions.defaultpayrate,
-          payrate: initialData.positions.defaultpayrate,
-          access_level: initialData.positions.access_level
-        });
-      }
-
-      console.log("Setting selected positions:", positions);
-      setSelectedPositions(positions);
-    } else {
-      setFormData({
-        firstname: "",
-        lastname: "",
-        email: "",
-        phonenumber: "",
-      });
-      setSelectedPositions([]);
-    }
-  }, [initialData, open]);
-
-  const handleFormChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (formData: any, selectedPositions: Position[]) => {
     setLoading(true);
     console.log("Submitting form with positions:", selectedPositions);
 
@@ -189,18 +125,12 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
             {initialData ? 'Edit Staff Member' : 'Add New Staff Member'}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <StaffFormFields formData={formData} onChange={handleFormChange} />
-          <PositionSelect 
-            selectedPositions={selectedPositions}
-            onPositionsChange={setSelectedPositions}
-          />
-          <DialogActions 
-            onCancel={() => onOpenChange(false)}
-            loading={loading}
-            isEditing={!!initialData}
-          />
-        </form>
+        <StaffDialogForm
+          initialData={initialData}
+          onSubmit={handleSubmit}
+          onCancel={() => onOpenChange(false)}
+          loading={loading}
+        />
       </DialogContent>
     </Dialog>
   );
