@@ -25,6 +25,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
       const primaryPosition = selectedPositions[0]?.positionid || null;
 
       if (initialData) {
+        // Update existing employee
         const { error: employeeError } = await supabase
           .from("employees")
           .update({
@@ -54,11 +55,14 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
                 positionid: position.positionid,
                 payrate: position.payrate || position.defaultpayrate || 0,
                 is_primary: index === 0,
-                access_level: position.access_level
+                access_level: position.access_level || 'basic'
               }))
             );
 
-          if (positionsError) throw positionsError;
+          if (positionsError) {
+            console.error("Error inserting positions:", positionsError);
+            throw positionsError;
+          }
         }
 
         toast({
@@ -66,6 +70,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
           description: "Staff member updated successfully",
         });
       } else {
+        // Create new employee
         const { data: employeeData, error: employeeError } = await supabase
           .from("employees")
           .insert([
@@ -79,7 +84,10 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
           .select()
           .single();
 
-        if (employeeError) throw employeeError;
+        if (employeeError) {
+          console.error("Error creating employee:", employeeError);
+          throw employeeError;
+        }
 
         if (selectedPositions.length > 0) {
           const { error: positionsError } = await supabase
@@ -90,11 +98,14 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
                 positionid: position.positionid,
                 payrate: position.payrate || position.defaultpayrate || 0,
                 is_primary: index === 0,
-                access_level: position.access_level
+                access_level: position.access_level || 'basic'
               }))
             );
 
-          if (positionsError) throw positionsError;
+          if (positionsError) {
+            console.error("Error inserting positions:", positionsError);
+            throw positionsError;
+          }
         }
 
         toast({
