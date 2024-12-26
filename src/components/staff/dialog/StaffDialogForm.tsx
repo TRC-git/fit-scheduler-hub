@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { StaffFormFields } from "./StaffFormFields";
 import { PositionSelect } from "../positions/PositionSelect";
 import { DialogActions } from "./DialogActions";
-import { Position } from "../positions/types";
+import { Position, PositionWithPayRate } from "../positions/types";
 
 interface StaffDialogFormProps {
   initialData?: any;
-  onSubmit: (formData: any, positions: Position[]) => void;
+  onSubmit: (formData: any, positions: PositionWithPayRate[]) => void;
   onCancel: () => void;
   loading: boolean;
 }
@@ -17,7 +17,7 @@ export const StaffDialogForm = ({
   onCancel, 
   loading 
 }: StaffDialogFormProps) => {
-  const [selectedPositions, setSelectedPositions] = useState<Position[]>([]);
+  const [selectedPositions, setSelectedPositions] = useState<PositionWithPayRate[]>([]);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
