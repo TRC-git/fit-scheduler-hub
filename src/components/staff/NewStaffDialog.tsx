@@ -37,21 +37,34 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
     if (initialData) {
       console.log("Setting initial data:", initialData);
       setFormData({
-        firstname: initialData.firstname,
-        lastname: initialData.lastname,
-        email: initialData.email,
+        firstname: initialData.firstname || "",
+        lastname: initialData.lastname || "",
+        email: initialData.email || "",
         phonenumber: initialData.phonenumber || "",
       });
       
+      // Transform employee positions data
       const positions = initialData.employeepositions?.map((ep: any) => ({
         positionid: ep.positions.positionid,
         positionname: ep.positions.positionname,
         defaultpayrate: ep.positions.defaultpayrate,
-        payrate: ep.payrate,
+        payrate: ep.payrate || ep.positions.defaultpayrate,
         access_level: ep.positions.access_level
       })) || [];
+
+      // Also include the primary position if it exists and isn't already included
+      if (initialData.positions && !positions.some(p => p.positionid === initialData.positions.positionid)) {
+        positions.push({
+          positionid: initialData.positions.positionid,
+          positionname: initialData.positions.positionname,
+          defaultpayrate: initialData.positions.defaultpayrate,
+          payrate: initialData.positions.defaultpayrate,
+          access_level: initialData.positions.access_level
+        });
+      }
+
+      console.log("Setting selected positions:", positions);
       setSelectedPositions(positions);
-      console.log("Set selected positions:", positions);
     } else {
       setFormData({
         firstname: "",
@@ -87,6 +100,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
         if (employeeError) throw employeeError;
 
+        // Delete existing positions
         const { error: deleteError } = await supabase
           .from("employeepositions")
           .delete()
@@ -94,6 +108,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
         if (deleteError) throw deleteError;
 
+        // Insert updated positions
         if (selectedPositions.length > 0) {
           const { error: positionsError } = await supabase
             .from("employeepositions")
