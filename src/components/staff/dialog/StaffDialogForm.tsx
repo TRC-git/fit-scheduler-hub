@@ -3,6 +3,8 @@ import { StaffFormFields } from "./StaffFormFields";
 import { PositionSelect } from "../positions/PositionSelect";
 import { DialogActions } from "./DialogActions";
 import { PositionWithPayRate } from "../positions/types";
+import { AvailabilitySection } from "./AvailabilitySection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface StaffDialogFormProps {
   initialData?: any;
@@ -18,6 +20,7 @@ export const StaffDialogForm = ({
   loading 
 }: StaffDialogFormProps) => {
   const [selectedPositions, setSelectedPositions] = useState<PositionWithPayRate[]>([]);
+  const [availability, setAvailability] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -63,6 +66,11 @@ export const StaffDialogForm = ({
       }
 
       setSelectedPositions(positions);
+
+      // Fetch availability if editing
+      if (initialData.employeeid) {
+        fetchAvailability(initialData.employeeid);
+      }
     } else {
       setFormData({
         firstname: "",
@@ -71,16 +79,55 @@ export const StaffDialogForm = ({
         phonenumber: "",
       });
       setSelectedPositions([]);
+      setAvailability([]);
     }
   }, [initialData]);
 
-  const handleFormChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const fetchAvailability = async (employeeId: number) => {
+    const { data } = await supabase
+      .from('employeeavailability')
+      .select('*')
+      .eq('employeeid', employeeId);
+    
+    if (data) {
+      setAvailability(data);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData, selectedPositions);
+    
+    // First submit the form data and get the employee ID
+    const success = await onSubmit(formData, selectedPositions);
+    
+    if (success && (initialData?.employeeid || success.employeeid)) {
+      const employeeId = initialData?.employeeid || success.employeeid;
+      
+      // Delete existing availability
+      await supabase
+        .from('employeeavailability')
+        .delete()
+        .eq('employeeid', employeeId);
+      
+      // Insert new availability
+      if (availability.length > 0) {
+        const availabilityData = availability.map(slot => ({
+          employeeid: employeeId,
+          dayofweek: slot.dayofweek,
+          starttime: slot.starttime,
+          endtime: slot.endtime,
+          ispreferred: slot.ispreferred || false
+        }));
+        
+        await supabase
+          .from('employeeavailability')
+          .insert(availabilityData);
+      }
+    }
+  };
+
+  const handleFormChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePositionsChange = (positions: PositionWithPayRate[]) => {
@@ -93,6 +140,10 @@ export const StaffDialogForm = ({
       <PositionSelect 
         selectedPositions={selectedPositions}
         onPositionsChange={handlePositionsChange}
+      />
+      <AvailabilitySection 
+        availability={availability}
+        onChange={setAvailability}
       />
       <DialogActions 
         onCancel={onCancel}
