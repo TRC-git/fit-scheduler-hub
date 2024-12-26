@@ -31,7 +31,10 @@ const StaffList = () => {
         .select(`
           *,
           employeepositions (
-            positions (positionname)
+            positions (
+              positionname,
+              access_level
+            )
           )
         `)
         .eq("isactive", true)
@@ -131,11 +134,14 @@ const StaffList = () => {
                 </div>
                 <p className="text-sm text-gray-400">{member.email}</p>
                 <p className="text-sm text-gray-400">{member.phonenumber}</p>
-                {member.employeepositions?.[0]?.positions?.positionname && (
-                  <p className="text-xs text-fitness-accent mt-1">
-                    {member.employeepositions[0].positions.positionname}
-                  </p>
-                )}
+                <div className="mt-2 space-y-1">
+                  {member.employeepositions?.map((position: any, index: number) => (
+                    <p key={index} className="text-xs text-fitness-accent">
+                      {position.positions.positionname}
+                      {position.is_primary && " (Primary)"}
+                    </p>
+                  ))}
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 <Button

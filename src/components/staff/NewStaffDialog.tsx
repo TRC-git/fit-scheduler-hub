@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { PositionSelect } from "./positions/PositionSelect";
+
+interface Position {
+  positionid: number;
+  positionname: string;
+  defaultpayrate: number | null;
+  access_level: any;
+}
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -16,6 +24,7 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
+  const [selectedPositions, setSelectedPositions] = useState<Position[]>([]);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -28,13 +37,8 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
     setLoading(true);
 
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData.user) {
-        throw new Error("Not authenticated");
-      }
-
-      const { error } = await supabase
+      // Insert employee
+      const { data: employeeData, error: employeeError } = await supabase
         .from("employees")
         .insert([
           {
@@ -42,11 +46,27 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
             hiredate: new Date().toISOString(),
             isactive: true,
           },
-        ]);
+        ])
+        .select()
+        .single();
 
-      if (error) {
-        console.error("Error creating employee:", error);
-        throw error;
+      if (employeeError) throw employeeError;
+
+      // Insert employee positions
+      if (selectedPositions.length > 0) {
+        const { error: positionsError } = await supabase
+          .from("employeepositions")
+          .insert(
+            selectedPositions.map((position, index) => ({
+              employeeid: employeeData.employeeid,
+              positionid: position.positionid,
+              payrate: position.defaultpayrate || 0,
+              is_primary: index === 0,
+              access_level: position.access_level
+            }))
+          );
+
+        if (positionsError) throw positionsError;
       }
 
       toast({
@@ -54,7 +74,6 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
         description: "Staff member added successfully",
       });
       
-      // Invalidate and refetch staff list
       queryClient.invalidateQueries({ queryKey: ["staff"] });
       
       onOpenChange(false);
@@ -64,6 +83,7 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
         email: "",
         phonenumber: "",
       });
+      setSelectedPositions([]);
     } catch (error: any) {
       console.error("Error in handleSubmit:", error);
       toast({
@@ -126,6 +146,12 @@ const NewStaffDialog = ({ open, onOpenChange }: NewStaffDialogProps) => {
               className="bg-fitness-inner text-fitness-text"
             />
           </div>
+          
+          <PositionSelect 
+            selectedPositions={selectedPositions}
+            onPositionsChange={setSelectedPositions}
+          />
+
           <div className="flex justify-end gap-2">
             <Button
               type="button"
