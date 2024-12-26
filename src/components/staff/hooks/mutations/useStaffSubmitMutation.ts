@@ -92,10 +92,14 @@ export const useStaffSubmitMutation = () => {
     
     const primaryPosition = selectedPositions[0]?.positionid || null;
 
+    // Update the employee record
     const { error: employeeError } = await supabase
       .from("employees")
       .update({
-        ...formData,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        phonenumber: formData.phonenumber,
         position_id: primaryPosition,
       })
       .eq("employeeid", employeeId);
@@ -105,6 +109,7 @@ export const useStaffSubmitMutation = () => {
       throw employeeError;
     }
 
+    // Update employee positions
     await handleEmployeePositions(employeeId, selectedPositions);
   };
 
