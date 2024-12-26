@@ -27,39 +27,39 @@ const StaffList = () => {
     queryKey: ["staff"],
     queryFn: async () => {
       console.log("Fetching staff members...");
-      const { data, error } = await supabase
-        .from("employees")
-        .select(`
-          *,
-          employeepositions (
-            payrate,
-            is_primary,
-            positions (
+      try {
+        const { data, error } = await supabase
+          .from("employees")
+          .select(`
+            *,
+            employeepositions (
+              payrate,
+              is_primary,
+              positions (
+                positionid,
+                positionname,
+                access_level
+              )
+            ),
+            positions:position_id (
               positionid,
-              positionname,
-              access_level
+              positionname
             )
-          ),
-          positions:position_id (
-            positionid,
-            positionname
-          )
-        `)
-        .eq("isactive", true)
-        .order("firstname");
-      
-      if (error) {
-        console.error("Error fetching staff:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load staff members",
-          variant: "destructive",
-        });
+          `)
+          .eq("isactive", true)
+          .order("firstname");
+        
+        if (error) {
+          console.error("Error fetching staff:", error);
+          throw error;
+        }
+        
+        console.log("Staff data:", data);
+        return data;
+      } catch (error) {
+        console.error("Error in staff query:", error);
         throw error;
       }
-      
-      console.log("Staff data:", data);
-      return data;
     },
   });
 
@@ -101,12 +101,13 @@ const StaffList = () => {
   });
 
   const handleEdit = (member: any) => {
-    console.log("Editing member:", member); // Add this for debugging
+    console.log("Editing member:", member);
     setSelectedStaff(member);
     setDialogOpen(true);
   };
 
   if (error) {
+    console.error("Staff list error:", error);
     return (
       <div className="p-4 text-red-500 bg-red-100 rounded">
         Failed to load staff members. Please try again later.
