@@ -35,10 +35,15 @@ export const StaffCard = ({ member, onEdit, onSuspend, onDelete }: StaffCardProp
           <p className="text-sm text-gray-400">{member.phonenumber}</p>
           <div className="mt-2 space-y-1">
             {member.employeepositions?.map((position: any, index: number) => (
-              <p key={index} className="text-xs text-fitness-accent">
-                {position.positions.positionname}
-                {position.is_primary && " (Primary)"}
-              </p>
+              <div key={index} className="flex items-center justify-between text-xs">
+                <span className="text-fitness-accent">
+                  {position.positions.positionname}
+                  {position.is_primary && " (Primary)"}
+                </span>
+                <span className="text-fitness-text">
+                  ${position.payrate}/hr
+                </span>
+              </div>
             ))}
           </div>
         </div>
