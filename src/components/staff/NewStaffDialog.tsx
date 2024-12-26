@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { StaffDialogForm } from "./dialog/StaffDialogForm";
-import { Position } from "./positions/types";
+import { PositionWithPayRate } from "./positions/types";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -17,7 +17,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (formData: any, selectedPositions: Position[]) => {
+  const handleSubmit = async (formData: any, selectedPositions: PositionWithPayRate[]) => {
     setLoading(true);
     console.log("Submitting form with positions:", selectedPositions);
 

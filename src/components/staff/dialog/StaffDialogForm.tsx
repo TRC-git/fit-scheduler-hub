@@ -40,7 +40,11 @@ export const StaffDialogForm = ({
         positionname: ep.positions.positionname,
         defaultpayrate: ep.positions.defaultpayrate || 0,
         payrate: ep.payrate || ep.positions.defaultpayrate || 0,
-        access_level: ep.positions.access_level
+        access_level: ep.positions.access_level,
+        description: ep.positions.description,
+        min_experience_months: ep.positions.min_experience_months,
+        paytype: ep.positions.paytype,
+        required_certifications: ep.positions.required_certifications
       })) || [];
 
       // Include primary position if it exists and isn't already included
@@ -50,7 +54,11 @@ export const StaffDialogForm = ({
           positionname: initialData.positions.positionname,
           defaultpayrate: initialData.positions.defaultpayrate || 0,
           payrate: initialData.positions.defaultpayrate || 0,
-          access_level: initialData.positions.access_level
+          access_level: initialData.positions.access_level,
+          description: initialData.positions.description,
+          min_experience_months: initialData.positions.min_experience_months,
+          paytype: initialData.positions.paytype,
+          required_certifications: initialData.positions.required_certifications
         });
       }
 
@@ -75,12 +83,16 @@ export const StaffDialogForm = ({
     onSubmit(formData, selectedPositions);
   };
 
+  const handlePositionsChange = (positions: PositionWithPayRate[]) => {
+    setSelectedPositions(positions);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <StaffFormFields formData={formData} onChange={handleFormChange} />
       <PositionSelect 
         selectedPositions={selectedPositions}
-        onPositionsChange={setSelectedPositions}
+        onPositionsChange={handlePositionsChange}
       />
       <DialogActions 
         onCancel={onCancel}
