@@ -64,6 +64,46 @@ const StaffList = () => {
     retry: 1,
   });
 
+  const updatePayRateMutation = useMutation({
+    mutationFn: async ({ 
+      employeeId, 
+      positionId, 
+      payRate 
+    }: { 
+      employeeId: number; 
+      positionId: number; 
+      payRate: number 
+    }) => {
+      console.log('Updating pay rate:', { employeeId, positionId, payRate });
+      const { data, error } = await supabase
+        .from('employeepositions')
+        .update({ 
+          payrate: payRate,
+          custom_payrate: payRate 
+        })
+        .eq('employeeid', employeeId)
+        .eq('positionid', positionId);
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['staff'] });
+      toast({
+        title: "Success",
+        description: "Pay rate updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating pay rate:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update pay rate",
+        variant: "destructive",
+      });
+    }
+  });
+
   const suspendMutation = useMutation({
     mutationFn: async ({ employeeId, suspend }: { employeeId: number, suspend: boolean }) => {
       const { error } = await supabase
@@ -123,6 +163,10 @@ const StaffList = () => {
     setDialogOpen(true);
   };
 
+  const handleUpdatePayRate = (employeeId: number, positionId: number, payRate: number) => {
+    updatePayRateMutation.mutate({ employeeId, positionId, payRate });
+  };
+
   if (error) {
     console.error("Staff list error:", error);
     return (
@@ -154,6 +198,7 @@ const StaffList = () => {
               suspendMutation.mutate({ employeeId, suspend })
             }
             onDelete={setStaffToDelete}
+            onUpdatePayRate={handleUpdatePayRate}
           />
         ))}
       </div>

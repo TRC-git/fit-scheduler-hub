@@ -281,27 +281,33 @@ export type Database = {
         Row: {
           access_level: string | null
           certification_expiry: string | null
+          custom_payrate: number | null
           employeeid: number | null
           employeepositionid: number
           is_primary: boolean | null
+          last_modified: string | null
           payrate: number
           positionid: number | null
         }
         Insert: {
           access_level?: string | null
           certification_expiry?: string | null
+          custom_payrate?: number | null
           employeeid?: number | null
           employeepositionid?: number
           is_primary?: boolean | null
+          last_modified?: string | null
           payrate: number
           positionid?: number | null
         }
         Update: {
           access_level?: string | null
           certification_expiry?: string | null
+          custom_payrate?: number | null
           employeeid?: number | null
           employeepositionid?: number
           is_primary?: boolean | null
+          last_modified?: string | null
           payrate?: number
           positionid?: number | null
         }
