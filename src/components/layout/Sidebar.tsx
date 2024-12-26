@@ -16,6 +16,26 @@ const timeOffRequests = [
 const Sidebar = () => {
   const { data: staff } = useStaffQuery();
 
+  const getPositionName = (member: any) => {
+    // First check employeepositions array for primary position
+    const primaryPosition = member.employeepositions?.find(
+      (ep: any) => ep.is_primary
+    )?.positions?.positionname;
+
+    // If no primary position in employeepositions, check direct position
+    if (!primaryPosition && member.positions) {
+      return member.positions.positionname;
+    }
+
+    // If primary position found, return it
+    if (primaryPosition) {
+      return primaryPosition;
+    }
+
+    // Default fallback
+    return "No Position";
+  };
+
   return (
     <aside className="w-72 bg-fitness-card border-r border-fitness-muted p-4 flex flex-col gap-6">
       <div>
@@ -44,9 +64,7 @@ const Sidebar = () => {
                       {member.firstname} {member.lastname}
                     </p>
                     <p className="text-sm text-gray-400">
-                      {member.positions?.positionname || 
-                       member.employeepositions?.[0]?.positions?.positionname || 
-                       "No Position"}
+                      {getPositionName(member)}
                     </p>
                   </div>
                 </div>
