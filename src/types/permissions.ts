@@ -34,8 +34,9 @@ export interface Position {
   paytype?: string | null;
   required_certifications?: string[] | null;
   access_level?: PermissionSettingsType | null;
+  payrate?: number;
 }
 
-export type PositionWithPermissions = Omit<Position, 'access_level'> & {
-  access_level?: PermissionSettingsType | null;
+export type PositionWithPermissions = Position & {
+  access_level: PermissionSettingsType | null;
 };

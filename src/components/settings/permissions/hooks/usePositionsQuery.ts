@@ -18,13 +18,13 @@ export const usePositionsQuery = () => {
       }
       
       console.log("Positions fetched:", data);
-      return (data as Position[]).map(position => ({
+      return (data as any[]).map(position => ({
         ...position,
         access_level: position.access_level ? {
           ...defaultPermissions,
-          ...(position.access_level as unknown as PermissionSettingsType)
+          ...(position.access_level as PermissionSettingsType)
         } : defaultPermissions
-      }));
+      })) as Position[];
     }
   });
 };
