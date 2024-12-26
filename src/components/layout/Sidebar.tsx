@@ -44,7 +44,9 @@ const Sidebar = () => {
                       {member.firstname} {member.lastname}
                     </p>
                     <p className="text-sm text-gray-400">
-                      {member.positions?.positionname || "No Position"}
+                      {member.positions?.positionname || 
+                       member.employeepositions?.[0]?.positions?.positionname || 
+                       "No Position"}
                     </p>
                   </div>
                 </div>

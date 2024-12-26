@@ -41,7 +41,7 @@ export const useStaffQuery = () => {
         throw error;
       }
     },
-    staleTime: 0, // Consider data stale immediately
-    refetchOnWindowFocus: true, // Refetch when window regains focus
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 };
