@@ -1,4 +1,3 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 interface TimeSlotSelectorProps {
@@ -17,7 +16,7 @@ export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorPro
       type="time"
       value={value}
       onChange={handleTimeChange}
-      className="w-[140px] bg-fitness-card text-fitness-text border-fitness-muted"
+      className="w-[140px] bg-fitness-card text-fitness-text border-fitness-muted [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.7]"
       placeholder={label}
     />
   );
