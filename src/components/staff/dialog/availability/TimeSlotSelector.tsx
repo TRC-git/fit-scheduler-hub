@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 
 interface TimeSlotSelectorProps {
   value: string;
@@ -8,46 +8,17 @@ interface TimeSlotSelectorProps {
 }
 
 export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorProps) => {
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 0; hour < 24; hour++) {
-      const ampm = hour < 12 ? 'AM' : 'PM';
-      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-      const timeString = `${displayHour.toString().padStart(2, '0')}:00 ${ampm}`;
-      const value = `${hour.toString().padStart(2, '0')}:00`;
-      slots.push({ display: timeString, value });
-    }
-    return slots;
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
   };
 
-  const timeSlots = generateTimeSlots();
-
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[140px] bg-fitness-card">
-        <SelectValue placeholder={label} />
-      </SelectTrigger>
-      <SelectContent className="bg-fitness-card border-fitness-muted">
-        <ScrollArea 
-          className="h-[200px] pr-4 overflow-y-auto" 
-          style={{
-            '--scrollbar-thumb': '#15e7fb',
-            '--scrollbar-track': 'transparent'
-          } as React.CSSProperties}
-        >
-          <div className="py-1">
-            {timeSlots.map(({ display, value }) => (
-              <SelectItem
-                key={value}
-                value={value}
-                className="text-fitness-text hover:bg-[#15e7fb] hover:text-[#333333]"
-              >
-                {display}
-              </SelectItem>
-            ))}
-          </div>
-        </ScrollArea>
-      </SelectContent>
-    </Select>
+    <Input
+      type="time"
+      value={value}
+      onChange={handleTimeChange}
+      className="w-[140px] bg-fitness-card text-fitness-text border-fitness-muted"
+      placeholder={label}
+    />
   );
 };
