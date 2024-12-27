@@ -21,6 +21,11 @@ export const usePositionMutations = (onSuccess?: () => void) => {
         console.error('Error creating position:', error);
         throw error;
       }
+      
+      if (!data) {
+        throw new Error('Failed to create position');
+      }
+      
       return data;
     },
     onSuccess: () => {
@@ -31,11 +36,11 @@ export const usePositionMutations = (onSuccess?: () => void) => {
       queryClient.invalidateQueries({ queryKey: ['positions'] });
       onSuccess?.();
     },
-    onError: (error) => {
-      console.error('Mutation error:', error);
+    onError: (error: any) => {
+      console.error('Create mutation error:', error);
       toast({
         title: "Error",
-        description: "Failed to create position. Please try again.",
+        description: error.message || "Failed to create position. Please try again.",
         variant: "destructive",
       });
     }
@@ -73,15 +78,11 @@ export const usePositionMutations = (onSuccess?: () => void) => {
       queryClient.invalidateQueries({ queryKey: ['positions'] });
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Update mutation error:', error);
-      const errorMessage = error instanceof Error && error.message === 'Position not found'
-        ? "Position not found. It may have been deleted."
-        : "Failed to update position. Please try again.";
-      
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "Failed to update position. Please try again.",
         variant: "destructive",
       });
     }
@@ -107,12 +108,13 @@ export const usePositionMutations = (onSuccess?: () => void) => {
         description: "Position deleted successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['positions'] });
+      onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Delete mutation error:', error);
       toast({
         title: "Error",
-        description: "Failed to delete position. Please try again.",
+        description: error.message || "Failed to delete position. Please try again.",
         variant: "destructive",
       });
     }

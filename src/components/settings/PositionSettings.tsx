@@ -6,10 +6,12 @@ import { PositionDialog } from "./positions/PositionDialog";
 import { usePositionMutations } from "./positions/hooks/usePositionMutations";
 import { usePositionsQuery } from "./positions/hooks/usePositionsQuery";
 import { PositionList } from "./positions/components/PositionList";
+import { useToast } from "@/components/ui/use-toast";
 
 const PositionSettings = () => {
   const [selectedPosition, setSelectedPosition] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const { data: positions, error: queryError } = usePositionsQuery();
   const { createPositionMutation, updatePositionMutation, deletePositionMutation } = usePositionMutations(() => {
@@ -17,20 +19,40 @@ const PositionSettings = () => {
     setSelectedPosition(null);
   });
 
-  const handleSubmit = (positionData: any) => {
-    console.log('Handling submit with data:', positionData);
-    if (selectedPosition) {
-      updatePositionMutation.mutate({
-        ...positionData,
-        positionid: selectedPosition.positionid
+  const handleSubmit = async (positionData: any) => {
+    try {
+      if (selectedPosition) {
+        await updatePositionMutation.mutateAsync({
+          ...positionData,
+          positionid: selectedPosition.positionid
+        });
+      } else {
+        await createPositionMutation.mutateAsync(positionData);
+      }
+    } catch (error: any) {
+      console.error('Error handling position:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save position. Please try again.",
+        variant: "destructive"
       });
-    } else {
-      createPositionMutation.mutate(positionData);
     }
   };
 
+  const handleEdit = (position: any) => {
+    if (!position || !position.positionid) {
+      toast({
+        title: "Error",
+        description: "Position not found. It may have been deleted.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setSelectedPosition(position);
+    setIsDialogOpen(true);
+  };
+
   if (queryError) {
-    console.error('Query error:', queryError);
     return (
       <Card className="bg-fitness-card">
         <CardContent className="p-6">
@@ -58,10 +80,7 @@ const PositionSettings = () => {
       <CardContent className="space-y-6">
         <PositionList
           positions={positions || []}
-          onEdit={(position) => {
-            setSelectedPosition(position);
-            setIsDialogOpen(true);
-          }}
+          onEdit={handleEdit}
           onDelete={(positionId) => deletePositionMutation.mutate(positionId)}
         />
       </CardContent>
