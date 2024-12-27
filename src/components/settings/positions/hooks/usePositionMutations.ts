@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Position } from "../types";
 
 export const usePositionMutations = (onSuccess?: () => void) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const createPositionMutation = useMutation({
-    mutationFn: async (positionData: any) => {
+    mutationFn: async (positionData: Omit<Position, 'positionid'>) => {
       console.log('Creating position:', positionData);
       const { data, error } = await supabase
         .from('positions')
@@ -40,9 +41,26 @@ export const usePositionMutations = (onSuccess?: () => void) => {
   });
 
   const updatePositionMutation = useMutation({
-    mutationFn: async (positionData: any) => {
+    mutationFn: async (positionData: Position) => {
       console.log('Updating position:', positionData);
       const { positionid, ...updateData } = positionData;
+      
+      // First check if position exists
+      const { data: existingPosition, error: checkError } = await supabase
+        .from('positions')
+        .select()
+        .eq('positionid', positionid)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking position:', checkError);
+        throw checkError;
+      }
+      
+      if (!existingPosition) {
+        throw new Error('Position not found');
+      }
+      
       const { data, error } = await supabase
         .from('positions')
         .update(updateData)
@@ -53,10 +71,6 @@ export const usePositionMutations = (onSuccess?: () => void) => {
       if (error) {
         console.error('Error updating position:', error);
         throw error;
-      }
-      
-      if (!data) {
-        throw new Error('Position not found');
       }
       
       return data;
@@ -71,9 +85,13 @@ export const usePositionMutations = (onSuccess?: () => void) => {
     },
     onError: (error) => {
       console.error('Update mutation error:', error);
+      const errorMessage = error instanceof Error && error.message === 'Position not found'
+        ? "Position not found. It may have been deleted."
+        : "Failed to update position. Please try again.";
+      
       toast({
         title: "Error",
-        description: "Failed to update position. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -82,6 +100,23 @@ export const usePositionMutations = (onSuccess?: () => void) => {
   const deletePositionMutation = useMutation({
     mutationFn: async (positionId: number) => {
       console.log('Deleting position:', positionId);
+      
+      // First check if position exists
+      const { data: existingPosition, error: checkError } = await supabase
+        .from('positions')
+        .select()
+        .eq('positionid', positionId)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking position:', checkError);
+        throw checkError;
+      }
+      
+      if (!existingPosition) {
+        throw new Error('Position not found');
+      }
+      
       const { error } = await supabase
         .from('positions')
         .delete()
@@ -101,9 +136,13 @@ export const usePositionMutations = (onSuccess?: () => void) => {
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
+      const errorMessage = error instanceof Error && error.message === 'Position not found'
+        ? "Position not found. It may have been deleted."
+        : "Failed to delete position. Please try again.";
+      
       toast({
         title: "Error",
-        description: "Failed to delete position. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
