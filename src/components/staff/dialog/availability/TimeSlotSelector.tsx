@@ -29,21 +29,23 @@ export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorPro
       </SelectTrigger>
       <SelectContent className="bg-fitness-card border-fitness-muted">
         <ScrollArea 
-          className="h-[200px] pr-4" 
+          className="h-[200px] pr-4 overflow-y-auto" 
           style={{
             '--scrollbar-thumb': '#15e7fb',
             '--scrollbar-track': 'transparent'
           } as React.CSSProperties}
         >
-          {timeSlots.map(({ display, value }) => (
-            <SelectItem
-              key={value}
-              value={value}
-              className="text-fitness-text hover:bg-[#15e7fb] hover:text-[#333333]"
-            >
-              {display}
-            </SelectItem>
-          ))}
+          <div className="py-1">
+            {timeSlots.map(({ display, value }) => (
+              <SelectItem
+                key={value}
+                value={value}
+                className="text-fitness-text hover:bg-[#15e7fb] hover:text-[#333333]"
+              >
+                {display}
+              </SelectItem>
+            ))}
+          </div>
         </ScrollArea>
       </SelectContent>
     </Select>
