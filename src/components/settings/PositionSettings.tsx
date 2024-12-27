@@ -1,137 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { PositionDialog } from "./positions/PositionDialog";
-import { PositionCard } from "./positions/PositionCard";
+import { usePositionMutations } from "./positions/hooks/usePositionMutations";
+import { usePositionsQuery } from "./positions/hooks/usePositionsQuery";
+import { PositionList } from "./positions/components/PositionList";
 
 const PositionSettings = () => {
-  const { toast } = useToast();
   const [selectedPosition, setSelectedPosition] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: positions, refetch, error: queryError } = useQuery({
-    queryKey: ['positions'],
-    queryFn: async () => {
-      console.log('Fetching positions...');
-      const { data, error } = await supabase
-        .from('positions')
-        .select('*');
-      
-      if (error) {
-        console.error('Error fetching positions:', error);
-        throw error;
-      }
-      console.log('Positions fetched:', data);
-      return data;
-    }
-  });
-
-  const createPositionMutation = useMutation({
-    mutationFn: async (positionData: any) => {
-      console.log('Creating position:', positionData);
-      const { data, error } = await supabase
-        .from('positions')
-        .insert([positionData])
-        .select()
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Error creating position:', error);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Position created successfully",
-      });
-      refetch();
-      setIsDialogOpen(false);
-    },
-    onError: (error) => {
-      console.error('Mutation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create position. Please try again.",
-        variant: "destructive",
-      });
-    }
-  });
-
-  const updatePositionMutation = useMutation({
-    mutationFn: async (positionData: any) => {
-      console.log('Updating position:', positionData);
-      const { positionid, ...updateData } = positionData;
-      const { data, error } = await supabase
-        .from('positions')
-        .update(updateData)
-        .eq('positionid', positionid)
-        .select()
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Error updating position:', error);
-        throw error;
-      }
-      
-      if (!data) {
-        throw new Error('Position not found');
-      }
-      
-      return data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Position updated successfully",
-      });
-      refetch();
-      setIsDialogOpen(false);
-      setSelectedPosition(null);
-    },
-    onError: (error) => {
-      console.error('Update mutation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update position. Please try again.",
-        variant: "destructive",
-      });
-    }
-  });
-
-  const deletePositionMutation = useMutation({
-    mutationFn: async (positionId: number) => {
-      console.log('Deleting position:', positionId);
-      const { error } = await supabase
-        .from('positions')
-        .delete()
-        .eq('positionid', positionId);
-      
-      if (error) {
-        console.error('Error deleting position:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Position deleted successfully",
-      });
-      refetch();
-    },
-    onError: (error) => {
-      console.error('Delete mutation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete position. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const { data: positions, error: queryError } = usePositionsQuery();
+  const { createPositionMutation, updatePositionMutation, deletePositionMutation } = usePositionMutations(() => {
+    setIsDialogOpen(false);
+    setSelectedPosition(null);
   });
 
   const handleSubmit = (positionData: any) => {
@@ -173,19 +56,14 @@ const PositionSettings = () => {
         </Button>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid gap-4">
-          {positions?.map((position: any) => (
-            <PositionCard
-              key={position.positionid}
-              position={position}
-              onEdit={() => {
-                setSelectedPosition(position);
-                setIsDialogOpen(true);
-              }}
-              onDelete={() => deletePositionMutation.mutate(position.positionid)}
-            />
-          ))}
-        </div>
+        <PositionList
+          positions={positions || []}
+          onEdit={(position) => {
+            setSelectedPosition(position);
+            setIsDialogOpen(true);
+          }}
+          onDelete={(positionId) => deletePositionMutation.mutate(positionId)}
+        />
       </CardContent>
 
       <PositionDialog
