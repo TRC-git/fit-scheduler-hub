@@ -37,7 +37,7 @@ const PositionSettings = () => {
         .from('positions')
         .insert([positionData])
         .select()
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error creating position:', error);
@@ -72,12 +72,17 @@ const PositionSettings = () => {
         .update(updateData)
         .eq('positionid', positionid)
         .select()
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error updating position:', error);
         throw error;
       }
+      
+      if (!data) {
+        throw new Error('Position not found');
+      }
+      
       return data;
     },
     onSuccess: () => {
