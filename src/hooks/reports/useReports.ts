@@ -17,10 +17,10 @@ export const useReports = (startDate: Date, endDate: Date, employeeId?: number) 
           employee_id: employeeId,
           start_date: formattedStartDate,
           end_date: formattedEndDate
-        });
+        }) as { data: EmployeeHours | null, error: any };
 
       if (error) throw error;
-      return data as EmployeeHours;
+      return data;
     },
     enabled: !!employeeId
   });
@@ -32,10 +32,10 @@ export const useReports = (startDate: Date, endDate: Date, employeeId?: number) 
         .rpc('get_position_schedule_summary', {
           start_date: formattedStartDate,
           end_date: formattedEndDate
-        });
+        }) as { data: PositionScheduleSummary[] | null, error: any };
 
       if (error) throw error;
-      return data as PositionScheduleSummary[];
+      return data || [];
     }
   });
 
@@ -46,10 +46,10 @@ export const useReports = (startDate: Date, endDate: Date, employeeId?: number) 
         .rpc('get_employee_attendance_summary', {
           start_date: formattedStartDate,
           end_date: formattedEndDate
-        });
+        }) as { data: EmployeeAttendanceSummary[] | null, error: any };
 
       if (error) throw error;
-      return data as EmployeeAttendanceSummary[];
+      return data || [];
     }
   });
 

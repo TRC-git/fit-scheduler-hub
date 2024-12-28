@@ -961,6 +961,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_employee_hours: {
+        Args: {
+          employee_id: number
+          start_date: string
+          end_date: string
+        }
+        Returns: {
+          total_scheduled_hours: number
+          total_worked_hours: number
+          total_overtime_hours: number
+          late_clock_ins: number
+          missed_clock_ins: number
+        }[]
+      }
+      get_employee_attendance_summary: {
+        Args: {
+          start_date: string
+          end_date: string
+        }
+        Returns: {
+          employee_name: string
+          position_name: string
+          total_scheduled_shifts: number
+          completed_shifts: number
+          missed_shifts: number
+          late_arrivals: number
+          total_overtime_hours: number
+        }[]
+      }
+      get_position_schedule_summary: {
+        Args: {
+          start_date: string
+          end_date: string
+        }
+        Returns: {
+          position_name: string
+          total_shifts: number
+          total_scheduled_hours: number
+          total_employees: number
+          avg_shift_duration: number
+        }[]
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
