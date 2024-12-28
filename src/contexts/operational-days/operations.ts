@@ -10,7 +10,6 @@ export const loadOperationalDays = async () => {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        // If no default settings exist, create them
         const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
         const { error: insertError } = await supabase
           .from('schedule_types')
