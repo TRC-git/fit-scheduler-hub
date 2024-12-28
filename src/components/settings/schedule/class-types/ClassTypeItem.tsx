@@ -4,6 +4,18 @@ import { ClassType, UpdateClassTypeData } from "@/types/schedule/class-types";
 import { Pencil, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ClassTypeForm from "./ClassTypeForm";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface ClassTypeItemProps {
   classType: ClassType;
@@ -12,6 +24,16 @@ interface ClassTypeItemProps {
 }
 
 const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      await onDelete(classType.schedule_type_id);
+    } catch (error) {
+      console.error('Error deleting class type:', error);
+    }
+  };
+
   return (
     <div className="p-4 bg-fitness-inner rounded-md">
       <div className="flex items-center justify-between">
@@ -22,7 +44,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
           </p>
         </div>
         <div className="flex gap-2">
-          <Dialog>
+          <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Pencil className="h-4 w-4 text-[#15e7fb]" />
@@ -40,19 +62,40 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
                   classType={classType}
                   onSubmit={async (data) => {
                     await onUpdate(classType.schedule_type_id, data);
+                    setIsEditOpen(false);
                   }}
-                  onCancel={() => {}}
+                  onCancel={() => setIsEditOpen(false)}
                 />
               </ScrollArea>
             </DialogContent>
           </Dialog>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(classType.schedule_type_id)}
-          >
-            <Trash2 className="h-4 w-4 text-fitness-danger" />
-          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Trash2 className="h-4 w-4 text-fitness-danger" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-fitness-card">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-fitness-text">Delete Class Type</AlertDialogTitle>
+                <AlertDialogDescription className="text-fitness-text/70">
+                  Are you sure you want to delete {classType.name}? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-transparent border-[#15e7fb] text-fitness-text hover:bg-[#15e7fb]/10">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-fitness-danger hover:bg-fitness-danger/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
