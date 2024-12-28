@@ -27,13 +27,14 @@ interface ClassTypeItemProps {
 
 const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       await onDelete(classType.schedule_type_id);
-      // Invalidate and refetch the classTypes query to update the UI
       await queryClient.invalidateQueries({ queryKey: ['classTypes'] });
       toast({
         title: "Success",
@@ -46,6 +47,8 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
         description: "Failed to delete class type. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -87,7 +90,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" disabled={isDeleting}>
                 <Trash2 className="h-4 w-4 text-fitness-danger" />
               </Button>
             </AlertDialogTrigger>
@@ -105,8 +108,9 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
                 <AlertDialogAction
                   onClick={handleDelete}
                   className="bg-fitness-danger hover:bg-fitness-danger/90"
+                  disabled={isDeleting}
                 >
-                  Delete Permanently
+                  {isDeleting ? 'Deleting...' : 'Delete Permanently'}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
