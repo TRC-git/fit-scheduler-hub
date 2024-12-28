@@ -6,24 +6,23 @@ export const loadOperationalDays = async () => {
       .from('schedule_types')
       .select('operational_days')
       .eq('name', 'default')
-      .limit(1)
-      .maybeSingle();
+      .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+        const { error: insertError } = await supabase
+          .from('schedule_types')
+          .insert({
+            name: 'default',
+            duration: 60,
+            operational_days: defaultDays
+          });
 
-    // If no default settings exist, create them
-    if (!settings) {
-      const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
-      const { error: insertError } = await supabase
-        .from('schedule_types')
-        .insert({
-          name: 'default',
-          duration: 60,
-          operational_days: defaultDays
-        });
-
-      if (insertError) throw insertError;
-      return new Set(defaultDays);
+        if (insertError) throw insertError;
+        return new Set(defaultDays);
+      }
+      throw error;
     }
 
     return new Set(settings?.operational_days || []);
@@ -38,7 +37,7 @@ export const saveOperationalDays = async (operationalDays: Set<string>) => {
     const { error } = await supabase
       .from('schedule_types')
       .update({ 
-        operational_days: Array.from(operationalDays) 
+        operational_days: Array.from(operationalDays)
       })
       .eq('name', 'default');
 

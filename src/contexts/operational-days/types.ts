@@ -3,4 +3,5 @@ export type OperationalDaysContextType = {
   toggleDay: (day: string) => void;
   saveOperationalDays: () => Promise<void>;
   reloadOperationalDays: () => Promise<void>;
+  isLoading: boolean;
 };

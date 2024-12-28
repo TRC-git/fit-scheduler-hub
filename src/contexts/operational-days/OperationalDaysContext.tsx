@@ -7,20 +7,23 @@ export const OperationalDaysContext = createContext<OperationalDaysContextType |
 
 export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const handleLoadOperationalDays = async () => {
     try {
+      setIsLoading(true);
       const days = await loadOperationalDays();
       setOperationalDays(days);
     } catch (error) {
       console.error('Error loading operational days:', error);
-      // Set default days if loading fails
-      setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       toast({
-        title: "Notice",
-        description: "Using default operational days",
+        title: "Error",
+        description: "Failed to load operational days",
+        variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -43,7 +46,7 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
   const handleSaveOperationalDays = async () => {
     try {
       await saveOperationalDays(operationalDays);
-      await handleLoadOperationalDays();
+      await handleLoadOperationalDays(); // Reload to ensure sync with database
       
       toast({
         title: "Success",
@@ -65,7 +68,8 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
       operationalDays, 
       toggleDay, 
       saveOperationalDays: handleSaveOperationalDays,
-      reloadOperationalDays: handleLoadOperationalDays 
+      reloadOperationalDays: handleLoadOperationalDays,
+      isLoading
     }}>
       {children}
     </OperationalDaysContext.Provider>

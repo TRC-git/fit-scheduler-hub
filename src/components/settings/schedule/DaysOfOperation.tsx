@@ -6,16 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 
 const DaysOfOperation = () => {
   const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
-  const { operationalDays, toggleDay, saveOperationalDays } = useOperationalDays();
+  const { operationalDays, toggleDay, saveOperationalDays, isLoading } = useOperationalDays();
   const { toast } = useToast();
 
   const handleSave = async () => {
     try {
       await saveOperationalDays();
-      toast({
-        title: "Success",
-        description: "Scheduling availability has been updated",
-      });
     } catch (error) {
       console.error('Error saving operational days:', error);
       toast({
@@ -25,6 +21,10 @@ const DaysOfOperation = () => {
       });
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
