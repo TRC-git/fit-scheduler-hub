@@ -8,12 +8,16 @@ import { BarChart3, Users, User } from "lucide-react";
 import { PositionSummaryTable } from "./tables/PositionSummaryTable";
 import { AttendanceSummaryTable } from "./tables/AttendanceSummaryTable";
 import { StaffSummaryTable } from "./tables/StaffSummaryTable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useStaffQuery } from "@/components/staff/hooks/useStaffQuery";
 
 export const StaffReports = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  const { data: staff } = useStaffQuery();
 
   const {
     positionSummary,
@@ -22,13 +26,38 @@ export const StaffReports = () => {
     isLoadingPositionSummary,
     isLoadingAttendanceSummary,
     isLoadingEmployeeHours,
-  } = useReports(dateRange.startDate, dateRange.endDate);
+  } = useReports(
+    dateRange.startDate, 
+    dateRange.endDate, 
+    selectedEmployee ? parseInt(selectedEmployee) : undefined
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight text-fitness-text">Staff Reports</h2>
-        <DateRangePicker dateRange={dateRange} onDateRangeChange={setDateRange} />
+        <div className="flex items-center gap-4">
+          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+            <SelectTrigger className="w-[200px] bg-fitness-card border-fitness-grid text-fitness-text">
+              <SelectValue placeholder="Select staff member" />
+            </SelectTrigger>
+            <SelectContent className="bg-fitness-card border-fitness-grid">
+              <SelectItem value="" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
+                All Staff
+              </SelectItem>
+              {staff?.map((member) => (
+                <SelectItem 
+                  key={member.employeeid} 
+                  value={member.employeeid.toString()}
+                  className="text-fitness-text hover:bg-fitness-accent hover:text-black"
+                >
+                  {member.firstname} {member.lastname}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DateRangePicker dateRange={dateRange} onDateRangeChange={setDateRange} />
+        </div>
       </div>
 
       <Tabs defaultValue="position" className="space-y-4">
