@@ -22,32 +22,32 @@ const Settings = () => {
           <h1 className="text-2xl font-bold text-fitness-text">Settings</h1>
         </div>
         
-        <OperationalDaysProvider>
-          <Tabs defaultValue="schedule" className="w-full">
-            <TabsList className="bg-fitness-card">
-              <TabsTrigger value="schedule">Schedule Templates</TabsTrigger>
-              <TabsTrigger value="positions">Positions & Wages</TabsTrigger>
-              <TabsTrigger value="permissions">Permissions</TabsTrigger>
-              <TabsTrigger value="payroll">Payroll Settings</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="schedule">
+        <Tabs defaultValue="schedule" className="w-full">
+          <TabsList className="bg-fitness-card">
+            <TabsTrigger value="schedule">Schedule Templates</TabsTrigger>
+            <TabsTrigger value="positions">Positions & Wages</TabsTrigger>
+            <TabsTrigger value="permissions">Permissions</TabsTrigger>
+            <TabsTrigger value="payroll">Payroll Settings</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="schedule">
+            <OperationalDaysProvider>
               <ScheduleSettings />
-            </TabsContent>
-            
-            <TabsContent value="positions">
-              <PositionSettings />
-            </TabsContent>
-            
-            <TabsContent value="permissions">
-              <PermissionSettings />
-            </TabsContent>
-            
-            <TabsContent value="payroll">
-              <PayrollSettings />
-            </TabsContent>
-          </Tabs>
-        </OperationalDaysProvider>
+            </OperationalDaysProvider>
+          </TabsContent>
+          
+          <TabsContent value="positions">
+            <PositionSettings />
+          </TabsContent>
+          
+          <TabsContent value="permissions">
+            <PermissionSettings />
+          </TabsContent>
+          
+          <TabsContent value="payroll">
+            <PayrollSettings />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
