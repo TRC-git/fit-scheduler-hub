@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { OperationalDaysContextType } from './types';
-import { loadOperationalDays, saveOperationalDays } from './operations';
+import { loadOperationalDays, saveOperationalDays as saveOperationalDaysToDb } from './operations';
 
 export const OperationalDaysContext = createContext<OperationalDaysContextType | undefined>(undefined);
 
@@ -45,9 +45,7 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
 
   const handleSaveOperationalDays = async () => {
     try {
-      await saveOperationalDays(operationalDays);
-      await handleLoadOperationalDays(); // Reload to ensure sync with database
-      
+      await saveOperationalDaysToDb(operationalDays);
       toast({
         title: "Success",
         description: "Operational days saved successfully",
