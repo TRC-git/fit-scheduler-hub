@@ -1,10 +1,14 @@
+import { Header } from "@/components/layout/Header";
 import { StaffReports } from "@/components/reports/StaffReports";
 
 const Reports = () => {
   return (
-    <div className="container mx-auto py-6">
-      <StaffReports />
-    </div>
+    <>
+      <Header />
+      <div className="container mx-auto py-6">
+        <StaffReports />
+      </div>
+    </>
   );
 };
 
