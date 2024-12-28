@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, BarChart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +30,10 @@ const Header = () => {
               <Button variant="ghost">Payroll/Hrs</Button>
             </Link>
             <Link to="/reports">
-              <Button variant="ghost">Reports</Button>
+              <Button variant="ghost" className="flex items-center gap-2">
+                <BarChart className="h-4 w-4" />
+                Reports
+              </Button>
             </Link>
             <Link to="/settings">
               <Button variant="ghost">Settings</Button>
