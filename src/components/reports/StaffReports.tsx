@@ -4,9 +4,10 @@ import { DateRangePicker } from "./DateRangePicker";
 import { useReports } from "@/hooks/reports/useReports";
 import { DateRange } from "@/types/reports";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Users } from "lucide-react";
+import { BarChart3, Users, User } from "lucide-react";
 import { PositionSummaryTable } from "./tables/PositionSummaryTable";
 import { AttendanceSummaryTable } from "./tables/AttendanceSummaryTable";
+import { StaffSummaryTable } from "./tables/StaffSummaryTable";
 
 export const StaffReports = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -17,8 +18,10 @@ export const StaffReports = () => {
   const {
     positionSummary,
     attendanceSummary,
+    employeeHours,
     isLoadingPositionSummary,
     isLoadingAttendanceSummary,
+    isLoadingEmployeeHours,
   } = useReports(dateRange.startDate, dateRange.endDate);
 
   return (
@@ -37,6 +40,10 @@ export const StaffReports = () => {
           <TabsTrigger value="attendance" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
             <Users className="w-4 h-4 mr-2" />
             Attendance Summary
+          </TabsTrigger>
+          <TabsTrigger value="staff" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+            <User className="w-4 h-4 mr-2" />
+            Staff Summary
           </TabsTrigger>
         </TabsList>
 
@@ -69,6 +76,23 @@ export const StaffReports = () => {
               <AttendanceSummaryTable 
                 data={attendanceSummary} 
                 isLoading={isLoadingAttendanceSummary} 
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="staff" className="space-y-4">
+          <Card className="bg-fitness-card border-fitness-grid">
+            <CardHeader>
+              <CardTitle className="text-fitness-text flex items-center gap-2">
+                <User className="w-5 h-5 text-fitness-accent" />
+                Individual Staff Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StaffSummaryTable 
+                data={employeeHours} 
+                isLoading={isLoadingEmployeeHours} 
               />
             </CardContent>
           </Card>
