@@ -1,4 +1,4 @@
-import { Header } from "@/components/layout/Header";
+import Header from "@/components/layout/Header";
 import { StaffReports } from "@/components/reports/StaffReports";
 
 const Reports = () => {
