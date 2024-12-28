@@ -15,6 +15,7 @@ const PayrollSettings = () => {
     queryFn: async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) throw new Error('Authentication required');
+      console.log('Current user email:', user.email); // Debug log
       return user;
     }
   });
@@ -24,12 +25,13 @@ const PayrollSettings = () => {
     queryKey: ['currentEmployee', user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      console.log('Fetching employee with email:', user?.email); // Debug log
+      const email = user?.email?.toLowerCase(); // Normalize email
+      console.log('Fetching employee with normalized email:', email); // Debug log
       
       const { data: employees, error } = await supabase
         .from('employees')
-        .select('employeeid')
-        .eq('email', user?.email)
+        .select('employeeid, email') // Also select email for debugging
+        .eq('email', email)
         .limit(1);
 
       if (error) {
@@ -38,10 +40,12 @@ const PayrollSettings = () => {
       }
 
       if (!employees || employees.length === 0) {
-        console.error('No employee found for email:', user?.email);
+        console.error('No employee found for email:', email);
+        console.log('Available employee emails:', await supabase.from('employees').select('email')); // Debug log
         throw new Error('Employee not found');
       }
 
+      console.log('Found employee:', employees[0]); // Debug log
       return employees[0].employeeid;
     }
   });
