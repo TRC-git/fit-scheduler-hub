@@ -4,6 +4,7 @@ import { ClassType, UpdateClassTypeData } from "@/types/schedule/class-types";
 import { Pencil, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ClassTypeForm from "./ClassTypeForm";
+import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,12 +26,22 @@ interface ClassTypeItemProps {
 
 const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleDelete = async () => {
     try {
       await onDelete(classType.schedule_type_id);
+      toast({
+        title: "Success",
+        description: `${classType.name} has been permanently deleted.`,
+      });
     } catch (error) {
       console.error('Error deleting class type:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete class type. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -80,7 +91,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-fitness-text">Delete Class Type</AlertDialogTitle>
                 <AlertDialogDescription className="text-fitness-text/70">
-                  Are you sure you want to delete {classType.name}? This action cannot be undone.
+                  Are you sure you want to delete {classType.name}? This action removes the class type permanently and cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -91,7 +102,7 @@ const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) =>
                   onClick={handleDelete}
                   className="bg-fitness-danger hover:bg-fitness-danger/90"
                 >
-                  Delete
+                  Delete Permanently
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
