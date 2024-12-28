@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Position } from "../types";
 
 export const usePositionMutations = (onSuccess?: () => void) => {
@@ -14,7 +14,6 @@ export const usePositionMutations = (onSuccess?: () => void) => {
         .from('positions')
         .insert([positionData])
         .select()
-        .returns<Position[]>()
         .maybeSingle();
       
       if (error) {
@@ -49,14 +48,29 @@ export const usePositionMutations = (onSuccess?: () => void) => {
   const updatePositionMutation = useMutation({
     mutationFn: async (positionData: Position) => {
       console.log('Updating position:', positionData);
-      const { positionid, ...updateData } = positionData;
       
+      // First check if position exists
+      const { data: existingPosition, error: checkError } = await supabase
+        .from('positions')
+        .select()
+        .eq('positionid', positionData.positionid)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking position:', checkError);
+        throw checkError;
+      }
+      
+      if (!existingPosition) {
+        throw new Error('Position not found');
+      }
+      
+      const { positionid, ...updateData } = positionData;
       const { data, error } = await supabase
         .from('positions')
         .update(updateData)
         .eq('positionid', positionid)
         .select()
-        .returns<Position[]>()
         .maybeSingle();
       
       if (error) {
@@ -65,7 +79,7 @@ export const usePositionMutations = (onSuccess?: () => void) => {
       }
       
       if (!data) {
-        throw new Error('Position not found');
+        throw new Error('Failed to update position');
       }
       
       return data;
@@ -91,6 +105,22 @@ export const usePositionMutations = (onSuccess?: () => void) => {
   const deletePositionMutation = useMutation({
     mutationFn: async (positionId: number) => {
       console.log('Deleting position:', positionId);
+      
+      // First check if position exists
+      const { data: existingPosition, error: checkError } = await supabase
+        .from('positions')
+        .select()
+        .eq('positionid', positionId)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking position:', checkError);
+        throw checkError;
+      }
+      
+      if (!existingPosition) {
+        throw new Error('Position not found');
+      }
       
       const { error } = await supabase
         .from('positions')
