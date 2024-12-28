@@ -26,6 +26,15 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
     );
   }
 
+  // Ensure all required properties have default values
+  const {
+    total_scheduled_hours = 0,
+    total_worked_hours = 0,
+    total_overtime_hours = 0,
+    late_clock_ins = 0,
+    missed_clock_ins = 0
+  } = data;
+
   return (
     <div className="rounded-md border border-fitness-grid">
       <Table>
@@ -41,7 +50,7 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
               Total Scheduled Hours
             </TableCell>
             <TableCell className="text-fitness-text text-right">
-              {data.total_scheduled_hours.toFixed(1)}h
+              {total_scheduled_hours.toFixed(1)}h
             </TableCell>
           </TableRow>
           <TableRow className="border-fitness-grid hover:bg-fitness-inner">
@@ -49,7 +58,7 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
               Total Worked Hours
             </TableCell>
             <TableCell className="text-fitness-text text-right">
-              {data.total_worked_hours.toFixed(1)}h
+              {total_worked_hours.toFixed(1)}h
             </TableCell>
           </TableRow>
           <TableRow className="border-fitness-grid hover:bg-fitness-inner">
@@ -57,7 +66,7 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
               Overtime Hours
             </TableCell>
             <TableCell className="text-fitness-text text-right text-fitness-accent">
-              {data.total_overtime_hours.toFixed(1)}h
+              {total_overtime_hours.toFixed(1)}h
             </TableCell>
           </TableRow>
           <TableRow className="border-fitness-grid hover:bg-fitness-inner">
@@ -65,7 +74,7 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
               Late Clock-ins
             </TableCell>
             <TableCell className="text-fitness-text text-right text-yellow-500">
-              {data.late_clock_ins}
+              {late_clock_ins}
             </TableCell>
           </TableRow>
           <TableRow className="border-fitness-grid hover:bg-fitness-inner">
@@ -73,7 +82,7 @@ export const StaffSummaryTable = ({ data, isLoading }: StaffSummaryTableProps) =
               Missed Clock-ins
             </TableCell>
             <TableCell className="text-fitness-text text-right text-fitness-danger">
-              {data.missed_clock_ins}
+              {missed_clock_ins}
             </TableCell>
           </TableRow>
         </TableBody>
