@@ -20,7 +20,7 @@ const PayrollSettings = () => {
   });
 
   // Then, get the employee ID for the authenticated user
-  const { data: employeeId, isLoading: isLoadingEmployee } = useQuery({
+  const { data: employeeId, isLoading: isLoadingEmployee, error: employeeError } = useQuery({
     queryKey: ['currentEmployee', user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -28,9 +28,13 @@ const PayrollSettings = () => {
         .from('employees')
         .select('employeeid')
         .eq('email', user?.email)
-        .single();
+        .maybeSingle();
 
-      if (error || !employee) {
+      if (error) {
+        throw error;
+      }
+
+      if (!employee) {
         throw new Error('Employee not found');
       }
 
@@ -48,22 +52,22 @@ const PayrollSettings = () => {
           .from('tax_withholding_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('employee_deductions')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('pto_holiday_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('commission_bonus_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
       ];
 
       const [tax, deductions, pto, commission] = await Promise.all(promises);
@@ -160,6 +164,10 @@ const PayrollSettings = () => {
 
   if (isLoadingUser || isLoadingEmployee || isLoadingSettings) {
     return <div>Loading...</div>;
+  }
+
+  if (employeeError) {
+    return <div>Error: Employee record not found. Please contact your administrator.</div>;
   }
 
   if (!user || !employeeId) {
