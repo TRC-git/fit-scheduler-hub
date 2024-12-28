@@ -15,12 +15,21 @@ import { Settings2 } from "lucide-react";
 const PayrollSettings = () => {
   const { toast } = useToast();
 
-  const { data: employeeId, isLoading: isLoadingEmployee } = useQuery({
-    queryKey: ['currentEmployee'],
+  // First, ensure we have a valid authenticated user
+  const { data: user, isLoading: isLoadingUser } = useQuery({
+    queryKey: ['currentUser'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
-      
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) throw new Error('Authentication required');
+      return user;
+    }
+  });
+
+  // Then, get the employee ID for the authenticated user
+  const { data: employeeId, isLoading: isLoadingEmployee } = useQuery({
+    queryKey: ['currentEmployee', user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
       const { data: employee, error } = await supabase
         .from('employees')
         .select('employeeid')
@@ -34,6 +43,7 @@ const PayrollSettings = () => {
     }
   });
 
+  // Finally, fetch all settings for the employee
   const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['payrollSettings', employeeId],
     enabled: !!employeeId,
@@ -84,6 +94,7 @@ const PayrollSettings = () => {
     mutationFn: async (updates: any) => {
       if (!employeeId) throw new Error('No employee ID found');
       
+      const timestamp = new Date().toISOString();
       const promises = [];
       
       if (updates.tax) {
@@ -93,7 +104,8 @@ const PayrollSettings = () => {
             .upsert({ 
               ...updates.tax, 
               employee_id: employeeId,
-              updated_at: new Date().toISOString()
+              updated_at: timestamp,
+              created_at: timestamp // Add for new records
             })
         );
       }
@@ -105,7 +117,8 @@ const PayrollSettings = () => {
             .upsert({ 
               ...updates.deductions, 
               employee_id: employeeId,
-              updated_at: new Date().toISOString()
+              updated_at: timestamp,
+              created_at: timestamp // Add for new records
             })
         );
       }
@@ -117,7 +130,8 @@ const PayrollSettings = () => {
             .upsert({ 
               ...updates.pto, 
               employee_id: employeeId,
-              updated_at: new Date().toISOString()
+              updated_at: timestamp,
+              created_at: timestamp // Add for new records
             })
         );
       }
@@ -129,7 +143,8 @@ const PayrollSettings = () => {
             .upsert({ 
               ...updates.commission, 
               employee_id: employeeId,
-              updated_at: new Date().toISOString()
+              updated_at: timestamp,
+              created_at: timestamp // Add for new records
             })
         );
       }
@@ -154,14 +169,18 @@ const PayrollSettings = () => {
       console.error('Error updating settings:', error);
       toast({
         title: "Error",
-        description: "Failed to update payroll settings",
+        description: "Failed to update payroll settings. Please try again.",
         variant: "destructive",
       });
     }
   });
 
-  if (isLoadingEmployee || isLoadingSettings) {
+  if (isLoadingUser || isLoadingEmployee || isLoadingSettings) {
     return <div>Loading...</div>;
+  }
+
+  if (!user || !employeeId) {
+    return <div>Please log in to access payroll settings.</div>;
   }
 
   return (
