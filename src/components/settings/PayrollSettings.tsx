@@ -1,16 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PayPeriodSection } from "./payroll/PayPeriodSection";
-import { TaxWithholdingSection } from "./payroll/TaxWithholdingSection";
-import { DeductionsSection } from "./payroll/DeductionsSection";
-import { OvertimeSection } from "./payroll/OvertimeSection";
-import { HolidayPTOSection } from "./payroll/HolidayPTOSection";
-import { CommissionSection } from "./payroll/CommissionSection";
-import { DirectDepositSection } from "./payroll/DirectDepositSection";
-import { Settings2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import TaxSettings from "./payroll/sections/TaxSettings";
+import DeductionsSettings from "./payroll/sections/DeductionsSettings";
+import PTOSettings from "./payroll/sections/PTOSettings";
+import CommissionSettings from "./payroll/sections/CommissionSettings";
 
 const PayrollSettings = () => {
   const { toast } = useToast();
@@ -33,12 +27,13 @@ const PayrollSettings = () => {
       const { data: employee, error } = await supabase
         .from('employees')
         .select('employeeid')
-        .eq('email', user.email)
+        .eq('email', user?.email)
         .single();
-      
-      if (error) throw error;
-      if (!employee) throw new Error('No employee found');
-      
+
+      if (error || !employee) {
+        throw new Error('Employee not found');
+      }
+
       return employee.employeeid;
     }
   });
@@ -48,13 +43,7 @@ const PayrollSettings = () => {
     queryKey: ['payrollSettings', employeeId],
     enabled: !!employeeId,
     queryFn: async () => {
-      const [
-        { data: tax },
-        { data: deductions },
-        { data: pto },
-        { data: commission },
-        { data: overtime }
-      ] = await Promise.all([
+      const promises = [
         supabase
           .from('tax_withholding_settings')
           .select('*')
@@ -75,22 +64,20 @@ const PayrollSettings = () => {
           .select('*')
           .eq('employee_id', employeeId)
           .single(),
-        supabase
-          .from('overtimerules')
-          .select('*')
-      ]);
+      ];
+
+      const [tax, deductions, pto, commission] = await Promise.all(promises);
 
       return {
-        tax,
-        deductions,
-        pto,
-        commission,
-        overtime
+        tax: tax.data || {},
+        deductions: deductions.data || {},
+        pto: pto.data || {},
+        commission: commission.data || {},
       };
     }
   });
 
-  const updateSettingsMutation = useMutation({
+  const updateSettings = useMutation({
     mutationFn: async (updates: any) => {
       if (!employeeId) throw new Error('No employee ID found');
       
@@ -109,7 +96,7 @@ const PayrollSettings = () => {
             })
         );
       }
-      
+
       if (updates.deductions) {
         promises.push(
           supabase
@@ -122,7 +109,7 @@ const PayrollSettings = () => {
             })
         );
       }
-      
+
       if (updates.pto) {
         promises.push(
           supabase
@@ -135,7 +122,7 @@ const PayrollSettings = () => {
             })
         );
       }
-      
+
       if (updates.commission) {
         promises.push(
           supabase
@@ -149,20 +136,11 @@ const PayrollSettings = () => {
         );
       }
 
-      if (updates.overtime) {
-        promises.push(
-          supabase
-            .from('overtimerules')
-            .upsert(updates.overtime)
-        );
-      }
-
       await Promise.all(promises);
-    },
-    onSuccess: () => {
+
       toast({
         title: "Success",
-        description: "Payroll settings updated successfully",
+        description: "Settings updated successfully",
       });
     },
     onError: (error) => {
@@ -175,6 +153,11 @@ const PayrollSettings = () => {
     }
   });
 
+  const handleSettingChange = (section: string, field: string, value: any) => {
+    const sectionData = { ...settings?.[section], [field]: value };
+    updateSettings.mutate({ [section]: sectionData });
+  };
+
   if (isLoadingUser || isLoadingEmployee || isLoadingSettings) {
     return <div>Loading...</div>;
   }
@@ -184,40 +167,24 @@ const PayrollSettings = () => {
   }
 
   return (
-    <Card className="bg-fitness-card">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Settings2 className="w-6 h-6 text-fitness-text" />
-          <CardTitle className="text-fitness-text text-3xl">Payroll Settings</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-12">
-        <div className="grid gap-8">
-          <PayPeriodSection />
-          <TaxWithholdingSection 
-            settings={settings?.tax} 
-            onUpdate={(tax) => updateSettingsMutation.mutate({ tax })}
-          />
-          <DeductionsSection 
-            settings={settings?.deductions}
-            onUpdate={(deductions) => updateSettingsMutation.mutate({ deductions })}
-          />
-          <OvertimeSection 
-            settings={settings?.overtime}
-            onUpdate={(overtime) => updateSettingsMutation.mutate({ overtime })}
-          />
-          <HolidayPTOSection 
-            settings={settings?.pto}
-            onUpdate={(pto) => updateSettingsMutation.mutate({ pto })}
-          />
-          <CommissionSection 
-            settings={settings?.commission}
-            onUpdate={(commission) => updateSettingsMutation.mutate({ commission })}
-          />
-          <DirectDepositSection />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <TaxSettings
+        settings={settings?.tax}
+        onSettingChange={(field, value) => handleSettingChange('tax', field, value)}
+      />
+      <DeductionsSettings
+        settings={settings?.deductions}
+        onSettingChange={(field, value) => handleSettingChange('deductions', field, value)}
+      />
+      <PTOSettings
+        settings={settings?.pto}
+        onSettingChange={(field, value) => handleSettingChange('pto', field, value)}
+      />
+      <CommissionSettings
+        settings={settings?.commission}
+        onSettingChange={(field, value) => handleSettingChange('commission', field, value)}
+      />
+    </div>
   );
 };
 
