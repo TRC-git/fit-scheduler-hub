@@ -1,5 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface OperationalDaysProps {
   selectedDays: string[];
@@ -8,6 +10,20 @@ interface OperationalDaysProps {
 
 const OperationalDays = ({ selectedDays, onDayToggle }: OperationalDaysProps) => {
   const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+  const { toast } = useToast();
+
+  const handleDayToggle = async (day: string) => {
+    try {
+      onDayToggle(day);
+    } catch (error) {
+      console.error('Error toggling day:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update operational day",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div>
@@ -18,7 +34,7 @@ const OperationalDays = ({ selectedDays, onDayToggle }: OperationalDaysProps) =>
             <Checkbox
               id={day}
               checked={selectedDays.includes(day)}
-              onCheckedChange={() => onDayToggle(day)}
+              onCheckedChange={() => handleDayToggle(day)}
               className="border-[#15e7fb] data-[state=checked]:bg-[#15e7fb]"
             />
             <Label htmlFor={day} className="text-fitness-text">{day}</Label>
