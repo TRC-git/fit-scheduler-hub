@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "./integrations/supabase/client";
+import Header from "@/components/layout/Header";
 import Index from "@/pages/Index";
 import Settings from "@/pages/Settings";
 import Login from "@/pages/Login";
@@ -34,7 +35,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <Header />
+      {children}
+    </>
+  );
 };
 
 const Router = () => {
