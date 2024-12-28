@@ -167,7 +167,23 @@ const PayrollSettings = () => {
   }
 
   if (employeeError) {
-    return <div>Error: Employee record not found. Please contact your administrator.</div>;
+    return (
+      <div className="p-4 text-center">
+        <h2 className="text-xl font-semibold mb-2">Employee Record Not Found</h2>
+        <p className="text-gray-600 mb-4">
+          We couldn't find an employee record for your email address ({user?.email}).
+          This could be because:
+        </p>
+        <ul className="list-disc text-left max-w-md mx-auto mb-4 text-gray-600">
+          <li>Your employee profile hasn't been created yet</li>
+          <li>Your email address doesn't match our records</li>
+          <li>Your account needs to be activated</li>
+        </ul>
+        <p className="text-gray-600">
+          Please contact your administrator to ensure your employee profile is properly set up.
+        </p>
+      </div>
+    );
   }
 
   if (!user || !employeeId) {
