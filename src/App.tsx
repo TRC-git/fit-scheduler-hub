@@ -1,17 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { PayPeriodProvider } from "./contexts/PayPeriodContext";
-import Reports from "./pages/Reports";
-import Settings from "./pages/Settings";
+import Router from "./Router";
 
 function App() {
   return (
     <PayPeriodProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </Router>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </PayPeriodProvider>
   );
 }
