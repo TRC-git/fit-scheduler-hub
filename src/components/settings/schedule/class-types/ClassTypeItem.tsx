@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ClassTypeItemProps {
   classType: ClassType;
@@ -27,10 +28,13 @@ interface ClassTypeItemProps {
 const ClassTypeItem = ({ classType, onUpdate, onDelete }: ClassTypeItemProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleDelete = async () => {
     try {
       await onDelete(classType.schedule_type_id);
+      // Invalidate and refetch the classTypes query to update the UI
+      await queryClient.invalidateQueries({ queryKey: ['classTypes'] });
       toast({
         title: "Success",
         description: `${classType.name} has been permanently deleted.`,
