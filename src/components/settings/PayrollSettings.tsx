@@ -24,21 +24,25 @@ const PayrollSettings = () => {
     queryKey: ['currentEmployee', user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const { data: employee, error } = await supabase
+      console.log('Fetching employee with email:', user?.email); // Debug log
+      
+      const { data: employees, error } = await supabase
         .from('employees')
         .select('employeeid')
         .eq('email', user?.email)
-        .maybeSingle();
+        .limit(1);
 
       if (error) {
+        console.error('Error fetching employee:', error);
         throw error;
       }
 
-      if (!employee) {
+      if (!employees || employees.length === 0) {
+        console.error('No employee found for email:', user?.email);
         throw new Error('Employee not found');
       }
 
-      return employee.employeeid;
+      return employees[0].employeeid;
     }
   });
 
@@ -167,6 +171,7 @@ const PayrollSettings = () => {
   }
 
   if (employeeError) {
+    console.error('Employee error:', employeeError); // Debug log
     return (
       <div className="p-4 text-center">
         <h2 className="text-xl font-semibold mb-2">Employee Record Not Found</h2>
