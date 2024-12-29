@@ -2,23 +2,22 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const loadOperationalDays = async () => {
   try {
-    const { data: settings, error } = await supabase
-      .from('schedule_types')
+    const { data: location, error } = await supabase
+      .from('businesslocations')
       .select('operational_days')
-      .eq('name', 'default')
       .limit(1)
       .maybeSingle();
 
     if (error) throw error;
 
-    // If no default settings exist, create them
-    if (!settings) {
+    // If no business location exists, create one with default settings
+    if (!location) {
       const defaultDays = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
       const { error: insertError } = await supabase
-        .from('schedule_types')
+        .from('businesslocations')
         .insert({
-          name: 'default',
-          duration: 60,
+          locationname: 'Main Location',
+          address: 'Default Address',
           operational_days: defaultDays
         });
 
@@ -26,7 +25,7 @@ export const loadOperationalDays = async () => {
       return new Set(defaultDays);
     }
 
-    return new Set(settings?.operational_days || []);
+    return new Set(location?.operational_days || []);
   } catch (error) {
     console.error('Error in loadOperationalDays:', error);
     throw error;
@@ -35,12 +34,22 @@ export const loadOperationalDays = async () => {
 
 export const saveOperationalDays = async (operationalDays: Set<string>) => {
   try {
+    const { data: location, error: fetchError } = await supabase
+      .from('businesslocations')
+      .select('locationid')
+      .limit(1)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+
+    if (!location) throw new Error('No business location found');
+
     const { error } = await supabase
-      .from('schedule_types')
+      .from('businesslocations')
       .update({ 
         operational_days: Array.from(operationalDays) 
       })
-      .eq('name', 'default');
+      .eq('locationid', location.locationid);
 
     if (error) throw error;
   } catch (error) {

@@ -10,18 +10,27 @@ const DaysOfOperation = () => {
   const { toast } = useToast();
 
   const handleSave = async () => {
-    await saveOperationalDays();
-    toast({
-      title: "Success",
-      description: "Scheduling availability has been updated",
-    });
+    try {
+      await saveOperationalDays();
+      toast({
+        title: "Success",
+        description: "Business operational days have been updated",
+      });
+    } catch (error) {
+      console.error('Error saving operational days:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update business operational days",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
     <div>
-      <h3 className="text-fitness-text mb-2">Schedule Days</h3>
+      <h3 className="text-fitness-text mb-2">Days of Operation</h3>
       <p className="text-sm text-fitness-text/70 mb-4">
-        Select which days appointments can be scheduled. Unselected days will be marked as unavailable in the schedule.
+        Select which days your business is open. Unselected days will be marked as closed.
       </p>
       <div className="flex gap-4 flex-wrap mb-4">
         {daysOfWeek.map((day) => (
