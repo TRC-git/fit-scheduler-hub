@@ -37,7 +37,7 @@ export const StaffDialogForm = ({
   const [passwordError, setPasswordError] = useState("");
   const { toast } = useToast();
 
-  const { availability, setAvailability } = useAvailability(initialData?.employeeid);
+  const { availability, setAvailability, handleAvailabilitySubmit } = useAvailability(initialData?.employeeid);
   const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
 
   const handleFormChange = (field: keyof typeof formData, value: string | boolean) => {
@@ -93,7 +93,20 @@ export const StaffDialogForm = ({
       }
     }
 
-    await submitForm(formData, selectedPositions, availability);
+    try {
+      const result = await submitForm(formData, selectedPositions, availability);
+      if (result) {
+        const employeeId = initialData?.employeeid || result.employeeid;
+        await handleAvailabilitySubmit(employeeId, availability);
+      }
+    } catch (error) {
+      console.error("Error in form submission:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save staff member",
+        variant: "destructive",
+      });
+    }
   };
 
   const handlePositionsChange = (positions: PositionWithPayRate[]) => {
@@ -121,8 +134,9 @@ export const StaffDialogForm = ({
         onPositionsChange={handlePositionsChange}
       />
       <AvailabilitySection 
-        availability={availability}
-        onChange={setAvailability}
+        employeeId={initialData?.employeeid}
+        initialAvailability={availability}
+        onAvailabilityChange={setAvailability}
       />
       <DialogActions 
         onCancel={onCancel}

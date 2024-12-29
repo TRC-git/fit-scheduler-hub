@@ -6,6 +6,7 @@ export interface TimeSlot {
 }
 
 export interface AvailabilitySectionProps {
-  availability: TimeSlot[];
-  onChange: (availability: TimeSlot[]) => void;
+  employeeId?: number;
+  initialAvailability?: TimeSlot[];
+  onAvailabilityChange: (availability: TimeSlot[]) => void;
 }
