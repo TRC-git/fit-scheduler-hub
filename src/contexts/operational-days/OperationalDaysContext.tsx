@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { OperationalDaysContextType } from './types';
 import { loadOperationalDays, saveOperationalDays } from './operations';
 
@@ -7,23 +7,20 @@ export const OperationalDaysContext = createContext<OperationalDaysContextType |
 
 export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const handleLoadOperationalDays = async () => {
     try {
-      setIsLoading(true);
       const days = await loadOperationalDays();
       setOperationalDays(days);
     } catch (error) {
       console.error('Error loading operational days:', error);
+      // Set default days if loading fails
+      setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       toast({
-        title: "Error",
-        description: "Failed to load operational days",
-        variant: "destructive",
+        title: "Notice",
+        description: "Using default operational days",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -46,6 +43,8 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
   const handleSaveOperationalDays = async () => {
     try {
       await saveOperationalDays(operationalDays);
+      await handleLoadOperationalDays();
+      
       toast({
         title: "Success",
         description: "Operational days saved successfully",
@@ -66,8 +65,7 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
       operationalDays, 
       toggleDay, 
       saveOperationalDays: handleSaveOperationalDays,
-      reloadOperationalDays: handleLoadOperationalDays,
-      isLoading
+      reloadOperationalDays: handleLoadOperationalDays 
     }}>
       {children}
     </OperationalDaysContext.Provider>

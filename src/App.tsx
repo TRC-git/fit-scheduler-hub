@@ -1,25 +1,18 @@
 import { BrowserRouter } from "react-router-dom";
-import { PayPeriodProvider } from "./contexts/PayPeriodContext";
-import Router from "./Router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import Router from "./Router";
+import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <PayPeriodProvider>
-        <BrowserRouter>
-          <Router />
-        </BrowserRouter>
-      </PayPeriodProvider>
+      <BrowserRouter>
+        <Router />
+        <Toaster />
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

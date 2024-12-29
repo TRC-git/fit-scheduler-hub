@@ -973,7 +973,6 @@ export type Database = {
           total_overtime_hours: number
           late_clock_ins: number
           missed_clock_ins: number
-          schedule_details: Json
         }[]
       }
       get_employee_attendance_summary: {

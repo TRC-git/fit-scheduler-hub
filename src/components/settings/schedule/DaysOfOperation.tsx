@@ -2,29 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useOperationalDays } from '@/contexts/operational-days/useOperationalDays';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const DaysOfOperation = () => {
   const daysOfWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
-  const { operationalDays, toggleDay, saveOperationalDays, isLoading } = useOperationalDays();
+  const { operationalDays, toggleDay, saveOperationalDays } = useOperationalDays();
   const { toast } = useToast();
 
   const handleSave = async () => {
-    try {
-      await saveOperationalDays();
-    } catch (error) {
-      console.error('Error saving operational days:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update scheduling availability",
-        variant: "destructive",
-      });
-    }
+    await saveOperationalDays();
+    toast({
+      title: "Success",
+      description: "Scheduling availability has been updated",
+    });
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>

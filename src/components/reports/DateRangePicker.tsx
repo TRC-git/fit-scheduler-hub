@@ -6,7 +6,6 @@ import { format } from "date-fns";
 import { DateRange } from "@/types/reports";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePayPeriod } from "@/contexts/PayPeriodContext";
 
 interface DateRangePickerProps {
   dateRange: DateRange;
@@ -15,15 +14,6 @@ interface DateRangePickerProps {
 
 export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { getPayPeriodRange } = usePayPeriod();
-
-  const handleSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      const { startDate, endDate } = getPayPeriodRange(selectedDate);
-      onDateRangeChange({ startDate, endDate });
-      setIsOpen(false);
-    }
-  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -47,7 +37,7 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
               format(dateRange.startDate, "LLL dd, y")
             )
           ) : (
-            <span>Pick a date</span>
+            <span>Pick a date range</span>
           )}
         </Button>
       </PopoverTrigger>
@@ -57,11 +47,22 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
       >
         <Calendar
           initialFocus
-          mode="single"
+          mode="range"
           defaultMonth={dateRange.startDate}
-          selected={dateRange.startDate}
-          onSelect={handleSelect}
-          numberOfMonths={1}
+          selected={{
+            from: dateRange.startDate,
+            to: dateRange.endDate,
+          }}
+          onSelect={(range) => {
+            if (range?.from && range?.to) {
+              onDateRangeChange({
+                startDate: range.from,
+                endDate: range.to,
+              });
+              setIsOpen(false);
+            }
+          }}
+          numberOfMonths={2}
           className="text-fitness-text"
         />
       </PopoverContent>
