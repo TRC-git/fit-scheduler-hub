@@ -42,7 +42,7 @@ export const StaffReports = () => {
               <SelectValue placeholder="Select staff member" />
             </SelectTrigger>
             <SelectContent className="bg-fitness-card border-fitness-grid">
-              <SelectItem value="" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
+              <SelectItem value="all" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
                 All Staff
               </SelectItem>
               {staff?.map((member) => (
@@ -63,15 +63,15 @@ export const StaffReports = () => {
       <Tabs defaultValue="position" className="space-y-4">
         <TabsList className="bg-fitness-card border-fitness-grid">
           <TabsTrigger value="position" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
-            <BarChart3 className="w-4 h-4 mr-2" />
+            <BarChart3 className="w-4 h-4 mr-0.5" />
             Position Summary
           </TabsTrigger>
           <TabsTrigger value="attendance" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
-            <Users className="w-4 h-4 mr-2" />
+            <Users className="w-4 h-4 mr-0.5" />
             Attendance Summary
           </TabsTrigger>
           <TabsTrigger value="staff" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
-            <User className="w-4 h-4 mr-2" />
+            <User className="w-4 h-4 mr-0.5" />
             Staff Summary
           </TabsTrigger>
         </TabsList>
