@@ -13,7 +13,7 @@ export const useStaffQuery = () => {
         .from("employees")
         .select(`
           *,
-          positions (*),
+          positions!employees_position_id_fkey (*),
           employeepositions (
             is_primary,
             positions (
