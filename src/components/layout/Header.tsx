@@ -45,7 +45,7 @@ const Header = () => {
             <Link to="/">
               <Button 
                 variant={isActive("/") ? "default" : "ghost"}
-                className={isActive("/") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+                className={isActive("/") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
                 Schedule
               </Button>
@@ -53,7 +53,7 @@ const Header = () => {
             <Link to="/staff">
               <Button 
                 variant={isActive("/staff") ? "default" : "ghost"}
-                className={isActive("/staff") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+                className={isActive("/staff") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
                 Staff
               </Button>
@@ -61,7 +61,7 @@ const Header = () => {
             <Link to="/payroll">
               <Button 
                 variant={isActive("/payroll") ? "default" : "ghost"}
-                className={isActive("/payroll") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+                className={isActive("/payroll") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
                 Payroll/Hrs
               </Button>
@@ -69,7 +69,7 @@ const Header = () => {
             <Link to="/reports">
               <Button 
                 variant={isActive("/reports") ? "default" : "ghost"}
-                className={isActive("/reports") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+                className={isActive("/reports") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
                 <BarChart className="h-4 w-4" />
                 Reports
@@ -78,7 +78,7 @@ const Header = () => {
             <Link to="/settings">
               <Button 
                 variant={isActive("/settings") ? "default" : "ghost"}
-                className={isActive("/settings") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+                className={isActive("/settings") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
                 Settings
               </Button>
