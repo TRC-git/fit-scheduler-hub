@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { BusinessLocation } from "@/types/database/business-location";
 
 export const useOperatingHours = () => {
@@ -21,7 +21,15 @@ export const useOperatingHours = () => {
         .select('opening_time, closing_time, slot_duration')
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading operating hours:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load operating hours",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data) {
         const location = data as BusinessLocation;
@@ -30,7 +38,7 @@ export const useOperatingHours = () => {
         setSlotDuration(location.slot_duration || 60);
       }
     } catch (error) {
-      console.error('Error loading operating hours:', error);
+      console.error('Error in loadOperatingHours:', error);
       toast({
         title: "Error",
         description: "Failed to load operating hours",
