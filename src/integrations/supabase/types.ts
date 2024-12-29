@@ -274,7 +274,7 @@ export type Database = {
         }
         Insert: {
           availabilityid?: number
-          dayofweek: string
+          dayofweek?: string
           employeeid?: number | null
           endtime: string
           ispreferred?: boolean | null
