@@ -18,7 +18,7 @@ interface StaffResponse {
 
 export const useStaffFormSubmit = (
   initialData: any | undefined,
-  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<any>,
+  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<StaffResponse>,
   onClose: () => void
 ) => {
   const [loading, setLoading] = useState(false);

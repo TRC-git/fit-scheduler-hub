@@ -8,12 +8,15 @@ import { useAvailability } from "./hooks/useAvailability";
 import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { PasswordSetup } from "./password/PasswordSetup";
-import { PasswordReset } from "./password/PasswordReset";
+
+interface StaffResponse {
+  employeeid: number;
+  [key: string]: any;
+}
 
 interface StaffDialogFormProps {
   initialData?: any;
-  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<any>;
+  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<StaffResponse>;
   onCancel: () => void;
   loading: boolean;
 }
