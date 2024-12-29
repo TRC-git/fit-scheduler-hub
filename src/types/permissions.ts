@@ -1,5 +1,3 @@
-import { Json } from "@/types/database/common";
-
 export interface PermissionSettingsType {
   // Calendar Permissions
   calendar_view: boolean;
@@ -9,6 +7,7 @@ export interface PermissionSettingsType {
   // Employee Management
   manage_employees: boolean;
   manage_positions: boolean;
+  approve_timeoff: boolean; // New permission added
   
   // Payroll & Finance
   manage_payroll: boolean;

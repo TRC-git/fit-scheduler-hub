@@ -7,6 +7,7 @@ export const defaultPermissions: PermissionSettingsType = {
   calendar_manage: false,
   manage_employees: false,
   manage_positions: false,
+  approve_timeoff: false, // New permission added
   manage_payroll: false,
   approve_timesheets: false,
   view_reports: false,
@@ -27,7 +28,7 @@ export const convertToJson = (permissions: PermissionSettingsType): Json => {
 
 export const permissionGroups = {
   "Calendar Access": ["calendar_view", "calendar_edit", "calendar_manage"],
-  "Employee Management": ["manage_employees", "manage_positions"],
+  "Employee Management": ["manage_employees", "manage_positions", "approve_timeoff"], // Added new permission
   "Payroll & Finance": ["manage_payroll", "approve_timesheets", "view_reports"],
   "Schedule Management": ["create_schedules", "modify_schedules", "approve_swaps"],
   "System Settings": ["manage_settings", "manage_locations"]
