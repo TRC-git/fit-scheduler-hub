@@ -55,22 +55,34 @@ export const StaffDialogForm = ({
     }
 
     if (!initialData) {
-      // Create auth user for new staff
-      const { error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: password,
-        options: {
-          data: {
+      try {
+        // Create auth user for new staff
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+          email: formData.email,
+          password: password,
+          email_confirm: true,
+          user_metadata: {
             first_name: formData.firstname,
             last_name: formData.lastname,
           }
-        }
-      });
+        });
 
-      if (authError) {
+        if (authError) {
+          console.error("Auth error:", authError);
+          toast({
+            title: "Error",
+            description: authError.message,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        console.log("Auth user created:", authData);
+      } catch (error) {
+        console.error("Error creating auth user:", error);
         toast({
           title: "Error",
-          description: authError.message,
+          description: "Failed to create user account",
           variant: "destructive",
         });
         return;
@@ -80,23 +92,35 @@ export const StaffDialogForm = ({
     await submitForm(formData, selectedPositions, availability);
   };
 
-  const handleResetPassword = async () => {
+  const handlePasswordReset = async () => {
     if (!initialData?.email) return;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(initialData.email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
+    try {
+      const { error } = await supabase.auth.admin.generateLink({
+        type: 'recovery',
+        email: initialData.email,
       });
-    } else {
+
+      if (error) {
+        console.error("Password reset error:", error);
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Success",
         description: "Password reset email sent",
+      });
+    } catch (error) {
+      console.error("Error sending password reset:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email",
+        variant: "destructive",
       });
     }
   };
@@ -148,7 +172,7 @@ export const StaffDialogForm = ({
           <Button
             type="button"
             variant="outline"
-            onClick={handleResetPassword}
+            onClick={handlePasswordReset}
             className="w-full text-fitness-text border-fitness-accent hover:bg-fitness-accent/10"
           >
             Send Password Reset Email
