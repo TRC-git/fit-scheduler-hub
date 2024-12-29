@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface TimeSlotSelectorProps {
   value: string;
@@ -7,17 +8,15 @@ interface TimeSlotSelectorProps {
 }
 
 export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorProps) => {
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-  };
-
   return (
-    <Input
-      type="time"
-      value={value}
-      onChange={handleTimeChange}
-      className="w-[140px] bg-fitness-card text-fitness-text border-fitness-muted [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.7]"
-      placeholder={label}
-    />
+    <div className="flex flex-col gap-1">
+      <Label className="text-fitness-text text-sm">{label}</Label>
+      <Input
+        type="time"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-[140px] bg-fitness-card text-fitness-text border-fitness-muted"
+      />
+    </div>
   );
 };
