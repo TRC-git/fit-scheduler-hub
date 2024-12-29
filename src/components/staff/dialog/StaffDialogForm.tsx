@@ -6,6 +6,11 @@ import { PositionWithPayRate } from "../positions/types";
 import { AvailabilitySection } from "./availability/AvailabilitySection";
 import { useAvailability } from "./hooks/useAvailability";
 import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface StaffDialogFormProps {
   initialData?: any;
@@ -22,18 +27,78 @@ export const StaffDialogForm = ({
 }: StaffDialogFormProps) => {
   const [selectedPositions, setSelectedPositions] = useState<PositionWithPayRate[]>([]);
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    phonenumber: "",
+    firstname: initialData?.firstname || "",
+    lastname: initialData?.lastname || "",
+    email: initialData?.email || "",
+    phonenumber: initialData?.phonenumber || "",
   });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const { toast } = useToast();
 
   const { availability, setAvailability } = useAvailability(initialData?.employeeid);
   const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPasswordError("");
+
+    if (!initialData && password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    if (!initialData && password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (!initialData) {
+      // Create auth user for new staff
+      const { error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: password,
+        options: {
+          data: {
+            first_name: formData.firstname,
+            last_name: formData.lastname,
+          }
+        }
+      });
+
+      if (authError) {
+        toast({
+          title: "Error",
+          description: authError.message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     await submitForm(formData, selectedPositions, availability);
+  };
+
+  const handleResetPassword = async () => {
+    if (!initialData?.email) return;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(initialData.email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Password reset email sent",
+      });
+    }
   };
 
   const handleFormChange = (field: keyof typeof formData, value: string) => {
@@ -47,6 +112,50 @@ export const StaffDialogForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <StaffFormFields formData={formData} onChange={handleFormChange} />
+      
+      {!initialData ? (
+        // New staff - show password setup
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-fitness-text">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-fitness-inner text-fitness-text"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword" className="text-fitness-text">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="bg-fitness-inner text-fitness-text"
+              required
+            />
+          </div>
+          {passwordError && (
+            <p className="text-sm text-red-500">{passwordError}</p>
+          )}
+        </div>
+      ) : (
+        // Existing staff - show reset password button
+        <div className="space-y-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleResetPassword}
+            className="w-full text-fitness-text border-fitness-accent hover:bg-fitness-accent/10"
+          >
+            Send Password Reset Email
+          </Button>
+        </div>
+      )}
+
       <PositionSelect 
         selectedPositions={selectedPositions}
         onPositionsChange={handlePositionsChange}
