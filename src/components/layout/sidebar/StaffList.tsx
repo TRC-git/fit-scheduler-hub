@@ -40,24 +40,33 @@ export const StaffList = () => {
                   <span className="text-fitness-text">
                     {employee.firstname} {employee.lastname}
                   </span>
-                  {employee.is_admin && (
-                    <span className="text-xs bg-[#15e7fb]/10 text-[#15e7fb] px-2 py-0.5 rounded-full">
-                      Admin
-                    </span>
-                  )}
+                  <div className="flex gap-1">
+                    {employee.is_admin && (
+                      <span className="text-xs bg-[#15e7fb]/10 text-[#15e7fb] px-2 py-0.5 rounded-full">
+                        Admin
+                      </span>
+                    )}
+                    {employee.suspended && (
+                      <span className="text-xs bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">
+                        Suspended
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span className="text-sm text-gray-400">
                   {getPositionName(employee)}
                 </span>
               </div>
             </div>
-            <Plus
-              className="w-5 h-5 text-fitness-accent cursor-pointer"
-              onClick={() => setSelectedEmployee({
-                id: employee.employeeid,
-                name: `${employee.firstname} ${employee.lastname}`
-              })}
-            />
+            {!employee.suspended && (
+              <Plus
+                className="w-5 h-5 text-fitness-accent cursor-pointer"
+                onClick={() => setSelectedEmployee({
+                  id: employee.employeeid,
+                  name: `${employee.firstname} ${employee.lastname}`
+                })}
+              />
+            )}
           </div>
         ))}
       </ScrollArea>
