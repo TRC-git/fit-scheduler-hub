@@ -36,9 +36,16 @@ export const StaffList = () => {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-fitness-text">
-                  {employee.firstname} {employee.lastname}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-fitness-text">
+                    {employee.firstname} {employee.lastname}
+                  </span>
+                  {employee.is_admin && (
+                    <span className="text-xs bg-[#15e7fb]/10 text-[#15e7fb] px-2 py-0.5 rounded-full">
+                      Admin
+                    </span>
+                  )}
+                </div>
                 <span className="text-sm text-gray-400">
                   {getPositionName(employee)}
                 </span>
