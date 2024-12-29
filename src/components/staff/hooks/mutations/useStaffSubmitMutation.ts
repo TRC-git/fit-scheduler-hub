@@ -1,53 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { PositionWithPayRate } from "../../positions/types";
-
-interface StaffFormData {
-  firstname: string;
-  lastname: string;
-  email: string;
-  phonenumber: string;
-  is_admin: boolean;
-}
-
-interface MutationParams {
-  formData: StaffFormData;
-  selectedPositions: PositionWithPayRate[];
-  initialData?: any;
-}
+import { MutationParams } from "../../types/staff";
 
 export const useStaffSubmitMutation = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  const handleEmployeePositions = async (
-    employeeId: number,
-    selectedPositions: PositionWithPayRate[]
-  ) => {
-    if (selectedPositions.length === 0) return;
-
-    const { error: deleteError } = await supabase
-      .from("employeepositions")
-      .delete()
-      .eq("employeeid", employeeId);
-
-    if (deleteError) throw deleteError;
-
-    const positionsToInsert = selectedPositions.map((position, index) => ({
-      employeeid: employeeId,
-      positionid: position.positionid,
-      payrate: position.payrate || position.defaultpayrate || 0,
-      is_primary: index === 0,
-      access_level: position.access_level ? JSON.stringify(position.access_level) : 'basic'
-    }));
-
-    const { error: positionsError } = await supabase
-      .from("employeepositions")
-      .insert(positionsToInsert);
-
-    if (positionsError) throw positionsError;
-  };
 
   return useMutation({
     mutationFn: async ({
@@ -107,4 +65,32 @@ export const useStaffSubmitMutation = () => {
       });
     },
   });
+};
+
+const handleEmployeePositions = async (
+  employeeId: number,
+  selectedPositions: any[]
+) => {
+  if (selectedPositions.length === 0) return;
+
+  const { error: deleteError } = await supabase
+    .from("employeepositions")
+    .delete()
+    .eq("employeeid", employeeId);
+
+  if (deleteError) throw deleteError;
+
+  const positionsToInsert = selectedPositions.map((position, index) => ({
+    employeeid: employeeId,
+    positionid: position.positionid,
+    payrate: position.payrate || position.defaultpayrate || 0,
+    is_primary: index === 0,
+    access_level: position.access_level ? JSON.stringify(position.access_level) : 'basic'
+  }));
+
+  const { error: positionsError } = await supabase
+    .from("employeepositions")
+    .insert(positionsToInsert);
+
+  if (positionsError) throw positionsError;
 };

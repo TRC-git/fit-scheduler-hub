@@ -1,9 +1,8 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { StaffDialogForm } from "./dialog/StaffDialogForm";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StaffResponse } from "./dialog/StaffDialogForm";
-import { PositionWithPayRate } from "./positions/types";
+import { Dialog } from "@/components/ui/dialog";
+import { StaffDialogContent } from "./dialog/StaffDialogContent";
 import { useStaffSubmitMutation } from "./hooks/mutations/useStaffSubmitMutation";
+import { StaffResponse } from "./types/staff";
+import { PositionWithPayRate } from "./positions/types";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -12,11 +11,11 @@ interface NewStaffDialogProps {
 }
 
 const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps) => {
-  const { mutate, isLoading } = useStaffSubmitMutation();
+  const mutation = useStaffSubmitMutation();
 
   const handleSubmit = async (formData: any, selectedPositions: PositionWithPayRate[]): Promise<StaffResponse> => {
     return new Promise((resolve, reject) => {
-      mutate(
+      mutation.mutate(
         { formData, selectedPositions, initialData },
         {
           onSuccess: (employeeId) => {
@@ -33,24 +32,12 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-fitness-card border-fitness-muted max-h-[90vh] w-[calc(100%+120px)] max-w-[calc(32rem+120px)]">
-        <DialogHeader>
-          <DialogTitle className="text-fitness-text">
-            {initialData ? 'Edit Staff Member' : 'Add New Staff Member'}
-          </DialogTitle>
-        </DialogHeader>
-        <ScrollArea className="max-h-[calc(90vh-120px)] pr-4" style={{
-          '--scrollbar-thumb': '#15e7fb',
-          '--scrollbar-track': 'transparent'
-        } as React.CSSProperties}>
-          <StaffDialogForm
-            initialData={initialData}
-            onSubmit={handleSubmit}
-            onCancel={() => onOpenChange(false)}
-            loading={isLoading}
-          />
-        </ScrollArea>
-      </DialogContent>
+      <StaffDialogContent
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        onClose={() => onOpenChange(false)}
+        loading={mutation.isPending}
+      />
     </Dialog>
   );
 };
