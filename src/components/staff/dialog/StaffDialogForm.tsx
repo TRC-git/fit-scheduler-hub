@@ -56,13 +56,14 @@ export const StaffDialogForm = ({
 
     if (!initialData) {
       try {
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: password,
-          email_confirm: true,
-          user_metadata: {
-            first_name: formData.firstname,
-            last_name: formData.lastname,
+          options: {
+            data: {
+              first_name: formData.firstname,
+              last_name: formData.lastname,
+            }
           }
         });
 
@@ -95,10 +96,10 @@ export const StaffDialogForm = ({
     if (!initialData?.email) return;
 
     try {
-      const { error } = await supabase.auth.admin.generateLink({
-        type: 'recovery',
-        email: initialData.email,
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        initialData.email,
+        { redirectTo: window.location.origin + '/reset-password' }
+      );
 
       if (error) {
         console.error("Password reset error:", error);
