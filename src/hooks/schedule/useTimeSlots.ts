@@ -14,7 +14,7 @@ export const useTimeSlots = () => {
     try {
       const { data: locationData, error: locationError } = await supabase
         .from('businesslocations')
-        .select('opening_time, closing_time, slot_duration')
+        .select('*')
         .maybeSingle();
 
       if (locationError) throw locationError;
