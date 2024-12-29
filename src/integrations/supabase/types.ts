@@ -265,33 +265,33 @@ export type Database = {
       }
       employeeavailability: {
         Row: {
+          "5": number
           availabilityid: number
           dayofweek: string
-          employeeid: number | null
           endtime: string
           ispreferred: boolean | null
           starttime: string
         }
         Insert: {
+          "5": number
           availabilityid?: number
           dayofweek?: string
-          employeeid?: number | null
           endtime: string
           ispreferred?: boolean | null
           starttime: string
         }
         Update: {
+          "5"?: number
           availabilityid?: number
           dayofweek?: string
-          employeeid?: number | null
           endtime?: string
           ispreferred?: boolean | null
           starttime?: string
         }
         Relationships: [
           {
-            foreignKeyName: "employeeavailability_employeeid_fkey"
-            columns: ["employeeid"]
+            foreignKeyName: "employeeavailability_5_fkey"
+            columns: ["5"]
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["employeeid"]

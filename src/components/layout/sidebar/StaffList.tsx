@@ -1,48 +1,47 @@
-import { Plus } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useStaffQuery } from "../../staff/hooks/useStaffQuery";
-import { getPositionName } from "./utils/positionUtils";
+import { useState } from "react";
+import { useStaffQuery } from "@/components/staff/hooks/useStaffQuery";
+import { Calendar } from "lucide-react";
+import { BulkScheduleDialog } from "@/components/schedule/BulkScheduleDialog";
 
 export const StaffList = () => {
-  const { data: staff } = useStaffQuery();
+  const { data: staff, isLoading } = useStaffQuery();
+  const [selectedEmployee, setSelectedEmployee] = useState<{id: number; name: string} | null>(null);
+
+  if (isLoading) {
+    return <div className="text-fitness-text">Loading staff...</div>;
+  }
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold text-fitness-text mb-4">Staff</h2>
-      <ScrollArea 
-        className="h-[300px] pr-4" 
-        style={{
-          '--scrollbar-thumb': '#15e7fb',
-          '--scrollbar-track': 'transparent'
-        } as React.CSSProperties}
-      >
-        <div className="space-y-3">
-          {staff?.map((member) => (
-            <div
-              key={member.employeeid}
-              className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
-            >
-              <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10">
-                  <div className="w-full h-full bg-fitness-accent flex items-center justify-center text-white font-semibold">
-                    {member.firstname[0]}{member.lastname[0]}
-                  </div>
-                </Avatar>
-                <div>
-                  <p className="text-fitness-text font-medium">
-                    {member.firstname} {member.lastname}
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    {getPositionName(member)}
-                  </p>
-                </div>
-              </div>
-              <Plus className="w-5 h-5 text-fitness-accent cursor-pointer" />
-            </div>
-          ))}
+    <div className="space-y-2">
+      {staff?.map((employee) => (
+        <div
+          key={employee.employeeid}
+          className="flex items-center justify-between p-2 rounded-md hover:bg-fitness-card/50"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-fitness-accent/20" />
+            <span className="text-fitness-text">
+              {employee.firstname} {employee.lastname}
+            </span>
+          </div>
+          <Calendar
+            className="w-5 h-5 text-fitness-accent cursor-pointer"
+            onClick={() => setSelectedEmployee({
+              id: employee.employeeid,
+              name: `${employee.firstname} ${employee.lastname}`
+            })}
+          />
         </div>
-      </ScrollArea>
+      ))}
+
+      {selectedEmployee && (
+        <BulkScheduleDialog
+          employeeId={selectedEmployee.id}
+          employeeName={selectedEmployee.name}
+          onClose={() => setSelectedEmployee(null)}
+          open={!!selectedEmployee}
+        />
+      )}
     </div>
   );
 };
