@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { BulkScheduleDialog } from "@/components/schedule/BulkScheduleDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
+import { getPositionName } from "./utils/positionUtils";
 
 export const StaffList = () => {
   const { data: staff, isLoading } = useStaffQuery();
@@ -35,7 +36,7 @@ export const StaffList = () => {
                   {employee.firstname} {employee.lastname}
                 </span>
                 <span className="text-sm text-gray-400">
-                  Coach
+                  {getPositionName(employee)}
                 </span>
               </div>
             </div>
