@@ -16,7 +16,7 @@ export const StaffReports = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("all");
   const { data: staff } = useStaffQuery();
 
   const {
@@ -29,7 +29,7 @@ export const StaffReports = () => {
   } = useReports(
     dateRange.startDate, 
     dateRange.endDate, 
-    selectedEmployee ? parseInt(selectedEmployee) : undefined
+    selectedEmployee !== "all" ? parseInt(selectedEmployee) : undefined
   );
 
   return (
