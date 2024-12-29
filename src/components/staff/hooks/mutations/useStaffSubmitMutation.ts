@@ -9,6 +9,7 @@ interface StaffFormData {
   lastname: string;
   email: string;
   phonenumber: string;
+  is_admin: boolean;
 }
 
 export const useStaffSubmitMutation = () => {
@@ -69,6 +70,7 @@ export const useStaffSubmitMutation = () => {
           hiredate: new Date().toISOString(),
           isactive: true,
           position_id: primaryPosition,
+          is_admin: formData.is_admin
         },
       ])
       .select()
@@ -92,7 +94,6 @@ export const useStaffSubmitMutation = () => {
     
     const primaryPosition = selectedPositions[0]?.positionid || null;
 
-    // Update the employee record
     const { error: employeeError } = await supabase
       .from("employees")
       .update({
@@ -101,6 +102,7 @@ export const useStaffSubmitMutation = () => {
         email: formData.email,
         phonenumber: formData.phonenumber,
         position_id: primaryPosition,
+        is_admin: formData.is_admin
       })
       .eq("employeeid", employeeId);
 
@@ -109,7 +111,6 @@ export const useStaffSubmitMutation = () => {
       throw employeeError;
     }
 
-    // Update employee positions
     await handleEmployeePositions(employeeId, selectedPositions);
   };
 

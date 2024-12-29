@@ -30,6 +30,7 @@ export const StaffDialogForm = ({
     lastname: initialData?.lastname || "",
     email: initialData?.email || "",
     phonenumber: initialData?.phonenumber || "",
+    is_admin: initialData?.is_admin || false,
   });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,6 +39,10 @@ export const StaffDialogForm = ({
 
   const { availability, setAvailability } = useAvailability(initialData?.employeeid);
   const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
+
+  const handleFormChange = (field: keyof typeof formData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,10 +94,6 @@ export const StaffDialogForm = ({
     }
 
     await submitForm(formData, selectedPositions, availability);
-  };
-
-  const handleFormChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePositionsChange = (positions: PositionWithPayRate[]) => {

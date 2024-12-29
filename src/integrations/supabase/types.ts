@@ -337,6 +337,7 @@ export type Database = {
           employeeid: number
           firstname: string
           hiredate: string
+          is_admin: boolean | null
           isactive: boolean | null
           lastname: string
           phonenumber: string | null
@@ -348,6 +349,7 @@ export type Database = {
           employeeid?: number
           firstname: string
           hiredate: string
+          is_admin?: boolean | null
           isactive?: boolean | null
           lastname: string
           phonenumber?: string | null
@@ -359,6 +361,7 @@ export type Database = {
           employeeid?: number
           firstname?: string
           hiredate?: string
+          is_admin?: boolean | null
           isactive?: boolean | null
           lastname?: string
           phonenumber?: string | null

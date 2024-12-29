@@ -1,16 +1,18 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 interface FormData {
   firstname: string;
   lastname: string;
   email: string;
   phonenumber: string;
+  is_admin?: boolean;
 }
 
 interface StaffFormFieldsProps {
   formData: FormData;
-  onChange: (field: keyof FormData, value: string) => void;
+  onChange: (field: keyof FormData, value: string | boolean) => void;
 }
 
 export const StaffFormFields = ({ formData, onChange }: StaffFormFieldsProps) => {
@@ -58,6 +60,15 @@ export const StaffFormFields = ({ formData, onChange }: StaffFormFieldsProps) =>
           onChange={(e) => onChange('phonenumber', e.target.value)}
           className="bg-fitness-inner text-fitness-text"
         />
+      </div>
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="admin"
+          checked={formData.is_admin}
+          onCheckedChange={(checked) => onChange('is_admin', checked)}
+          className="data-[state=checked]:bg-[#15e7fb]"
+        />
+        <Label htmlFor="admin" className="text-fitness-text">Admin Privileges</Label>
       </div>
     </>
   );
