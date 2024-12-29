@@ -33,6 +33,7 @@ export const useTimeSlots = () => {
 
       if (locationData) {
         const location = locationData as BusinessLocation;
+        console.log('Location data:', location);
         const slots = generateTimeSlots(
           location.opening_time || '09:00',
           location.closing_time || '17:00',

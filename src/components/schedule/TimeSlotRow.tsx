@@ -19,12 +19,9 @@ export const TimeSlotRow = ({
 
   // Format the time slot for better display
   const formatTimeSlot = (timeSlot: string) => {
-    const [start, end] = timeSlot.split(' - ');
     return (
       <div className="flex flex-row items-center justify-start space-x-1 text-sm whitespace-nowrap">
-        <span>{start}</span>
-        <span>-</span>
-        <span>{end}</span>
+        <span>{timeSlot}</span>
       </div>
     );
   };
