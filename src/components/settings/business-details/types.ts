@@ -4,6 +4,8 @@ export interface BusinessLocationUpdate {
   tax_id?: string;
   address?: string;
   logo_url?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface BusinessLocation {
