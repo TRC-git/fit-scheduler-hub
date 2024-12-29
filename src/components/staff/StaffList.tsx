@@ -4,7 +4,9 @@ import NewStaffDialog from "./NewStaffDialog";
 import { StaffLoadingState } from "./components/StaffLoadingState";
 import { DeleteConfirmDialog } from "./components/DeleteConfirmDialog";
 import { useStaffQuery } from "./hooks/useStaffQuery";
-import { useStaffMutations } from "./hooks/useStaffMutations";
+import { useStaffPayRateMutation } from "./hooks/mutations/useStaffPayRateMutation";
+import { useStaffSuspendMutation } from "./hooks/mutations/useStaffSuspendMutation";
+import { useStaffDeleteMutation } from "./hooks/mutations/useStaffDeleteMutation";
 
 const StaffList = () => {
   const [staffToDelete, setStaffToDelete] = useState<any>(null);
@@ -12,7 +14,9 @@ const StaffList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   
   const { data: staff, isLoading, error } = useStaffQuery();
-  const { updatePayRateMutation, suspendMutation, deleteMutation } = useStaffMutations();
+  const updatePayRateMutation = useStaffPayRateMutation();
+  const suspendMutation = useStaffSuspendMutation();
+  const deleteMutation = useStaffDeleteMutation();
 
   const handleEdit = (member: any) => {
     console.log("Editing member:", member);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { PositionWithPayRate } from "../positions/types";
 import { StaffResponse } from "../dialog/StaffDialogForm";
 
@@ -121,91 +121,8 @@ export const useStaffMutations = () => {
     }
   };
 
-  const updatePayRateMutation = useMutation({
-    mutationFn: async ({ employeeId, positionId, payRate }: { 
-      employeeId: number;
-      positionId: number;
-      payRate: number;
-    }) => {
-      const { error } = await supabase
-        .from('employeepositions')
-        .update({ payrate: payRate })
-        .eq('employeeid', employeeId)
-        .eq('positionid', positionId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
-      toast({
-        title: "Success",
-        description: "Pay rate updated successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update pay rate",
-        variant: "destructive",
-      });
-    }
-  });
-
-  const suspendMutation = useMutation({
-    mutationFn: async ({ employeeId, suspend }: { employeeId: number, suspend: boolean }) => {
-      const { error } = await supabase
-        .from('employees')
-        .update({ suspended: suspend })
-        .eq('employeeid', employeeId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
-      toast({
-        title: "Success",
-        description: "Employee status updated successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update employee status",
-        variant: "destructive",
-      });
-    }
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (employeeId: number) => {
-      const { error } = await supabase
-        .from('employees')
-        .update({ isactive: false })
-        .eq('employeeid', employeeId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["staff"] });
-      toast({
-        title: "Success",
-        description: "Employee deleted successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete employee",
-        variant: "destructive",
-      });
-    }
-  });
-
   return {
     submitStaffForm,
-    updatePayRateMutation,
-    suspendMutation,
-    deleteMutation,
     loading
   };
 };

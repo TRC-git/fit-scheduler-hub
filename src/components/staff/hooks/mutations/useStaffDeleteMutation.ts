@@ -1,4 +1,4 @@
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
@@ -10,7 +10,7 @@ export const useStaffDeleteMutation = () => {
     mutationFn: async (employeeId: number) => {
       const { error } = await supabase
         .from('employees')
-        .delete()
+        .update({ isactive: false })
         .eq('employeeid', employeeId);
 
       if (error) throw error;
