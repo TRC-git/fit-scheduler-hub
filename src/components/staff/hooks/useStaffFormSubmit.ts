@@ -2,7 +2,6 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PositionWithPayRate } from "../positions/types";
 import { TimeSlot } from "../dialog/types/availability";
-import { StaffResponse } from "../types/staff";
 
 interface StaffFormData {
   firstname: string;
@@ -10,6 +9,11 @@ interface StaffFormData {
   email: string;
   phonenumber: string;
   is_admin: boolean;
+}
+
+interface StaffResponse {
+  employeeid: number;
+  [key: string]: any;
 }
 
 export const useStaffFormSubmit = (
@@ -24,12 +28,12 @@ export const useStaffFormSubmit = (
     await supabase
       .from('employeeavailability')
       .delete()
-      .eq('employeeid', employeeId);
+      .eq('5', employeeId);
     
     // Insert new availability
     if (availability.length > 0) {
       const availabilityData = availability.map(slot => ({
-        employeeid: employeeId,
+        "5": employeeId,
         dayofweek: slot.dayofweek,
         starttime: slot.starttime,
         endtime: slot.endtime,

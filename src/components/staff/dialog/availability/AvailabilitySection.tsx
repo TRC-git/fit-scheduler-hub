@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DaySelector } from "./components/DaySelector";
 import { DaySchedule } from "./components/DaySchedule";
-import { TimeSlot } from "../types";
+import { TimeSlot } from "../types/availability";
 
 interface AvailabilitySectionProps {
   employeeId?: number;
@@ -28,12 +28,7 @@ export const AvailabilitySection = ({
       if (!slots[slot.dayofweek]) {
         slots[slot.dayofweek] = [];
       }
-      slots[slot.dayofweek].push({
-        starttime: slot.starttime,
-        endtime: slot.endtime,
-        dayofweek: slot.dayofweek,
-        ispreferred: slot.ispreferred
-      });
+      slots[slot.dayofweek].push(slot);
     });
     return slots;
   });
@@ -55,6 +50,7 @@ export const AvailabilitySection = ({
     setTimeSlots(prev => ({
       ...prev,
       [day]: [...(prev[day] || []), { 
+        "5": employeeId || 0,
         starttime: "09:00", 
         endtime: "17:00", 
         dayofweek: day,
