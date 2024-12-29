@@ -55,6 +55,11 @@ export const StaffCard = ({
                   Suspended
                 </span>
               )}
+              {member.is_admin && (
+                <span className="text-xs bg-[#15e7fb]/10 text-[#15e7fb] px-2 py-0.5 rounded-full">
+                  Admin
+                </span>
+              )}
             </div>
             <p className="text-sm text-gray-400">{member.email}</p>
             <p className="text-sm text-gray-400">{member.phonenumber}</p>
