@@ -12,30 +12,36 @@ export type Database = {
       businesslocations: {
         Row: {
           address: string
+          closing_time: string
           latitude: number | null
           locationid: number
           locationname: string
           longitude: number | null
+          opening_time: string
           operational_days: string[] | null
           radiusmeters: number | null
           slot_duration: number
         }
         Insert: {
           address: string
+          closing_time?: string
           latitude?: number | null
           locationid?: number
           locationname: string
           longitude?: number | null
+          opening_time?: string
           operational_days?: string[] | null
           radiusmeters?: number | null
           slot_duration?: number
         }
         Update: {
           address?: string
+          closing_time?: string
           latitude?: number | null
           locationid?: number
           locationname?: string
           longitude?: number | null
+          opening_time?: string
           operational_days?: string[] | null
           radiusmeters?: number | null
           slot_duration?: number

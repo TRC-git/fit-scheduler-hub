@@ -5,6 +5,13 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
+interface BusinessLocation {
+  locationid?: number;
+  opening_time?: string;
+  closing_time?: string;
+  slot_duration?: number;
+}
+
 const OperatingHours = () => {
   const [openingTime, setOpeningTime] = useState("09:00");
   const [closingTime, setClosingTime] = useState("17:00");
@@ -26,9 +33,10 @@ const OperatingHours = () => {
       if (error) throw error;
       
       if (data) {
-        setOpeningTime(data.opening_time?.slice(0, 5) || "09:00");
-        setClosingTime(data.closing_time?.slice(0, 5) || "17:00");
-        setSlotDuration(data.slot_duration || 60);
+        const location = data as BusinessLocation;
+        setOpeningTime(location.opening_time?.slice(0, 5) || "09:00");
+        setClosingTime(location.closing_time?.slice(0, 5) || "17:00");
+        setSlotDuration(location.slot_duration || 60);
       }
     } catch (error) {
       console.error('Error loading operating hours:', error);

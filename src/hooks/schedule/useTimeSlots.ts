@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, addMinutes, parse } from 'date-fns';
 
+interface BusinessLocation {
+  opening_time?: string;
+  closing_time?: string;
+  slot_duration?: number;
+}
+
 export const useTimeSlots = () => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
@@ -20,10 +26,11 @@ export const useTimeSlots = () => {
       if (locationError) throw locationError;
 
       if (locationData) {
+        const location = locationData as BusinessLocation;
         const slots = generateTimeSlots(
-          locationData.opening_time || '09:00',
-          locationData.closing_time || '17:00',
-          locationData.slot_duration || 60
+          location.opening_time || '09:00',
+          location.closing_time || '17:00',
+          location.slot_duration || 60
         );
         setTimeSlots(slots);
       }
