@@ -591,6 +591,7 @@ export type Database = {
           opening_time: string | null
           operational_days: string[] | null
           schedule_type_id: number
+          updated_at: string | null
         }
         Insert: {
           closing_time?: string | null
@@ -600,6 +601,7 @@ export type Database = {
           opening_time?: string | null
           operational_days?: string[] | null
           schedule_type_id?: number
+          updated_at?: string | null
         }
         Update: {
           closing_time?: string | null
@@ -609,6 +611,7 @@ export type Database = {
           opening_time?: string | null
           operational_days?: string[] | null
           schedule_type_id?: number
+          updated_at?: string | null
         }
         Relationships: []
       }
