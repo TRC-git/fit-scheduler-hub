@@ -49,12 +49,12 @@ export const useStaffSubmitMutation = () => {
     if (positionsError) throw positionsError;
   };
 
-  return useMutation<number, Error, MutationParams, unknown>({
+  return useMutation({
     mutationFn: async ({
       formData,
       selectedPositions,
       initialData
-    }) => {
+    }: MutationParams) => {
       if (initialData) {
         const { error } = await supabase
           .from("employees")
