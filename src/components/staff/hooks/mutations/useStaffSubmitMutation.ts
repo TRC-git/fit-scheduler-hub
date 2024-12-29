@@ -54,7 +54,7 @@ export const useStaffSubmitMutation = () => {
       formData,
       selectedPositions,
       initialData
-    }: MutationParams) => {
+    }: MutationParams): Promise<number> => {
       if (initialData) {
         const { error } = await supabase
           .from("employees")
