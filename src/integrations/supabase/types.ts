@@ -16,7 +16,6 @@ export type Database = {
           closing_time: string
           latitude: number | null
           locationid: number
-          locationname: string
           logo_url: string | null
           longitude: number | null
           opening_time: string
@@ -32,7 +31,6 @@ export type Database = {
           closing_time?: string
           latitude?: number | null
           locationid?: number
-          locationname: string
           logo_url?: string | null
           longitude?: number | null
           opening_time?: string
@@ -48,7 +46,6 @@ export type Database = {
           closing_time?: string
           latitude?: number | null
           locationid?: number
-          locationname?: string
           logo_url?: string | null
           longitude?: number | null
           opening_time?: string

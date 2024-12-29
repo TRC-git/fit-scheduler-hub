@@ -1,64 +1,15 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Building2, Phone, Receipt, Image, MapPin } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface BusinessLocationUpdate {
-  business_name?: string;
-  phone_number?: string;
-  tax_id?: string;
-  address?: string;
-  logo_url?: string;
-}
+import { BusinessDetailsForm } from "./business-details/BusinessDetailsForm";
+import { LogoUpload } from "./business-details/LogoUpload";
+import { useBusinessLocation } from "./business-details/useBusinessLocation";
+import { BusinessLocationUpdate } from "./business-details/types";
 
 const BusinessDetails = () => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [logoFile, setLogoFile] = useState<File | null>(null);
-
-  const { data: businessLocation, isLoading } = useQuery({
-    queryKey: ['businessLocation'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('businesslocations')
-        .select('*')
-        .single();
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (formData: BusinessLocationUpdate) => {
-      const { error } = await supabase
-        .from('businesslocations')
-        .update(formData)
-        .eq('locationid', businessLocation?.locationid);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['businessLocation'] });
-      toast({
-        title: "Success",
-        description: "Business details updated successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to update business details",
-        variant: "destructive",
-      });
-      console.error("Error updating business details:", error);
-    }
-  });
+  const { businessLocation, isLoading, updateMutation } = useBusinessLocation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -105,89 +56,11 @@ const BusinessDetails = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Building2 className="w-5 h-5 text-fitness-accent" />
-              <div className="flex-1">
-                <Label htmlFor="business_name" className="text-fitness-text">Business Name</Label>
-                <Input
-                  id="business_name"
-                  name="business_name"
-                  defaultValue={businessLocation?.business_name || ''}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Phone className="w-5 h-5 text-fitness-accent" />
-              <div className="flex-1">
-                <Label htmlFor="phone_number" className="text-fitness-text">Phone Number</Label>
-                <Input
-                  id="phone_number"
-                  name="phone_number"
-                  defaultValue={businessLocation?.phone_number || ''}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Receipt className="w-5 h-5 text-fitness-accent" />
-              <div className="flex-1">
-                <Label htmlFor="tax_id" className="text-fitness-text">Tax ID</Label>
-                <Input
-                  id="tax_id"
-                  name="tax_id"
-                  defaultValue={businessLocation?.tax_id || ''}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <MapPin className="w-5 h-5 text-fitness-accent" />
-              <div className="flex-1">
-                <Label htmlFor="address" className="text-fitness-text">Address</Label>
-                <Input
-                  id="address"
-                  name="address"
-                  defaultValue={businessLocation?.address || ''}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
-                />
-                {businessLocation?.latitude && businessLocation?.longitude && (
-                  <div className="mt-2 text-sm text-fitness-text">
-                    Coordinates: {businessLocation.latitude}, {businessLocation.longitude}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Image className="w-5 h-5 text-fitness-accent" />
-              <div className="flex-1">
-                <Label htmlFor="logo" className="text-fitness-text">Business Logo</Label>
-                <Input
-                  id="logo"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
-                />
-              </div>
-            </div>
-
-            {businessLocation?.logo_url && (
-              <div className="mt-4">
-                <img
-                  src={businessLocation.logo_url}
-                  alt="Business Logo"
-                  className="w-32 h-32 object-contain"
-                />
-              </div>
-            )}
-          </div>
-
+          <BusinessDetailsForm businessLocation={businessLocation} />
+          <LogoUpload 
+            businessLocation={businessLocation}
+            onFileSelect={setLogoFile}
+          />
           <Button 
             type="submit"
             disabled={updateMutation.isPending}
