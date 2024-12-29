@@ -8,6 +8,12 @@ interface StaffFormData {
   lastname: string;
   email: string;
   phonenumber: string;
+  is_admin: boolean;
+}
+
+interface StaffResponse {
+  employeeid: number;
+  [key: string]: any;
 }
 
 export const useStaffFormSubmit = (
@@ -44,7 +50,7 @@ export const useStaffFormSubmit = (
     formData: StaffFormData,
     selectedPositions: PositionWithPayRate[],
     availability: TimeSlot[]
-  ) => {
+  ): Promise<StaffResponse | null> => {
     setLoading(true);
     try {
       const result = await onSubmit(formData, selectedPositions);
@@ -53,12 +59,12 @@ export const useStaffFormSubmit = (
         const employeeId = initialData?.employeeid || result.employeeid;
         await handleAvailabilityUpdate(employeeId, availability);
         onClose();
-        return true;
+        return result;
       }
-      return false;
+      return null;
     } catch (error) {
       console.error("Error in submitForm:", error);
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }
