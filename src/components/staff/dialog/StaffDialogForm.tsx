@@ -1,20 +1,16 @@
 import { useState } from "react";
-import { StaffFormFields } from "./StaffFormFields";
-import { PositionSelect } from "../positions/PositionSelect";
+import { StaffBasicInfo } from "./form/StaffBasicInfo";
+import { StaffPositions } from "./form/StaffPositions";
+import { StaffAvailability } from "./form/StaffAvailability";
 import { DialogActions } from "./DialogActions";
 import { PositionWithPayRate } from "../positions/types";
-import { AvailabilitySection } from "./availability/AvailabilitySection";
 import { useAvailability } from "./hooks/useAvailability";
 import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PasswordSetup } from "./password/PasswordSetup";
 import { PasswordReset } from "./password/PasswordReset";
-
-export interface StaffResponse {
-  employeeid: number;
-  [key: string]: any;
-}
+import { StaffResponse } from "../types/staff";
 
 interface StaffDialogFormProps {
   initialData?: any;
@@ -23,11 +19,11 @@ interface StaffDialogFormProps {
   loading: boolean;
 }
 
-export const StaffDialogForm = ({ 
-  initialData, 
-  onSubmit, 
+export const StaffDialogForm = ({
+  initialData,
+  onSubmit,
   onCancel,
-  loading: parentLoading 
+  loading: parentLoading
 }: StaffDialogFormProps) => {
   const [selectedPositions, setSelectedPositions] = useState<PositionWithPayRate[]>(
     initialData?.employeepositions?.map((ep: any) => ({
@@ -36,6 +32,7 @@ export const StaffDialogForm = ({
       is_primary: ep.is_primary
     })) || []
   );
+
   const [formData, setFormData] = useState({
     firstname: initialData?.firstname || "",
     lastname: initialData?.lastname || "",
@@ -43,6 +40,7 @@ export const StaffDialogForm = ({
     phonenumber: initialData?.phonenumber || "",
     is_admin: initialData?.is_admin || false,
   });
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -51,7 +49,7 @@ export const StaffDialogForm = ({
   const { availability, setAvailability } = useAvailability(initialData?.employeeid);
   const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
 
-  const handleFormChange = (field: keyof typeof formData, value: string | boolean) => {
+  const handleFormChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -107,8 +105,7 @@ export const StaffDialogForm = ({
     try {
       const result = await submitForm(formData, selectedPositions, availability);
       if (result) {
-        const employeeId = initialData?.employeeid || result.employeeid;
-        console.log("Staff member saved with ID:", employeeId);
+        console.log("Staff member saved with ID:", initialData?.employeeid || result.employeeid);
       }
     } catch (error) {
       console.error("Error in form submission:", error);
@@ -120,13 +117,9 @@ export const StaffDialogForm = ({
     }
   };
 
-  const handlePositionsChange = (positions: PositionWithPayRate[]) => {
-    setSelectedPositions(positions);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <StaffFormFields formData={formData} onChange={handleFormChange} />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <StaffBasicInfo formData={formData} onChange={handleFormChange} />
       
       {!initialData ? (
         <PasswordSetup
@@ -140,16 +133,18 @@ export const StaffDialogForm = ({
         <PasswordReset email={initialData.email} />
       )}
 
-      <PositionSelect 
+      <StaffPositions
         selectedPositions={selectedPositions}
-        onPositionsChange={handlePositionsChange}
+        onPositionsChange={setSelectedPositions}
       />
-      <AvailabilitySection 
+
+      <StaffAvailability
         employeeId={initialData?.employeeid}
-        initialAvailability={availability}
+        availability={availability}
         onAvailabilityChange={setAvailability}
       />
-      <DialogActions 
+
+      <DialogActions
         onCancel={onCancel}
         loading={loading || parentLoading}
         isEditing={!!initialData}
