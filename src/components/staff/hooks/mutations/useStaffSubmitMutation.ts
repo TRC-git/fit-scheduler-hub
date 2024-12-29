@@ -58,7 +58,7 @@ export const useStaffSubmitMutation = () => {
       dayofweek: slot.dayofweek,
       starttime: slot.starttime,
       endtime: slot.endtime,
-      ispreferred: slot.ispreferred || false
+      ispreferred: slot.ispreferred
     }));
 
     const { error: insertError } = await supabase

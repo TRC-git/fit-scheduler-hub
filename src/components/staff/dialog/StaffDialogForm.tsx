@@ -44,31 +44,33 @@ export const StaffDialogForm = ({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const { availability, setAvailability } = useAvailability(initialData?.employeeid);
-  const { submitForm, loading } = useStaffFormSubmit(initialData, onSubmit, onCancel);
+  const { handleSubmit } = useStaffFormSubmit();
 
   const handleFormChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError("");
+    setIsSubmitting(true);
 
-    if (!initialData && password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
+    try {
+      if (!initialData && password !== confirmPassword) {
+        setPasswordError("Passwords do not match");
+        return;
+      }
 
-    if (!initialData && password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      return;
-    }
+      if (!initialData && password.length < 6) {
+        setPasswordError("Password must be at least 6 characters");
+        return;
+      }
 
-    if (!initialData) {
-      try {
+      if (!initialData) {
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: password,
@@ -91,21 +93,19 @@ export const StaffDialogForm = ({
         }
 
         console.log("Auth user created:", authData);
-      } catch (error) {
-        console.error("Error creating auth user:", error);
-        toast({
-          title: "Error",
-          description: "Failed to create user account",
-          variant: "destructive",
-        });
-        return;
       }
-    }
 
-    try {
-      const result = await submitForm(formData, selectedPositions, availability);
+      const result = await onSubmit(formData, selectedPositions);
+      
       if (result) {
-        console.log("Staff member saved with ID:", initialData?.employeeid || result.employeeid);
+        const employeeId = initialData?.employeeid || result.employeeid;
+        const { success, error } = await handleSubmit(employeeId, availability);
+        
+        if (!success) {
+          throw error;
+        }
+        
+        onCancel();
       }
     } catch (error) {
       console.error("Error in form submission:", error);
@@ -114,11 +114,13 @@ export const StaffDialogForm = ({
         description: "Failed to save staff member",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleFormSubmit} className="space-y-6">
       <StaffBasicInfo formData={formData} onChange={handleFormChange} />
       
       {!initialData ? (
@@ -146,7 +148,7 @@ export const StaffDialogForm = ({
 
       <DialogActions
         onCancel={onCancel}
-        loading={loading || parentLoading}
+        loading={isSubmitting || parentLoading}
         isEditing={!!initialData}
       />
     </form>
