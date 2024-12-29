@@ -52,7 +52,7 @@ export const useStaffSubmitMutation = () => {
 
     if (availability.length === 0) return;
 
-    // Insert new availability records
+    // Transform availability records to match database schema
     const availabilityRecords: Omit<TimeSlot, 'availabilityid'>[] = availability.map(slot => ({
       "5": employeeId,
       dayofweek: slot.dayofweek,
@@ -114,8 +114,8 @@ export const useStaffSubmitMutation = () => {
       // Handle employee positions
       await handleEmployeePositions(employeeId, selectedPositions);
 
-      // Handle availability
-      await handleAvailability(employeeId, availability);
+      // Handle availability with proper type casting
+      await handleAvailability(employeeId, availability as TimeSlotInput[]);
 
       return employeeId;
     },

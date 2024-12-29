@@ -2,5 +2,5 @@ export interface TimeSlot {
   dayofweek: string;
   starttime: string;
   endtime: string;
-  ispreferred?: boolean;
+  ispreferred: boolean; // Changed from optional to required
 }
