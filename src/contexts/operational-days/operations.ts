@@ -25,7 +25,7 @@ export const loadOperationalDays = async () => {
       return new Set(defaultDays);
     }
 
-    return new Set(location?.operational_days || []);
+    return new Set(location.operational_days || []);
   } catch (error) {
     console.error('Error in loadOperationalDays:', error);
     throw error;

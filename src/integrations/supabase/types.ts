@@ -16,6 +16,7 @@ export type Database = {
           locationid: number
           locationname: string
           longitude: number | null
+          operational_days: string[] | null
           radiusmeters: number | null
         }
         Insert: {
@@ -24,6 +25,7 @@ export type Database = {
           locationid?: number
           locationname: string
           longitude?: number | null
+          operational_days?: string[] | null
           radiusmeters?: number | null
         }
         Update: {
@@ -32,6 +34,7 @@ export type Database = {
           locationid?: number
           locationname?: string
           longitude?: number | null
+          operational_days?: string[] | null
           radiusmeters?: number | null
         }
         Relationships: []

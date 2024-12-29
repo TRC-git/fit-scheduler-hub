@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { OperationalDaysContextType } from './types';
-import { loadOperationalDays, saveOperationalDays } from './operations';
+import { loadOperationalDays, saveOperationalDays as saveOperationalDaysToDb } from './operations';
 
 export const OperationalDaysContext = createContext<OperationalDaysContextType | undefined>(undefined);
 
@@ -12,7 +12,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
   const handleLoadOperationalDays = async () => {
     try {
       const days = await loadOperationalDays();
-      setOperationalDays(days);
+      setOperationalDays(days as Set<string>);
     } catch (error) {
       console.error('Error loading operational days:', error);
       setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
@@ -41,7 +41,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
 
   const handleSaveOperationalDays = async () => {
     try {
-      await saveOperationalDays(operationalDays);
+      await saveOperationalDaysToDb(operationalDays);
       await handleLoadOperationalDays();
       
       toast({
