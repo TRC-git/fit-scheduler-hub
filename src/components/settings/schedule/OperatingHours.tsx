@@ -21,13 +21,13 @@ const OperatingHours = () => {
       const { data, error } = await supabase
         .from('businesslocations')
         .select('opening_time, closing_time, slot_duration')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       
       if (data) {
-        setOpeningTime(data.opening_time || "09:00");
-        setClosingTime(data.closing_time || "17:00");
+        setOpeningTime(data.opening_time?.slice(0, 5) || "09:00");
+        setClosingTime(data.closing_time?.slice(0, 5) || "17:00");
         setSlotDuration(data.slot_duration || 60);
       }
     } catch (error) {
@@ -48,7 +48,7 @@ const OperatingHours = () => {
       const { data: existingData, error: checkError } = await supabase
         .from('businesslocations')
         .select('locationid')
-        .single();
+        .maybeSingle();
 
       if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
         throw checkError;
