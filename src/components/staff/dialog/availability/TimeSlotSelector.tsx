@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Clock } from "lucide-react";
 
 interface TimeSlotSelectorProps {
   value: string;
@@ -10,7 +11,10 @@ interface TimeSlotSelectorProps {
 export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorProps) => {
   return (
     <div className="flex flex-col gap-1">
-      <Label className="text-fitness-text text-sm">{label}</Label>
+      <Label className="text-fitness-text text-sm flex items-center gap-2">
+        <Clock className="w-4 h-4 text-[#15E7FB]" />
+        {label}
+      </Label>
       <Input
         type="time"
         value={value}
