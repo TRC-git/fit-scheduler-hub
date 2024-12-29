@@ -7,8 +7,12 @@ import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
 import { getPositionName } from "./utils/positionUtils";
 
 export const StaffList = () => {
-  const { data: staff, isLoading } = useStaffQuery();
+  const { data: staff, isLoading, error } = useStaffQuery();
   const [selectedEmployee, setSelectedEmployee] = useState<{id: number; name: string} | null>(null);
+
+  if (error) {
+    return <div className="text-red-500">Error loading staff</div>;
+  }
 
   if (isLoading) {
     return <div className="text-fitness-text">Loading staff...</div>;
