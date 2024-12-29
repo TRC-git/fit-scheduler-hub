@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, addMinutes, parse } from 'date-fns';
-import { Tables } from "@/integrations/supabase/types";
-
-type BusinessLocation = Tables<"businesslocations">;
+import { BusinessLocation } from '@/types/database/business-location';
 
 export const useTimeSlots = () => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
