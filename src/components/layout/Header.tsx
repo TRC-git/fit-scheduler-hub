@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut, BarChart, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,6 +32,8 @@ const Header = () => {
     navigate("/login");
   };
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <header className="bg-fitness-card border-b border-fitness-border">
       <div className="container mx-auto px-4 py-4">
@@ -40,22 +43,45 @@ const Header = () => {
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/">
-              <Button variant="ghost">Schedule</Button>
+              <Button 
+                variant={isActive("/") ? "default" : "ghost"}
+                className={isActive("/") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+              >
+                Schedule
+              </Button>
             </Link>
             <Link to="/staff">
-              <Button variant="ghost">Staff</Button>
+              <Button 
+                variant={isActive("/staff") ? "default" : "ghost"}
+                className={isActive("/staff") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+              >
+                Staff
+              </Button>
             </Link>
             <Link to="/payroll">
-              <Button variant="ghost">Payroll/Hrs</Button>
+              <Button 
+                variant={isActive("/payroll") ? "default" : "ghost"}
+                className={isActive("/payroll") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+              >
+                Payroll/Hrs
+              </Button>
             </Link>
             <Link to="/reports">
-              <Button variant="ghost" className="flex items-center gap-2">
+              <Button 
+                variant={isActive("/reports") ? "default" : "ghost"}
+                className={isActive("/reports") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+              >
                 <BarChart className="h-4 w-4" />
                 Reports
               </Button>
             </Link>
             <Link to="/settings">
-              <Button variant="ghost">Settings</Button>
+              <Button 
+                variant={isActive("/settings") ? "default" : "ghost"}
+                className={isActive("/settings") ? "bg-fitness-accent text-white hover:bg-fitness-accent/90" : ""}
+              >
+                Settings
+              </Button>
             </Link>
             
             {userEmail && (
