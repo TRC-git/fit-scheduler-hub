@@ -1,57 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export const useStaffQuery = () => {
-  const { toast } = useToast();
-
   return useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      console.log("Fetching staff members...");
-      try {
-        const { data: staffData, error: staffError } = await supabase
-          .from("employees")
-          .select(`
-            *,
-            employeepositions (
-              payrate,
-              is_primary,
-              positions (
-                positionid,
-                positionname,
-                access_level,
-                defaultpayrate
-              )
+      console.log("Fetching staff with positions...");
+      const { data, error } = await supabase
+        .from("employees")
+        .select(`
+          *,
+          positions (*),
+          employeepositions (
+            is_primary,
+            positions (
+              positionid,
+              positionname
             )
-          `)
-          .eq("isactive", true)
-          .order("firstname");
-        
-        if (staffError) {
-          console.error("Error fetching staff:", staffError);
-          toast({
-            title: "Error",
-            description: "Failed to fetch staff members. Please try again.",
-            variant: "destructive",
-          });
-          throw staffError;
-        }
-        
-        console.log("Staff data:", staffData);
-        return staffData;
-      } catch (error) {
-        console.error("Error in staff query:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch staff members. Please try again.",
-          variant: "destructive",
-        });
+          )
+        `)
+        .eq("isactive", true)
+        .order("firstname");
+
+      if (error) {
+        console.error("Error fetching staff:", error);
         throw error;
       }
+
+      console.log("Staff data:", data);
+      return data;
     },
-    staleTime: 0,
-    refetchOnWindowFocus: true,
-    retry: 3,
   });
 };
