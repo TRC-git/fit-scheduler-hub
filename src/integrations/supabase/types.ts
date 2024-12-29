@@ -12,39 +12,51 @@ export type Database = {
       businesslocations: {
         Row: {
           address: string
+          business_name: string | null
           closing_time: string
           latitude: number | null
           locationid: number
           locationname: string
+          logo_url: string | null
           longitude: number | null
           opening_time: string
           operational_days: string[] | null
+          phone_number: string | null
           radiusmeters: number | null
           slot_duration: number
+          tax_id: string | null
         }
         Insert: {
           address: string
+          business_name?: string | null
           closing_time?: string
           latitude?: number | null
           locationid?: number
           locationname: string
+          logo_url?: string | null
           longitude?: number | null
           opening_time?: string
           operational_days?: string[] | null
+          phone_number?: string | null
           radiusmeters?: number | null
           slot_duration?: number
+          tax_id?: string | null
         }
         Update: {
           address?: string
+          business_name?: string | null
           closing_time?: string
           latitude?: number | null
           locationid?: number
           locationname?: string
+          logo_url?: string | null
           longitude?: number | null
           opening_time?: string
           operational_days?: string[] | null
+          phone_number?: string | null
           radiusmeters?: number | null
           slot_duration?: number
+          tax_id?: string | null
         }
         Relationships: []
       }
