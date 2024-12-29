@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, BarChart, User } from "lucide-react";
+import { LogOut, BarChart, User, Calendar, Users, DollarSign, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -47,6 +47,7 @@ const Header = () => {
                 variant={isActive("/") ? "default" : "ghost"}
                 className={isActive("/") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
+                <Calendar className="h-4 w-4 mr-2" />
                 Schedule
               </Button>
             </Link>
@@ -55,6 +56,7 @@ const Header = () => {
                 variant={isActive("/staff") ? "default" : "ghost"}
                 className={isActive("/staff") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
+                <Users className="h-4 w-4 mr-2" />
                 Staff
               </Button>
             </Link>
@@ -63,6 +65,7 @@ const Header = () => {
                 variant={isActive("/payroll") ? "default" : "ghost"}
                 className={isActive("/payroll") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
+                <DollarSign className="h-4 w-4 mr-2" />
                 Payroll/Hrs
               </Button>
             </Link>
@@ -71,7 +74,7 @@ const Header = () => {
                 variant={isActive("/reports") ? "default" : "ghost"}
                 className={isActive("/reports") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <BarChart className="h-4 w-4" />
+                <BarChart className="h-4 w-4 mr-2" />
                 Reports
               </Button>
             </Link>
@@ -80,6 +83,7 @@ const Header = () => {
                 variant={isActive("/settings") ? "default" : "ghost"}
                 className={isActive("/settings") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
+                <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
             </Link>
