@@ -8,7 +8,11 @@ import { getPositionName } from "./utils/positionUtils";
 
 export const StaffList = () => {
   const { data: staff, isLoading, error } = useStaffQuery();
-  const [selectedEmployee, setSelectedEmployee] = useState<{id: number; name: string} | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<{
+    id: number; 
+    name: string;
+    positions: { positions: { positionname: string } }[];
+  } | null>(null);
 
   if (error) {
     return <div className="text-red-500">Error loading staff</div>;
@@ -63,7 +67,8 @@ export const StaffList = () => {
                 className="w-5 h-5 text-fitness-accent cursor-pointer"
                 onClick={() => setSelectedEmployee({
                   id: employee.employeeid,
-                  name: `${employee.firstname} ${employee.lastname}`
+                  name: `${employee.firstname} ${employee.lastname}`,
+                  positions: employee.employeepositions
                 })}
               />
             )}
@@ -76,6 +81,7 @@ export const StaffList = () => {
           <BulkScheduleDialog
             employeeId={selectedEmployee.id}
             employeeName={selectedEmployee.name}
+            employeePositions={selectedEmployee.positions}
             onClose={() => setSelectedEmployee(null)}
             open={!!selectedEmployee}
           />

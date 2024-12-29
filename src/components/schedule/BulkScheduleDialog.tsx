@@ -1,22 +1,21 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { format } from "date-fns";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { DialogHeader } from "./dialog/DialogHeader";
+import { DialogActions } from "./dialog/DialogActions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
+import { useOperationalDays } from "@/contexts/operational-days/useOperationalDays";
+import { useTimeSlots } from "@/hooks/schedule/useTimeSlots";
 
 interface BulkScheduleDialogProps {
   employeeId: number;
   employeeName: string;
+  employeePositions: { positions: { positionname: string } }[];
   onClose: () => void;
   open: boolean;
 }
@@ -24,150 +23,136 @@ interface BulkScheduleDialogProps {
 export const BulkScheduleDialog = ({
   employeeId,
   employeeName,
+  employeePositions,
   onClose,
-  open
+  open,
 }: BulkScheduleDialogProps) => {
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [selectedClassType, setSelectedClassType] = useState<string>("");
-  const { dates } = useScheduleContext();
-  const { classTypes, isLoading: isLoadingClassTypes } = useClassTypes();
-  const [isLoading, setIsLoading] = useState(false);
+  const { classTypes, isLoading } = useClassTypes();
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
+  const { addBulkAppointments } = useScheduleContext();
+  const { operationalDays } = useOperationalDays();
+  const { timeSlots } = useTimeSlots();
 
-  const handleDateToggle = (date: Date) => {
-    if (selectedDates.some(d => d.getTime() === date.getTime())) {
-      setSelectedDates(prev => prev.filter(d => d.getTime() !== date.getTime()));
-    } else {
-      setSelectedDates(prev => [...prev, date]);
-    }
+  // Filter class types based on employee positions
+  const availableClassTypes = classTypes?.filter(type => 
+    employeePositions.some(pos => 
+      pos.positions.positionname.toLowerCase() === type.name.toLowerCase()
+    )
+  );
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const handleDayToggle = (day: string) => {
+    setSelectedDays(current =>
+      current.includes(day)
+        ? current.filter(d => d !== day)
+        : [...current, day]
+    );
   };
 
-  const handleSubmit = async () => {
-    if (!selectedClassType) {
-      console.error("No class type selected");
-      return;
-    }
+  const handleTimeSlotToggle = (timeSlot: string) => {
+    setSelectedTimeSlots(current =>
+      current.includes(timeSlot)
+        ? current.filter(t => t !== timeSlot)
+        : [...current, timeSlot]
+    );
+  };
 
-    setIsLoading(true);
-    try {
-      // Get the class type details
-      const selectedType = classTypes?.find(type => type.name === selectedClassType);
-      if (!selectedType) throw new Error("Class type not found");
+  const handleConfirm = () => {
+    if (!selectedType || selectedDays.length === 0 || selectedTimeSlots.length === 0) return;
 
-      // Get employee availability
-      const { data: availability } = await supabase
-        .from('employeeavailability')
-        .select('*')
-        .eq('5', employeeId);
+    const appointments = selectedDays.flatMap(day =>
+      selectedTimeSlots.map(timeSlot => ({
+        day,
+        timeSlot,
+        name: employeeName,
+        type: selectedType,
+      }))
+    );
 
-      // For each selected date, create a schedule
-      for (const date of selectedDates) {
-        const dayOfWeek = format(date, 'EEE');
-        const dayAvailability = availability?.find(a => a.dayofweek === dayOfWeek);
-
-        if (dayAvailability) {
-          await supabase.from('schedules').insert({
-            employeeid: employeeId,
-            shiftdate: format(date, 'yyyy-MM-dd'),
-            starttime: dayAvailability.starttime,
-            endtime: dayAvailability.endtime,
-            notes: `Bulk scheduled for ${selectedClassType}`
-          });
-        }
-      }
-
-      onClose();
-    } catch (error) {
-      console.error('Error creating bulk schedule:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    addBulkAppointments(appointments);
+    onClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-fitness-card border-fitness-muted">
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-fitness-accent/20 flex items-center justify-center">
-              <span className="text-[#15e7fb] font-medium">
-                {employeeName.split(' ').map(name => name[0]).join('')}
-              </span>
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-fitness-text">
-                Bulk Schedule
-              </h2>
-              <p className="text-sm text-gray-500">{employeeName}</p>
-            </div>
-          </div>
+      <DialogContent>
+        <DialogHeader
+          title={`Schedule ${employeeName}`}
+          description="Add multiple appointments for this staff member."
+        />
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-fitness-text mb-2 block">
-                Class Type
-              </label>
-              <Select
-                value={selectedClassType}
-                onValueChange={setSelectedClassType}
-              >
-                <SelectTrigger className="w-full bg-fitness-inner text-fitness-text">
-                  <SelectValue placeholder="Select class type" />
-                </SelectTrigger>
-                <SelectContent className="bg-fitness-card border-fitness-muted">
-                  {isLoadingClassTypes ? (
-                    <SelectItem value="loading" disabled>Loading...</SelectItem>
-                  ) : (
-                    classTypes?.map((type) => (
-                      <SelectItem
-                        key={type.schedule_type_id}
-                        value={type.name}
-                        className="text-fitness-text hover:bg-[#15e7fb] hover:text-[#333333]"
-                      >
-                        {type.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <ScrollArea className="h-[300px] pr-4">
-              <div className="space-y-2">
-                {dates.map((date) => (
-                  <Button
-                    key={date.toISOString()}
-                    variant="outline"
-                    className={`w-full justify-start ${
-                      selectedDates.some(d => d.getTime() === date.getTime())
-                        ? "border-fitness-accent text-fitness-accent"
-                        : ""
-                    }`}
-                    onClick={() => handleDateToggle(date)}
-                  >
-                    {format(date, "EEEE, MMMM d")}
-                  </Button>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>Class Type</Label>
+            <Select
+              value={selectedType}
+              onValueChange={setSelectedType}
+              disabled={isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a class type" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableClassTypes?.map((type) => (
+                  <SelectItem key={type.schedule_type_id} value={type.name}>
+                    {type.name}
+                  </SelectItem>
                 ))}
-              </div>
-            </ScrollArea>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button 
-              variant="outline" 
-              onClick={onClose}
-              className="bg-fitness-inner text-fitness-text hover:bg-fitness-muted"
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSubmit}
-              disabled={selectedDates.length === 0 || !selectedClassType || isLoading}
-              className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
-            >
-              {isLoading ? "Scheduling..." : "Schedule"}
-            </Button>
+          <div className="space-y-2">
+            <Label>Days</Label>
+            <div className="grid grid-cols-7 gap-2">
+              {days.map((day) => (
+                <div
+                  key={day}
+                  className={cn(
+                    "flex flex-col items-center p-2 rounded-md cursor-pointer border transition-colors",
+                    operationalDays.has(day)
+                      ? selectedDays.includes(day)
+                        ? "border-[#15e7fb] bg-[#15e7fb]/10"
+                        : "border-gray-600 hover:border-[#15e7fb]"
+                      : "border-gray-800 bg-gray-900/50 cursor-not-allowed opacity-50"
+                  )}
+                  onClick={() => operationalDays.has(day) && handleDayToggle(day)}
+                >
+                  <span className="text-xs text-gray-400">{format(new Date(`2024/01/${days.indexOf(day) + 1}`), 'EEE')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Time Slots</Label>
+            <div className="grid grid-cols-4 gap-2">
+              {timeSlots.map((timeSlot) => (
+                <div
+                  key={timeSlot}
+                  className={cn(
+                    "p-2 rounded-md cursor-pointer border text-center text-sm transition-colors",
+                    selectedTimeSlots.includes(timeSlot)
+                      ? "border-[#15e7fb] bg-[#15e7fb]/10"
+                      : "border-gray-600 hover:border-[#15e7fb]"
+                  )}
+                  onClick={() => handleTimeSlotToggle(timeSlot)}
+                >
+                  {timeSlot}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
+        <DialogActions
+          onClose={onClose}
+          onConfirm={handleConfirm}
+          disabled={!selectedType || selectedDays.length === 0 || selectedTimeSlots.length === 0}
+        />
       </DialogContent>
     </Dialog>
   );
