@@ -3,7 +3,7 @@ import { DialogHeader } from "@/components/schedule/dialog/DialogHeader";
 import { DialogActions } from "@/components/schedule/dialog/DialogActions";
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { startOfWeek, endOfWeek, format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +24,7 @@ export const CloneWeekDialog = ({ isOpen, onClose, sourceWeekStart }: CloneWeekD
     setIsLoading(true);
     try {
       const targetWeekStart = startOfWeek(targetDate, { weekStartsOn: 1 }); // 1 represents Monday
+      const targetWeekEnd = endOfWeek(targetWeekStart, { weekStartsOn: 1 });
       
       // Get schedules for the source week
       const { data: sourceSchedules, error: fetchError } = await supabase
@@ -78,20 +79,30 @@ export const CloneWeekDialog = ({ isOpen, onClose, sourceWeekStart }: CloneWeekD
     }
   };
 
+  const weekDisplay = targetDate 
+    ? `${format(startOfWeek(targetDate, { weekStartsOn: 1 }), 'MMM d')} - ${format(endOfWeek(targetDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`
+    : 'Select target week';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-fitness-card border-fitness-grid">
         <DialogHeader
           title="Clone Week Schedule"
-          description="Select a target week to clone the current schedule to"
+          description={`Select a target week to clone the schedule from ${format(sourceWeekStart, 'MMM d')} - ${format(endOfWeek(sourceWeekStart, { weekStartsOn: 1 }), 'MMM d, yyyy')}`}
         />
         
         <div className="py-4">
+          <div className="flex flex-col gap-2">
+            <span className="text-sm text-fitness-text">Selected Week:</span>
+            <div className="bg-fitness-inner px-4 py-2 rounded-md text-fitness-text">
+              {weekDisplay}
+            </div>
+          </div>
           <Calendar
             mode="single"
             selected={targetDate}
             onSelect={setTargetDate}
-            className="rounded-md border border-fitness-grid"
+            className="rounded-md border border-fitness-grid mt-4"
             disabled={(date) => date < new Date()}
             weekStartsOn={1} // Set Monday as the first day of the week
           />
