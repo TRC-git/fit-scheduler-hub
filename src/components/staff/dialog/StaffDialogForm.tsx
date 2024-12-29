@@ -98,7 +98,7 @@ export const StaffDialogForm = ({
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(
         initialData.email,
-        { redirectTo: window.location.origin + '/reset-password' }
+        { redirectTo: `${window.location.origin}/reset-password` }
       );
 
       if (error) {
