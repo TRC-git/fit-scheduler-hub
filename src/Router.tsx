@@ -37,6 +37,36 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const { data: employees } = await supabase
+        .from('employees')
+        .select('is_admin')
+        .eq('email', (await supabase.auth.getSession()).data.session?.user?.email)
+        .single();
+
+      setIsAdmin(employees?.is_admin || false);
+      setLoading(false);
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  if (loading) {
+    return <div className="min-h-screen bg-fitness-background" />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/" />;
+  }
+
+  return <>{children}</>;
+};
+
 const Router = () => {
   return (
     <Routes>
@@ -61,7 +91,9 @@ const Router = () => {
         path="/settings"
         element={
           <ProtectedRoute>
-            <Settings />
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />
