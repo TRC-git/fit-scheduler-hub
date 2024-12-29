@@ -1,7 +1,8 @@
 import { TimeSlotRow } from "./TimeSlotRow";
 import { DayHeader } from "./DayHeader";
 import { useAppointments } from "@/hooks/useAppointments";
-import { timeSlots, days } from "./constants";
+import { days } from "./constants";
+import { useTimeSlots } from "@/hooks/schedule/useTimeSlots";
 
 const ScheduleGrid = () => {
   const {
@@ -14,6 +15,8 @@ const ScheduleGrid = () => {
     handleCopy,
     handleUpdate,
   } = useAppointments();
+
+  const { timeSlots } = useTimeSlots();
 
   return (
     <div className="bg-fitness-grid rounded-lg p-4">
