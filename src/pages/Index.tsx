@@ -1,4 +1,3 @@
-import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import ScheduleHeader from "@/components/schedule/ScheduleHeader";
 import ScheduleGrid from "@/components/schedule/ScheduleGrid";
@@ -6,20 +5,16 @@ import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
 
 const Index = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-fitness-background">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <main className="flex-1 p-6">
-          <h1 className="text-2xl font-bold text-fitness-text mb-6">
-            Scheduling
-          </h1>
-          <ScheduleProvider>
-            <ScheduleHeader />
+    <div className="flex h-screen bg-fitness-background">
+      <Sidebar />
+      <main className="flex-1 p-8 overflow-auto">
+        <ScheduleProvider>
+          <ScheduleHeader />
+          <div className="mt-8">
             <ScheduleGrid />
-          </ScheduleProvider>
-        </main>
-      </div>
+          </div>
+        </ScheduleProvider>
+      </main>
     </div>
   );
 };
