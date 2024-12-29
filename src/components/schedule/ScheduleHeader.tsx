@@ -2,10 +2,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import { useState } from "react";
 import { format, addWeeks, subWeeks, startOfWeek, endOfWeek } from "date-fns";
+import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
   const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
 
   const handlePreviousWeek = () => {
     setCurrentWeek(prevWeek => subWeeks(prevWeek, 1));
@@ -55,7 +57,10 @@ const ScheduleHeader = () => {
             onClick={handleNextWeek}
           />
         </div>
-        <button className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md">
+        <button 
+          className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md hover:bg-fitness-inner transition-colors"
+          onClick={() => setIsCloneDialogOpen(true)}
+        >
           Clone Week
         </button>
       </div>
@@ -63,6 +68,12 @@ const ScheduleHeader = () => {
       <button className="px-4 py-2 bg-fitness-accent text-white rounded-md">
         Clock-In
       </button>
+
+      <CloneWeekDialog
+        isOpen={isCloneDialogOpen}
+        onClose={() => setIsCloneDialogOpen(false)}
+        sourceWeekStart={weekStart}
+      />
     </div>
   );
 };
