@@ -9,6 +9,7 @@ const OperatingHours = () => {
   const [openingTime, setOpeningTime] = useState("09:00");
   const [closingTime, setClosingTime] = useState("17:00");
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadOperatingHours();
@@ -20,7 +21,7 @@ const OperatingHours = () => {
         .from('schedule_types')
         .select('opening_time, closing_time')
         .eq('name', 'default')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       
@@ -40,12 +41,14 @@ const OperatingHours = () => {
 
   const handleSave = async () => {
     try {
+      setLoading(true);
+      
       // First check if default record exists
       const { data: existingData, error: checkError } = await supabase
         .from('schedule_types')
         .select('schedule_type_id')
         .eq('name', 'default')
-        .single();
+        .maybeSingle();
 
       if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
         throw checkError;
@@ -58,7 +61,8 @@ const OperatingHours = () => {
           .from('schedule_types')
           .update({ 
             opening_time: openingTime,
-            closing_time: closingTime
+            closing_time: closingTime,
+            updated_at: new Date().toISOString()
           })
           .eq('name', 'default');
         updateError = error;
@@ -81,9 +85,6 @@ const OperatingHours = () => {
         title: "Success",
         description: "Operating hours have been updated",
       });
-
-      // Reload the data to ensure UI is in sync
-      await loadOperatingHours();
     } catch (error) {
       console.error('Error saving operating hours:', error);
       toast({
@@ -91,6 +92,8 @@ const OperatingHours = () => {
         description: "Failed to save operating hours",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,9 +122,10 @@ const OperatingHours = () => {
       </div>
       <Button 
         onClick={handleSave}
+        disabled={loading}
         className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
       >
-        Save Operating Hours
+        {loading ? "Saving..." : "Save Operating Hours"}
       </Button>
     </div>
   );
