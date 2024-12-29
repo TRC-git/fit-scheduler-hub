@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import { PositionWithPayRate } from "../../positions/types";
 
 interface StaffFormData {
@@ -15,26 +14,19 @@ interface StaffFormData {
 export const useStaffSubmitMutation = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false);
 
   const handleEmployeePositions = async (
     employeeId: number,
     selectedPositions: PositionWithPayRate[]
   ) => {
-    console.log("Handling employee positions for:", employeeId, selectedPositions);
-    
     if (selectedPositions.length === 0) return;
 
-    // Delete existing positions first
     const { error: deleteError } = await supabase
       .from("employeepositions")
       .delete()
       .eq("employeeid", employeeId);
 
-    if (deleteError) {
-      console.error("Error deleting positions:", deleteError);
-      throw deleteError;
-    }
+    if (deleteError) throw deleteError;
 
     const positionsToInsert = selectedPositions.map((position, index) => ({
       employeeid: employeeId,
@@ -48,113 +40,69 @@ export const useStaffSubmitMutation = () => {
       .from("employeepositions")
       .insert(positionsToInsert);
 
-    if (positionsError) {
-      console.error("Error inserting positions:", positionsError);
-      throw positionsError;
-    }
+    if (positionsError) throw positionsError;
   };
 
-  const createStaffMember = async (
-    formData: StaffFormData,
-    selectedPositions: PositionWithPayRate[]
-  ) => {
-    console.log("Creating staff member:", formData);
-    
-    const primaryPosition = selectedPositions[0]?.positionid || null;
-
-    const { data: employeeData, error: employeeError } = await supabase
-      .from("employees")
-      .insert([
-        {
-          ...formData,
-          hiredate: new Date().toISOString(),
-          isactive: true,
-          position_id: primaryPosition,
-          is_admin: formData.is_admin
-        },
-      ])
-      .select()
-      .single();
-
-    if (employeeError) {
-      console.error("Error creating employee:", employeeError);
-      throw employeeError;
-    }
-
-    await handleEmployeePositions(employeeData.employeeid, selectedPositions);
-    return employeeData;
-  };
-
-  const updateStaffMember = async (
-    employeeId: number,
-    formData: StaffFormData,
-    selectedPositions: PositionWithPayRate[]
-  ) => {
-    console.log("Updating staff member:", employeeId, formData);
-    
-    const primaryPosition = selectedPositions[0]?.positionid || null;
-
-    const { error: employeeError } = await supabase
-      .from("employees")
-      .update({
-        firstname: formData.firstname,
-        lastname: formData.lastname,
-        email: formData.email,
-        phonenumber: formData.phonenumber,
-        position_id: primaryPosition,
-        is_admin: formData.is_admin
-      })
-      .eq("employeeid", employeeId);
-
-    if (employeeError) {
-      console.error("Error updating employee:", employeeError);
-      throw employeeError;
-    }
-
-    await handleEmployeePositions(employeeId, selectedPositions);
-  };
-
-  const submitStaffForm = async (
-    formData: StaffFormData,
-    selectedPositions: PositionWithPayRate[],
-    initialData?: any
-  ) => {
-    console.log("Submitting staff form:", { formData, selectedPositions, initialData });
-    setLoading(true);
-    
-    try {
+  return useMutation({
+    mutationFn: async ({
+      formData,
+      selectedPositions,
+      initialData
+    }: {
+      formData: StaffFormData;
+      selectedPositions: PositionWithPayRate[];
+      initialData?: any;
+    }) => {
       if (initialData) {
-        await updateStaffMember(initialData.employeeid, formData, selectedPositions);
-        toast({
-          title: "Success",
-          description: "Staff member updated successfully",
-        });
+        const { error } = await supabase
+          .from("employees")
+          .update({
+            firstname: formData.firstname,
+            lastname: formData.lastname,
+            email: formData.email,
+            phonenumber: formData.phonenumber,
+            is_admin: formData.is_admin
+          })
+          .eq("employeeid", initialData.employeeid);
+
+        if (error) throw error;
+
+        await handleEmployeePositions(initialData.employeeid, selectedPositions);
+        return initialData.employeeid;
       } else {
-        await createStaffMember(formData, selectedPositions);
-        toast({
-          title: "Success",
-          description: "Staff member added successfully",
-        });
+        const { data, error } = await supabase
+          .from("employees")
+          .insert([
+            {
+              ...formData,
+              hiredate: new Date().toISOString(),
+              isactive: true,
+              position_id: selectedPositions[0]?.positionid || null,
+            },
+          ])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        await handleEmployeePositions(data.employeeid, selectedPositions);
+        return data.employeeid;
       }
-      
-      // Invalidate and refetch staff data
-      await queryClient.invalidateQueries({ queryKey: ["staff"] });
-      return true;
-    } catch (error: any) {
-      console.error("Error in submitStaffForm:", error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast({
+        title: "Success",
+        description: "Staff member saved successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Error in staff mutation:", error);
       toast({
         title: "Error",
-        description: error.message || `Failed to ${initialData ? 'update' : 'add'} staff member`,
+        description: error.message || "Failed to save staff member",
         variant: "destructive",
       });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    submitStaffForm,
-    loading
-  };
+    },
+  });
 };

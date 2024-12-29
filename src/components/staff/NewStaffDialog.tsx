@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StaffDialogForm } from "./dialog/StaffDialogForm";
-import { useStaffMutations } from "./hooks/useStaffMutations";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StaffResponse } from "./dialog/StaffDialogForm";
 import { PositionWithPayRate } from "./positions/types";
+import { useStaffSubmitMutation } from "./hooks/mutations/useStaffSubmitMutation";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -12,12 +12,23 @@ interface NewStaffDialogProps {
 }
 
 const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps) => {
-  const { submitStaffForm, loading } = useStaffMutations();
+  const { mutate, isLoading } = useStaffSubmitMutation();
 
   const handleSubmit = async (formData: any, selectedPositions: PositionWithPayRate[]): Promise<StaffResponse> => {
-    const result = await submitStaffForm(formData, selectedPositions, initialData);
-    onOpenChange(false);
-    return result;
+    return new Promise((resolve, reject) => {
+      mutate(
+        { formData, selectedPositions, initialData },
+        {
+          onSuccess: (employeeId) => {
+            onOpenChange(false);
+            resolve({ employeeid: employeeId });
+          },
+          onError: (error) => {
+            reject(error);
+          },
+        }
+      );
+    });
   };
 
   return (
@@ -36,7 +47,7 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
             initialData={initialData}
             onSubmit={handleSubmit}
             onCancel={() => onOpenChange(false)}
-            loading={loading}
+            loading={isLoading}
           />
         </ScrollArea>
       </DialogContent>
