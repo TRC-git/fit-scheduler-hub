@@ -78,7 +78,7 @@ export const BulkScheduleDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-[#171717] border-0">
         <DialogHeader
           title={`Schedule ${employeeName}`}
           description="Add multiple appointments for this staff member."
@@ -86,18 +86,22 @@ export const BulkScheduleDialog = ({
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Class Type</Label>
+            <Label className="text-fitness-text">Class Type</Label>
             <Select
               value={selectedType}
               onValueChange={setSelectedType}
               disabled={isLoading}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-[#333333] border-[#d1d1d1] text-fitness-text">
                 <SelectValue placeholder="Select a class type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-[#333333] border-[#d1d1d1]">
                 {availableClassTypes?.map((type) => (
-                  <SelectItem key={type.schedule_type_id} value={type.name}>
+                  <SelectItem 
+                    key={type.schedule_type_id} 
+                    value={type.name}
+                    className="text-fitness-text hover:text-[#333333] hover:bg-[#15e7fb]"
+                  >
                     {type.name}
                   </SelectItem>
                 ))}
@@ -106,7 +110,7 @@ export const BulkScheduleDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Days</Label>
+            <Label className="text-fitness-text">Days</Label>
             <div className="grid grid-cols-7 gap-2">
               {days.map((day) => (
                 <div
@@ -128,7 +132,7 @@ export const BulkScheduleDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Time Slots</Label>
+            <Label className="text-fitness-text">Time Slots</Label>
             <div className="grid grid-cols-4 gap-2">
               {timeSlots.map((timeSlot) => (
                 <div
