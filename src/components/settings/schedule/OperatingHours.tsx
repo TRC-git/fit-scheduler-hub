@@ -20,13 +20,13 @@ const OperatingHours = () => {
         .from('schedule_types')
         .select('opening_time, closing_time')
         .eq('name', 'default')
-        .limit(1);
+        .single();
 
       if (error) throw error;
       
-      if (data && data.length > 0) {
-        setOpeningTime(data[0].opening_time || "09:00");
-        setClosingTime(data[0].closing_time || "17:00");
+      if (data) {
+        setOpeningTime(data.opening_time || "09:00");
+        setClosingTime(data.closing_time || "17:00");
       }
     } catch (error) {
       console.error('Error loading operating hours:', error);
@@ -40,20 +40,50 @@ const OperatingHours = () => {
 
   const handleSave = async () => {
     try {
-      const { error } = await supabase
+      // First check if default record exists
+      const { data: existingData, error: checkError } = await supabase
         .from('schedule_types')
-        .update({ 
-          opening_time: openingTime,
-          closing_time: closingTime
-        })
-        .eq('name', 'default');
+        .select('schedule_type_id')
+        .eq('name', 'default')
+        .single();
 
-      if (error) throw error;
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+        throw checkError;
+      }
+
+      let updateError;
+      if (existingData) {
+        // Update existing record
+        const { error } = await supabase
+          .from('schedule_types')
+          .update({ 
+            opening_time: openingTime,
+            closing_time: closingTime
+          })
+          .eq('name', 'default');
+        updateError = error;
+      } else {
+        // Insert new record
+        const { error } = await supabase
+          .from('schedule_types')
+          .insert([{ 
+            name: 'default',
+            opening_time: openingTime,
+            closing_time: closingTime,
+            duration: 60 // Default duration
+          }]);
+        updateError = error;
+      }
+
+      if (updateError) throw updateError;
 
       toast({
         title: "Success",
         description: "Operating hours have been updated",
       });
+
+      // Reload the data to ensure UI is in sync
+      await loadOperatingHours();
     } catch (error) {
       console.error('Error saving operating hours:', error);
       toast({
