@@ -3,7 +3,7 @@ import { DialogHeader } from "@/components/schedule/dialog/DialogHeader";
 import { DialogActions } from "@/components/schedule/dialog/DialogActions";
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
-import { startOfWeek } from "date-fns";
+import { startOfWeek, endOfWeek } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,7 +23,7 @@ export const CloneWeekDialog = ({ isOpen, onClose, sourceWeekStart }: CloneWeekD
 
     setIsLoading(true);
     try {
-      const targetWeekStart = startOfWeek(targetDate, { weekStartsOn: 1 });
+      const targetWeekStart = startOfWeek(targetDate, { weekStartsOn: 1 }); // 1 represents Monday
       
       // Get schedules for the source week
       const { data: sourceSchedules, error: fetchError } = await supabase
@@ -93,6 +93,7 @@ export const CloneWeekDialog = ({ isOpen, onClose, sourceWeekStart }: CloneWeekD
             onSelect={setTargetDate}
             className="rounded-md border border-fitness-grid"
             disabled={(date) => date < new Date()}
+            weekStartsOn={1} // Set Monday as the first day of the week
           />
         </div>
 
