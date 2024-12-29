@@ -16,7 +16,7 @@ export const StaffReports = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("all"); // Changed initial value to "all"
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
   const { data: staff } = useStaffQuery();
 
   const {
@@ -29,7 +29,7 @@ export const StaffReports = () => {
   } = useReports(
     dateRange.startDate, 
     dateRange.endDate, 
-    selectedEmployee !== "all" ? parseInt(selectedEmployee) : undefined // Updated condition
+    selectedEmployee ? parseInt(selectedEmployee) : undefined
   );
 
   return (
@@ -42,7 +42,7 @@ export const StaffReports = () => {
               <SelectValue placeholder="Select staff member" />
             </SelectTrigger>
             <SelectContent className="bg-fitness-card border-fitness-grid">
-              <SelectItem value="all" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
+              <SelectItem value="" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
                 All Staff
               </SelectItem>
               {staff?.map((member) => (
