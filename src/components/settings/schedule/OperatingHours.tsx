@@ -4,13 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Tables } from "@/integrations/supabase/types";
 
-interface BusinessLocation {
-  locationid?: number;
-  opening_time?: string;
-  closing_time?: string;
-  slot_duration?: number;
-}
+type BusinessLocation = Tables<"businesslocations">;
 
 const OperatingHours = () => {
   const [openingTime, setOpeningTime] = useState("09:00");

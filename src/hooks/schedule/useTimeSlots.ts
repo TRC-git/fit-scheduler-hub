@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, addMinutes, parse } from 'date-fns';
+import { Tables } from "@/integrations/supabase/types";
 
-interface BusinessLocation {
-  opening_time?: string;
-  closing_time?: string;
-  slot_duration?: number;
-}
+type BusinessLocation = Tables<"businesslocations">;
 
 export const useTimeSlots = () => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
@@ -17,7 +14,6 @@ export const useTimeSlots = () => {
 
   const loadOperatingHours = async () => {
     try {
-      // First get the business location settings
       const { data: locationData, error: locationError } = await supabase
         .from('businesslocations')
         .select('opening_time, closing_time, slot_duration')
