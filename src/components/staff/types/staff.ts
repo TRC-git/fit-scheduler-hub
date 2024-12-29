@@ -1,5 +1,3 @@
-import { TimeSlot } from "../dialog/types/availability";
-
 export interface StaffResponse {
   employeeid: number;
   [key: string]: any;
