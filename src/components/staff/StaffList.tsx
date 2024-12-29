@@ -63,8 +63,10 @@ const StaffList = () => {
         staffToDelete={staffToDelete}
         onClose={() => setStaffToDelete(null)}
         onConfirm={() => {
-          deleteMutation.mutate(staffToDelete?.employeeid);
-          setStaffToDelete(null);
+          if (staffToDelete?.employeeid) {
+            deleteMutation.mutate(staffToDelete.employeeid);
+            setStaffToDelete(null);
+          }
         }}
       />
 
