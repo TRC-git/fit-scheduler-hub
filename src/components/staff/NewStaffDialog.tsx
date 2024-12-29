@@ -16,11 +16,8 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
   const handleSubmit = async (formData: any, selectedPositions: PositionWithPayRate[]): Promise<StaffResponse> => {
     const result = await submitStaffForm(formData, selectedPositions, initialData);
-    if (result && typeof result === 'object' && 'employeeid' in result) {
-      onOpenChange(false);
-      return result as StaffResponse;
-    }
-    throw new Error("Failed to submit staff form");
+    onOpenChange(false);
+    return result;
   };
 
   return (
