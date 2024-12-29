@@ -15,11 +15,14 @@ export const StaffList = () => {
 
   return (
     <div className="space-y-2">
+      <h2 className="text-xl font-semibold text-fitness-text mb-4">Staff</h2>
       <ScrollArea className="h-[280px] pr-4" style={{ '--scrollbar-thumb': '#15e7fb' } as React.CSSProperties}>
-        {staff?.map((employee) => (
+        {staff?.map((employee, index) => (
           <div
             key={employee.employeeid}
-            className="flex items-center justify-between p-2 rounded-md hover:bg-fitness-card/50 mb-2"
+            className={`flex items-center justify-between p-2 rounded-md hover:bg-fitness-card/50 mb-2 ${
+              index % 2 === 0 ? 'bg-[#202020]' : 'bg-[#171717]'
+            }`}
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-fitness-accent/20 flex items-center justify-center">
@@ -27,9 +30,14 @@ export const StaffList = () => {
                   {employee.firstname[0]}{employee.lastname[0]}
                 </span>
               </div>
-              <span className="text-fitness-text">
-                {employee.firstname} {employee.lastname}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-fitness-text">
+                  {employee.firstname} {employee.lastname}
+                </span>
+                <span className="text-sm text-gray-400">
+                  Coach
+                </span>
+              </div>
             </div>
             <Plus
               className="w-5 h-5 text-fitness-accent cursor-pointer"

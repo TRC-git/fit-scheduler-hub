@@ -9,11 +9,13 @@ export const ApprovedTimeOff = () => {
       <h2 className="text-xl font-semibold text-fitness-text mb-4">
         Approved Time Off
       </h2>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {approvedTimeOff.map((item, index) => (
           <div
             key={index}
-            className="p-3 bg-fitness-inner rounded-md text-fitness-text"
+            className={`p-3 rounded-md text-fitness-text ${
+              index % 2 === 0 ? 'bg-[#202020]' : 'bg-[#171717]'
+            }`}
           >
             <p className="font-medium">{item.name}</p>
             <p className="text-sm text-gray-400">Approved: {item.approver}</p>

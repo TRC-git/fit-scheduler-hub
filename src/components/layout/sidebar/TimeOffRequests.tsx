@@ -17,11 +17,13 @@ export const TimeOffRequests = () => {
           Ask
         </button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {timeOffRequests.map((request, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-3 bg-fitness-inner rounded-md"
+            className={`flex items-center justify-between p-3 rounded-md ${
+              index % 2 === 0 ? 'bg-[#202020]' : 'bg-[#171717]'
+            }`}
           >
             <span className="text-fitness-text">{request.name}</span>
             <div className="flex gap-2">
