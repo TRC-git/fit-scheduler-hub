@@ -33,11 +33,18 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
     setLoading(true);
     try {
       // Get employee ID from the selected staff (format: "firstname lastname")
-      const [firstName, lastName] = selectedStaff.split(" ").map(part => part.trim()).filter(Boolean);
+      // Split and clean up the name parts
+      const nameParts = selectedStaff.split(" ").map(part => part.trim()).filter(Boolean);
       
-      if (!firstName || !lastName) {
+      if (nameParts.length < 2) {
         throw new Error("Invalid staff name format");
       }
+
+      // The first part is the first name, the rest is the last name (handles middle names)
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ");
+
+      console.log("Looking up employee:", { firstName, lastName });
 
       const { data: employee, error: employeeError } = await supabase
         .from("employees")
