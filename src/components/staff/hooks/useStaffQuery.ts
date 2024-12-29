@@ -10,18 +10,6 @@ export const useStaffQuery = () => {
     queryFn: async () => {
       console.log("Fetching staff members...");
       try {
-        // First check if user is authenticated
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError) {
-          console.error("Auth error:", authError);
-          throw authError;
-        }
-
-        if (!user) {
-          throw new Error("User not authenticated");
-        }
-
-        // Then fetch staff data
         const { data: staffData, error: staffError } = await supabase
           .from("employees")
           .select(`
