@@ -4,11 +4,13 @@ import { useState } from "react";
 import { format, addWeeks, subWeeks, startOfWeek, endOfWeek } from "date-fns";
 import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
 import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
+import { ClockInOutDialog } from "./dialog/ClockInOutDialog";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
+  const [isClockInDialogOpen, setIsClockInDialogOpen] = useState(false);
   const { selectedScheduleType, setSelectedScheduleType } = useScheduleContext();
 
   const handlePreviousWeek = () => {
@@ -71,7 +73,10 @@ const ScheduleHeader = () => {
         </button>
       </div>
       
-      <button className="px-4 py-2 bg-fitness-accent text-[#333333] rounded-md">
+      <button 
+        className="px-4 py-2 bg-fitness-accent text-[#333333] rounded-md hover:bg-fitness-accent/90"
+        onClick={() => setIsClockInDialogOpen(true)}
+      >
         Clock-In
       </button>
 
@@ -79,6 +84,11 @@ const ScheduleHeader = () => {
         isOpen={isCloneDialogOpen}
         onClose={() => setIsCloneDialogOpen(false)}
         sourceWeekStart={weekStart}
+      />
+
+      <ClockInOutDialog
+        open={isClockInDialogOpen}
+        onOpenChange={setIsClockInDialogOpen}
       />
     </div>
   );
