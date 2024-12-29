@@ -56,7 +56,6 @@ export const StaffDialogForm = ({
 
     if (!initialData) {
       try {
-        // Create auth user for new staff
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email: formData.email,
           password: password,
