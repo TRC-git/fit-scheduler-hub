@@ -12,7 +12,7 @@ export const TimeSlotSelector = ({ value, onChange, label }: TimeSlotSelectorPro
   return (
     <div className="flex flex-col gap-1">
       <Label className="text-fitness-text text-sm flex items-center gap-2">
-        <Clock className="w-4 h-4 text-[#15E7FB]" />
+        <Clock className="w-4 h-4 text-[#868686]" />
         {label}
       </Label>
       <Input
