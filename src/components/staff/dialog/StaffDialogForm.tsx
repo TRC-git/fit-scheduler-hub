@@ -6,11 +6,10 @@ import { PositionWithPayRate } from "../positions/types";
 import { AvailabilitySection } from "./availability/AvailabilitySection";
 import { useAvailability } from "./hooks/useAvailability";
 import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { PasswordSetup } from "./password/PasswordSetup";
+import { PasswordReset } from "./password/PasswordReset";
 
 interface StaffDialogFormProps {
   initialData?: any;
@@ -92,39 +91,6 @@ export const StaffDialogForm = ({
     await submitForm(formData, selectedPositions, availability);
   };
 
-  const handlePasswordReset = async () => {
-    if (!initialData?.email) return;
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        initialData.email,
-        { redirectTo: `${window.location.origin}/reset-password` }
-      );
-
-      if (error) {
-        console.error("Password reset error:", error);
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      toast({
-        title: "Success",
-        description: "Password reset email sent",
-      });
-    } catch (error) {
-      console.error("Error sending password reset:", error);
-      toast({
-        title: "Error",
-        description: "Failed to send password reset email",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleFormChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -138,46 +104,15 @@ export const StaffDialogForm = ({
       <StaffFormFields formData={formData} onChange={handleFormChange} />
       
       {!initialData ? (
-        // New staff - show password setup
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-fitness-text">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-fitness-inner text-fitness-text"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-fitness-text">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="bg-fitness-inner text-fitness-text"
-              required
-            />
-          </div>
-          {passwordError && (
-            <p className="text-sm text-red-500">{passwordError}</p>
-          )}
-        </div>
+        <PasswordSetup
+          password={password}
+          confirmPassword={confirmPassword}
+          passwordError={passwordError}
+          onPasswordChange={setPassword}
+          onConfirmPasswordChange={setConfirmPassword}
+        />
       ) : (
-        // Existing staff - show reset password button
-        <div className="space-y-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handlePasswordReset}
-            className="w-full text-fitness-text border-fitness-accent hover:bg-fitness-accent/10"
-          >
-            Send Password Reset Email
-          </Button>
-        </div>
+        <PasswordReset email={initialData.email} />
       )}
 
       <PositionSelect 
