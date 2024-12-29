@@ -11,6 +11,12 @@ interface StaffFormData {
   is_admin: boolean;
 }
 
+interface MutationParams {
+  formData: StaffFormData;
+  selectedPositions: PositionWithPayRate[];
+  initialData?: any;
+}
+
 export const useStaffSubmitMutation = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -43,15 +49,11 @@ export const useStaffSubmitMutation = () => {
     if (positionsError) throw positionsError;
   };
 
-  return useMutation({
+  return useMutation<number, Error, MutationParams>({
     mutationFn: async ({
       formData,
       selectedPositions,
       initialData
-    }: {
-      formData: StaffFormData;
-      selectedPositions: PositionWithPayRate[];
-      initialData?: any;
     }) => {
       if (initialData) {
         const { error } = await supabase
@@ -96,7 +98,7 @@ export const useStaffSubmitMutation = () => {
         description: "Staff member saved successfully",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Error in staff mutation:", error);
       toast({
         title: "Error",
