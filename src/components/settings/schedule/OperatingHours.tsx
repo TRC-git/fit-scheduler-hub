@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 const OperatingHours = () => {
   const [openingTime, setOpeningTime] = useState("09:00");
   const [closingTime, setClosingTime] = useState("17:00");
+  const [slotDuration, setSlotDuration] = useState(60);
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -18,16 +19,16 @@ const OperatingHours = () => {
   const loadOperatingHours = async () => {
     try {
       const { data, error } = await supabase
-        .from('schedule_types')
-        .select('opening_time, closing_time')
-        .eq('name', 'default')
-        .maybeSingle();
+        .from('businesslocations')
+        .select('opening_time, closing_time, slot_duration')
+        .single();
 
       if (error) throw error;
       
       if (data) {
         setOpeningTime(data.opening_time || "09:00");
         setClosingTime(data.closing_time || "17:00");
+        setSlotDuration(data.slot_duration || 60);
       }
     } catch (error) {
       console.error('Error loading operating hours:', error);
@@ -45,10 +46,9 @@ const OperatingHours = () => {
       
       // First check if default record exists
       const { data: existingData, error: checkError } = await supabase
-        .from('schedule_types')
-        .select('schedule_type_id')
-        .eq('name', 'default')
-        .maybeSingle();
+        .from('businesslocations')
+        .select('locationid')
+        .single();
 
       if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
         throw checkError;
@@ -58,23 +58,24 @@ const OperatingHours = () => {
       if (existingData) {
         // Update existing record
         const { error } = await supabase
-          .from('schedule_types')
+          .from('businesslocations')
           .update({ 
             opening_time: openingTime,
             closing_time: closingTime,
-            updated_at: new Date().toISOString()
+            slot_duration: slotDuration
           })
-          .eq('name', 'default');
+          .eq('locationid', existingData.locationid);
         updateError = error;
       } else {
         // Insert new record
         const { error } = await supabase
-          .from('schedule_types')
+          .from('businesslocations')
           .insert([{ 
-            name: 'default',
+            locationname: 'Default Location',
+            address: 'Default Address',
             opening_time: openingTime,
             closing_time: closingTime,
-            duration: 60 // Default duration
+            slot_duration: slotDuration
           }]);
         updateError = error;
       }
@@ -100,7 +101,7 @@ const OperatingHours = () => {
   return (
     <div>
       <h3 className="text-fitness-text mb-4">Operating Hours</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <Label className="text-fitness-text">Opening Time</Label>
           <Input 
@@ -116,6 +117,18 @@ const OperatingHours = () => {
             type="time" 
             value={closingTime}
             onChange={(e) => setClosingTime(e.target.value)}
+            className="bg-fitness-inner text-fitness-text" 
+          />
+        </div>
+        <div>
+          <Label className="text-fitness-text">Slot Duration (minutes)</Label>
+          <Input 
+            type="number" 
+            value={slotDuration}
+            onChange={(e) => setSlotDuration(parseInt(e.target.value))}
+            min={15}
+            max={120}
+            step={15}
             className="bg-fitness-inner text-fitness-text" 
           />
         </div>
