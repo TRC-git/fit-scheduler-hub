@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { StaffDialogForm } from "./dialog/StaffDialogForm";
 import { useStaffMutations } from "./hooks/useStaffMutations";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { StaffResponse } from "./dialog/StaffDialogForm";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -12,11 +13,13 @@ interface NewStaffDialogProps {
 const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps) => {
   const { submitStaffForm, loading } = useStaffMutations();
 
-  const handleSubmit = async (formData: any, selectedPositions: any) => {
-    const success = await submitStaffForm(formData, selectedPositions, initialData);
-    if (success) {
+  const handleSubmit = async (formData: any, selectedPositions: any): Promise<StaffResponse> => {
+    const result = await submitStaffForm(formData, selectedPositions, initialData);
+    if (result) {
       onOpenChange(false);
+      return result;
     }
+    throw new Error("Failed to submit staff form");
   };
 
   return (

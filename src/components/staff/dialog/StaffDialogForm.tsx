@@ -8,8 +8,10 @@ import { useAvailability } from "./hooks/useAvailability";
 import { useStaffFormSubmit } from "./hooks/useStaffFormSubmit";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { PasswordSetup } from "./password/PasswordSetup";
+import { PasswordReset } from "./password/PasswordReset";
 
-interface StaffResponse {
+export interface StaffResponse {
   employeeid: number;
   [key: string]: any;
 }
