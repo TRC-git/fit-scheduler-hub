@@ -3,11 +3,13 @@ import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import { useState } from "react";
 import { format, addWeeks, subWeeks, startOfWeek, endOfWeek } from "date-fns";
 import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
+import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
+  const { selectedScheduleType, setSelectedScheduleType } = useScheduleContext();
 
   const handlePreviousWeek = () => {
     setCurrentWeek(prevWeek => subWeeks(prevWeek, 1));
@@ -26,7 +28,11 @@ const ScheduleHeader = () => {
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <select className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[210px]">
+        <select 
+          className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[210px]"
+          value={selectedScheduleType}
+          onChange={(e) => setSelectedScheduleType(e.target.value)}
+        >
           {isLoading ? (
             <option className="pl-2">Loading...</option>
           ) : (

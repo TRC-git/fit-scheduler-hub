@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import ScheduleHeader from "@/components/schedule/ScheduleHeader";
 import ScheduleGrid from "@/components/schedule/ScheduleGrid";
+import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
 
 const Index = () => {
   return (
@@ -13,8 +14,10 @@ const Index = () => {
           <h1 className="text-2xl font-bold text-fitness-text mb-6">
             Scheduling
           </h1>
-          <ScheduleHeader />
-          <ScheduleGrid />
+          <ScheduleProvider>
+            <ScheduleHeader />
+            <ScheduleGrid />
+          </ScheduleProvider>
         </main>
       </div>
     </div>
