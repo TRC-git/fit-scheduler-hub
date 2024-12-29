@@ -17,7 +17,7 @@ export const useAvailability = (employeeId?: number) => {
     const { data, error } = await supabase
       .from('employeeavailability')
       .select('*')
-      .eq('employeeid', employeeId);
+      .eq('5', employeeId);
     
     if (error) {
       console.error('Error fetching availability:', error);
@@ -35,14 +35,14 @@ export const useAvailability = (employeeId?: number) => {
       const { error: deleteError } = await supabase
         .from('employeeavailability')
         .delete()
-        .eq('employeeid', employeeId);
+        .eq('5', employeeId);
 
       if (deleteError) throw deleteError;
 
       // Then insert new availability records
       if (availabilityData.length > 0) {
         const availabilityRecords = availabilityData.map(slot => ({
-          employeeid: employeeId,
+          "5": employeeId,
           dayofweek: slot.dayofweek,
           starttime: slot.starttime,
           endtime: slot.endtime,

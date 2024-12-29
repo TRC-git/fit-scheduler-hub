@@ -47,7 +47,7 @@ export const useStaffSubmitMutation = () => {
     const { error: deleteError } = await supabase
       .from("employeeavailability")
       .delete()
-      .eq("employeeid", employeeId);
+      .eq("5", employeeId);
 
     if (deleteError) throw deleteError;
 
@@ -55,7 +55,7 @@ export const useStaffSubmitMutation = () => {
 
     // Insert new availability records
     const availabilityRecords = availability.map(slot => ({
-      employeeid: employeeId,
+      "5": employeeId,
       dayofweek: slot.dayofweek,
       starttime: slot.starttime,
       endtime: slot.endtime,

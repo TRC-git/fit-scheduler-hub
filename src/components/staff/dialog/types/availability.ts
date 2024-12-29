@@ -1,12 +1,8 @@
 export interface TimeSlot {
+  "5": number;  // This represents employeeid in the database
   dayofweek: string;
   starttime: string;
   endtime: string;
   ispreferred?: boolean;
-}
-
-export interface AvailabilitySectionProps {
-  employeeId?: number;
-  initialAvailability?: TimeSlot[];
-  onAvailabilityChange: (availability: TimeSlot[]) => void;
+  availabilityid?: number;
 }

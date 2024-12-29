@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DaySelector } from "./components/DaySelector";
 import { DaySchedule } from "./components/DaySchedule";
-import { TimeSlot } from "./types";
+import { TimeSlot } from "../types";
 
 interface AvailabilitySectionProps {
   employeeId?: number;
@@ -87,12 +87,12 @@ export const AvailabilitySection = ({
       await supabase
         .from('employeeavailability')
         .delete()
-        .eq('employeeid', employeeId);
+        .eq('5', employeeId);
 
       // Insert new availability
       const availabilityData = selectedDays.flatMap(day => 
         timeSlots[day]?.map(slot => ({
-          employeeid: employeeId,
+          "5": employeeId,
           dayofweek: day,
           starttime: slot.starttime,
           endtime: slot.endtime,
