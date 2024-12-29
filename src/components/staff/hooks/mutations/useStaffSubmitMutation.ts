@@ -2,8 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MutationParams } from "../../types/staff";
-import { TimeSlot } from "../../dialog/types/availability";
-import { PositionWithPayRate } from "../../positions/types";
+import { TimeSlot, TimeSlotInput } from "../../dialog/types/availability";
 
 export const useStaffSubmitMutation = () => {
   const { toast } = useToast();
@@ -11,7 +10,7 @@ export const useStaffSubmitMutation = () => {
 
   const handleEmployeePositions = async (
     employeeId: number,
-    selectedPositions: PositionWithPayRate[]
+    selectedPositions: any[]
   ) => {
     // First delete existing positions
     const { error: deleteError } = await supabase
@@ -41,7 +40,7 @@ export const useStaffSubmitMutation = () => {
 
   const handleAvailability = async (
     employeeId: number,
-    availability: TimeSlot[]
+    availability: TimeSlotInput[]
   ) => {
     // Delete existing availability
     const { error: deleteError } = await supabase
@@ -54,7 +53,7 @@ export const useStaffSubmitMutation = () => {
     if (availability.length === 0) return;
 
     // Insert new availability records
-    const availabilityRecords = availability.map(slot => ({
+    const availabilityRecords: Omit<TimeSlot, 'availabilityid'>[] = availability.map(slot => ({
       "5": employeeId,
       dayofweek: slot.dayofweek,
       starttime: slot.starttime,
@@ -75,7 +74,7 @@ export const useStaffSubmitMutation = () => {
       selectedPositions,
       initialData,
       availability = []
-    }: MutationParams): Promise<number> => {
+    }: MutationParams) => {
       let employeeId: number;
 
       if (initialData) {

@@ -1,77 +1,30 @@
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PositionWithPayRate } from "../../positions/types";
-import { TimeSlot } from "../types/availability";
+import { TimeSlot, TimeSlotInput } from "../types/availability";
 
-interface StaffFormData {
-  firstname: string;
-  lastname: string;
-  email: string;
-  phonenumber: string;
-  is_admin: boolean;
-}
-
-interface StaffResponse {
-  employeeid: number;
-  [key: string]: any;
-}
-
-export const useStaffFormSubmit = (
-  initialData: any | undefined,
-  onSubmit: (formData: any, positions: PositionWithPayRate[]) => Promise<StaffResponse>,
-  onClose: () => void
-) => {
-  const [loading, setLoading] = useState(false);
-
-  const handleAvailabilityUpdate = async (employeeId: number, availability: TimeSlot[]) => {
-    // Delete existing availability
-    await supabase
-      .from('employeeavailability')
-      .delete()
-      .eq('employeeid', employeeId);
-    
-    // Insert new availability
-    if (availability.length > 0) {
-      const availabilityData = availability.map(slot => ({
-        employeeid: employeeId,
+export const useStaffFormSubmit = () => {
+  const handleSubmit = async (employeeId: number, availability: TimeSlotInput[]) => {
+    try {
+      // Transform the availability data to match the database schema
+      const transformedAvailability: Omit<TimeSlot, 'availabilityid'>[] = availability.map(slot => ({
+        "5": employeeId,
         dayofweek: slot.dayofweek,
         starttime: slot.starttime,
         endtime: slot.endtime,
-        ispreferred: slot.ispreferred || false
+        ispreferred: slot.ispreferred
       }));
-      
-      await supabase
+
+      const { error } = await supabase
         .from('employeeavailability')
-        .insert(availabilityData);
-    }
-  };
+        .insert(transformedAvailability);
 
-  const submitForm = async (
-    formData: StaffFormData,
-    selectedPositions: PositionWithPayRate[],
-    availability: TimeSlot[]
-  ): Promise<StaffResponse | null> => {
-    setLoading(true);
-    try {
-      const result = await onSubmit(formData, selectedPositions);
+      if (error) throw error;
       
-      if (result) {
-        const employeeId = initialData?.employeeid || result.employeeid;
-        await handleAvailabilityUpdate(employeeId, availability);
-        onClose();
-        return result;
-      }
-      return null;
+      return { success: true };
     } catch (error) {
-      console.error("Error in submitForm:", error);
-      return null;
-    } finally {
-      setLoading(false);
+      console.error('Error submitting staff form:', error);
+      return { success: false, error };
     }
   };
 
-  return {
-    submitForm,
-    loading
-  };
+  return { handleSubmit };
 };
