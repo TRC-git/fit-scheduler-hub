@@ -104,13 +104,14 @@ export const CloneWeekDialog = ({ isOpen, onClose, sourceWeekStart }: CloneWeekD
             onSelect={setTargetDate}
             className="rounded-md border border-fitness-grid mt-4"
             disabled={(date) => date < new Date()}
-            weekStartsOn={1} // Set Monday as the first day of the week
+            weekStartsOn={1}
           />
         </div>
 
         <DialogActions
-          onSubmit={handleCloneWeek}
-          isDisabled={!targetDate || isLoading}
+          onConfirm={handleCloneWeek}
+          onClose={onClose}
+          disabled={!targetDate || isLoading}
         />
       </DialogContent>
     </Dialog>

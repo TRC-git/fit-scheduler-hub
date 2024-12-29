@@ -42,8 +42,9 @@ export const EditAppointmentDialog = ({
         <StaffSelect value={selectedStaff} onChange={setSelectedStaff} />
         <TypeSelect value={selectedType} onChange={setSelectedType} />
         <DialogActions 
-          onSubmit={handleSubmit}
-          isDisabled={!selectedStaff || !selectedType}
+          onConfirm={handleSubmit}
+          onClose={() => {}}
+          disabled={!selectedStaff || !selectedType}
         />
       </div>
     </DialogContent>
