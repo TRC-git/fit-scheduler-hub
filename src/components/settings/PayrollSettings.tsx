@@ -46,22 +46,22 @@ const PayrollSettings = () => {
           .from('tax_withholding_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('employee_deductions')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('pto_holiday_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('commission_bonus_settings')
           .select('*')
           .eq('employee_id', employeeId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('overtimerules')
           .select('*')

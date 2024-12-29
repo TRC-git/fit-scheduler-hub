@@ -5,7 +5,7 @@ import { loadOperationalDays, saveOperationalDays } from './operations';
 
 export const OperationalDaysContext = createContext<OperationalDaysContextType | undefined>(undefined);
 
-export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const OperationalDaysProvider = ({ children }: { children: React.ReactNode }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -15,7 +15,6 @@ export const OperationalDaysProvider: React.FC<{ children: React.ReactNode }> = 
       setOperationalDays(days);
     } catch (error) {
       console.error('Error loading operational days:', error);
-      // Set default days if loading fails
       setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
       toast({
         title: "Notice",
