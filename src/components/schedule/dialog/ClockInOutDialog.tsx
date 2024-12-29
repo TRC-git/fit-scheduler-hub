@@ -33,25 +33,34 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
     setLoading(true);
     try {
       // Get employee ID from the selected staff (format: "firstname lastname")
-      const [firstName, lastName] = selectedStaff.split(" ");
-      const { data: employee } = await supabase
+      const [firstName, lastName] = selectedStaff.split(" ").map(part => part.trim()).filter(Boolean);
+      
+      if (!firstName || !lastName) {
+        throw new Error("Invalid staff name format");
+      }
+
+      const { data: employee, error: employeeError } = await supabase
         .from("employees")
         .select("employeeid")
         .eq("firstname", firstName)
         .eq("lastname", lastName)
-        .single();
+        .maybeSingle();
+
+      if (employeeError) {
+        throw employeeError;
+      }
 
       if (!employee) {
-        throw new Error("Employee not found");
+        throw new Error(`No employee found with name ${firstName} ${lastName}`);
       }
 
       // Create time entry
-      const { error } = await supabase.from("timeentries").insert({
+      const { error: timeEntryError } = await supabase.from("timeentries").insert({
         employeeid: employee.employeeid,
         clockintime: new Date().toISOString(),
       });
 
-      if (error) throw error;
+      if (timeEntryError) throw timeEntryError;
 
       toast({
         title: "Success",
