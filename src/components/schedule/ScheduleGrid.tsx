@@ -20,7 +20,7 @@ const ScheduleGrid = () => {
 
   return (
     <div className="bg-fitness-grid rounded-lg p-4">
-      <div className="grid grid-cols-8 gap-2 mb-4">
+      <div className="grid grid-cols-8 gap-4 mb-4">
         <div className="text-fitness-text font-medium p-2 min-w-[150px]">Time Slots</div>
         {days.map((day, index) => (
           <DayHeader key={day} day={day} index={index} />

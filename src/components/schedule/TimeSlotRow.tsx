@@ -26,7 +26,7 @@ export const TimeSlotRow = ({
   };
 
   return (
-    <div className="grid grid-cols-8 gap-2">
+    <div className="grid grid-cols-8 gap-4">
       <div className="text-fitness-text p-2 flex items-center min-w-[150px]">
         {formatTimeSlot(timeSlot)}
       </div>
