@@ -5,8 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Building2, Phone, Receipt, Image } from "lucide-react";
+import { Building2, Phone, Receipt, Image, MapPin } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+interface BusinessLocationUpdate {
+  business_name?: string;
+  phone_number?: string;
+  tax_id?: string;
+  address?: string;
+  logo_url?: string;
+}
 
 const BusinessDetails = () => {
   const { toast } = useToast();
@@ -27,13 +35,7 @@ const BusinessDetails = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (formData: {
-      business_name?: string;
-      phone_number?: string;
-      tax_id?: string;
-      address?: string;
-      logo_url?: string;
-    }) => {
+    mutationFn: async (formData: BusinessLocationUpdate) => {
       const { error } = await supabase
         .from('businesslocations')
         .update(formData)
@@ -61,7 +63,7 @@ const BusinessDetails = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const updates = {
+    const updates: BusinessLocationUpdate = {
       business_name: formData.get('business_name') as string,
       phone_number: formData.get('phone_number') as string,
       tax_id: formData.get('tax_id') as string,
@@ -144,7 +146,7 @@ const BusinessDetails = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Building2 className="w-5 h-5 text-fitness-accent" />
+              <MapPin className="w-5 h-5 text-fitness-accent" />
               <div className="flex-1">
                 <Label htmlFor="address" className="text-fitness-text">Address</Label>
                 <Input
@@ -153,6 +155,11 @@ const BusinessDetails = () => {
                   defaultValue={businessLocation?.address || ''}
                   className="bg-fitness-inner text-fitness-text border-fitness-muted"
                 />
+                {businessLocation?.latitude && businessLocation?.longitude && (
+                  <div className="mt-2 text-sm text-fitness-text">
+                    Coordinates: {businessLocation.latitude}, {businessLocation.longitude}
+                  </div>
+                )}
               </div>
             </div>
 
