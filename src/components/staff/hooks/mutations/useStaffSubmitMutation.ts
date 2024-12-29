@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MutationParams } from "../../types/staff";
+import { TimeSlot } from "../../dialog/types/availability";
 
 export const useStaffSubmitMutation = () => {
   const { toast } = useToast();
@@ -11,9 +12,13 @@ export const useStaffSubmitMutation = () => {
     mutationFn: async ({
       formData,
       selectedPositions,
-      initialData
+      initialData,
+      availability
     }: MutationParams): Promise<number> => {
+      let employeeId: number;
+
       if (initialData) {
+        // Update existing employee
         const { error } = await supabase
           .from("employees")
           .update({
@@ -26,10 +31,9 @@ export const useStaffSubmitMutation = () => {
           .eq("employeeid", initialData.employeeid);
 
         if (error) throw error;
-
-        await handleEmployeePositions(initialData.employeeid, selectedPositions);
-        return initialData.employeeid;
+        employeeId = initialData.employeeid;
       } else {
+        // Insert new employee
         const { data, error } = await supabase
           .from("employees")
           .insert([
@@ -44,10 +48,39 @@ export const useStaffSubmitMutation = () => {
           .single();
 
         if (error) throw error;
-
-        await handleEmployeePositions(data.employeeid, selectedPositions);
-        return data.employeeid;
+        employeeId = data.employeeid;
       }
+
+      // Handle employee positions
+      await handleEmployeePositions(employeeId, selectedPositions);
+
+      // Handle availability
+      if (availability && availability.length > 0) {
+        // First delete existing availability
+        const { error: deleteError } = await supabase
+          .from("employeeavailability")
+          .delete()
+          .eq("employeeid", employeeId);
+
+        if (deleteError) throw deleteError;
+
+        // Insert new availability records
+        const availabilityRecords = availability.map(slot => ({
+          employeeid: employeeId,
+          dayofweek: slot.dayofweek,
+          starttime: slot.starttime,
+          endtime: slot.endtime,
+          ispreferred: slot.ispreferred || false
+        }));
+
+        const { error: insertError } = await supabase
+          .from("employeeavailability")
+          .insert(availabilityRecords);
+
+        if (insertError) throw insertError;
+      }
+
+      return employeeId;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
