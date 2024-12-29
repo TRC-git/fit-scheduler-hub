@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, addMinutes, parse } from 'date-fns';
-import { Tables } from "@/integrations/supabase/types";
-
-type BusinessLocation = Tables<"businesslocations">;
+import { BusinessLocation } from '@/types/database/business-location';
 
 export const useTimeSlots = () => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
@@ -16,7 +14,7 @@ export const useTimeSlots = () => {
     try {
       const { data: locationData, error: locationError } = await supabase
         .from('businesslocations')
-        .select('opening_time, closing_time, slot_duration')
+        .select('*')
         .maybeSingle();
 
       if (locationError) throw locationError;
