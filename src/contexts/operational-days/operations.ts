@@ -2,20 +2,29 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
 const checkAdminStatus = async () => {
-  const { data, error } = await supabase.rpc('is_admin');
-  if (error) {
-    console.error('Error checking admin status:', error);
+  try {
+    const { data, error } = await supabase.rpc('is_admin');
+    if (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+    return data;
+  } catch (error) {
+    console.error('Error in checkAdminStatus:', error);
     return false;
   }
-  return data;
 };
 
 const createDefaultLocation = async () => {
   try {
-    // First check if user is admin
     const isAdmin = await checkAdminStatus();
     if (!isAdmin) {
       console.log('User is not admin, skipping default location creation');
+      toast({
+        title: "Access Denied",
+        description: "Only administrators can create business locations.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -30,7 +39,6 @@ const createDefaultLocation = async () => {
       throw fetchError;
     }
 
-    // If no location exists, create a default one
     if (!existingLocation) {
       console.log('No existing location found, creating default...');
       const { error: insertError } = await supabase
@@ -81,15 +89,14 @@ export const loadOperationalDays = async () => {
 
 export const saveOperationalDays = async (operationalDays: Set<string>) => {
   try {
-    // Check if user is admin before attempting to save
     const isAdmin = await checkAdminStatus();
     if (!isAdmin) {
       toast({
-        title: "Error",
-        description: "You need admin rights to modify operational days.",
+        title: "Access Denied",
+        description: "You need administrator rights to modify operational days.",
         variant: "destructive"
       });
-      throw new Error('Admin rights required');
+      throw new Error('Administrator rights required');
     }
 
     const { data: location, error: fetchError } = await supabase
@@ -100,6 +107,11 @@ export const saveOperationalDays = async (operationalDays: Set<string>) => {
 
     if (fetchError) {
       console.error('Error fetching location:', fetchError);
+      toast({
+        title: "Error",
+        description: "Could not find business location.",
+        variant: "destructive"
+      });
       throw fetchError;
     }
 
@@ -114,11 +126,16 @@ export const saveOperationalDays = async (operationalDays: Set<string>) => {
       console.error('Error saving operational days:', error);
       toast({
         title: "Error",
-        description: "Failed to save operational days. Please ensure you have admin rights.",
+        description: "Failed to save operational days. Please ensure you have administrator rights.",
         variant: "destructive"
       });
       throw error;
     }
+
+    toast({
+      title: "Success",
+      description: "Operational days have been updated successfully.",
+    });
   } catch (error) {
     console.error('Error in saveOperationalDays:', error);
     throw error;
