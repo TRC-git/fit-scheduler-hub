@@ -71,7 +71,7 @@ const ScheduleHeader = () => {
         </button>
       </div>
       
-      <button className="px-4 py-2 bg-fitness-accent text-white rounded-md">
+      <button className="px-4 py-2 bg-fitness-accent text-[#333333] rounded-md">
         Clock-In
       </button>
 
