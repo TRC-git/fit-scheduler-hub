@@ -1,14 +1,7 @@
-import type { Position } from "@/types/permissions";
-
-export interface PositionWithPayRate extends Position {
-  payrate: number;
-}
-
-export interface FormData {
+export interface PositionWithPayRate {
+  positionid: number;
   positionname: string;
-  paytype: string;
-  defaultpayrate: string;
-  description: string;
-  required_certifications: string;
-  min_experience_months: string;
+  defaultpayrate: number;
+  payrate?: number;
+  access_level?: any;
 }

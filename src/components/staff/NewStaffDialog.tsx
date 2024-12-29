@@ -3,6 +3,7 @@ import { StaffDialogForm } from "./dialog/StaffDialogForm";
 import { useStaffMutations } from "./hooks/useStaffMutations";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StaffResponse } from "./dialog/StaffDialogForm";
+import { PositionWithPayRate } from "./positions/types";
 
 interface NewStaffDialogProps {
   open: boolean;
@@ -13,11 +14,11 @@ interface NewStaffDialogProps {
 const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps) => {
   const { submitStaffForm, loading } = useStaffMutations();
 
-  const handleSubmit = async (formData: any, selectedPositions: any): Promise<StaffResponse> => {
+  const handleSubmit = async (formData: any, selectedPositions: PositionWithPayRate[]): Promise<StaffResponse> => {
     const result = await submitStaffForm(formData, selectedPositions, initialData);
-    if (result) {
+    if (result && typeof result === 'object' && 'employeeid' in result) {
       onOpenChange(false);
-      return result;
+      return result as StaffResponse;
     }
     throw new Error("Failed to submit staff form");
   };

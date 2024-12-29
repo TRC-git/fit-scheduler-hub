@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { PositionWithPayRate } from "../../positions/types";
+import { PositionWithPayRate } from "../positions/types";
 import { TimeSlot } from "../dialog/types/availability";
 import { StaffResponse } from "../dialog/StaffDialogForm";
 
@@ -50,7 +50,7 @@ export const useStaffFormSubmit = (
     formData: StaffFormData,
     selectedPositions: PositionWithPayRate[],
     availability: TimeSlot[]
-  ): Promise<StaffResponse | null> => {
+  ): Promise<StaffResponse> => {
     setLoading(true);
     try {
       const result = await onSubmit(formData, selectedPositions);
@@ -61,10 +61,10 @@ export const useStaffFormSubmit = (
         onClose();
         return result;
       }
-      return null;
+      throw new Error("Failed to submit staff form");
     } catch (error) {
       console.error("Error in submitForm:", error);
-      return null;
+      throw error;
     } finally {
       setLoading(false);
     }
