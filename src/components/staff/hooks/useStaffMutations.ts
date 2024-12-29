@@ -121,8 +121,46 @@ export const useStaffMutations = () => {
     }
   };
 
+  const updatePayRateMutation = async ({ employeeId, positionId, payRate }: { 
+    employeeId: number;
+    positionId: number;
+    payRate: number;
+  }) => {
+    const { error } = await supabase
+      .from('employeepositions')
+      .update({ payrate: payRate })
+      .eq('employeeid', employeeId)
+      .eq('positionid', positionId);
+
+    if (error) throw error;
+    queryClient.invalidateQueries({ queryKey: ["staff"] });
+  };
+
+  const suspendMutation = async (employeeId: number, suspended: boolean) => {
+    const { error } = await supabase
+      .from('employees')
+      .update({ suspended })
+      .eq('employeeid', employeeId);
+
+    if (error) throw error;
+    queryClient.invalidateQueries({ queryKey: ["staff"] });
+  };
+
+  const deleteMutation = async (employeeId: number) => {
+    const { error } = await supabase
+      .from('employees')
+      .update({ isactive: false })
+      .eq('employeeid', employeeId);
+
+    if (error) throw error;
+    queryClient.invalidateQueries({ queryKey: ["staff"] });
+  };
+
   return {
     submitStaffForm,
+    updatePayRateMutation,
+    suspendMutation,
+    deleteMutation,
     loading
   };
 };
