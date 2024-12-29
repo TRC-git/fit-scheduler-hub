@@ -1,12 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
-import { TimeSlot } from "../dialog/types/availability";
+import { TimeSlotInput } from "../dialog/types/availability";
 
 export const useStaffFormSubmit = () => {
-  const handleSubmit = async (employeeId: number, availability: Omit<TimeSlot, "5">[]) => {
+  const handleSubmit = async (employeeId: number, availability: TimeSlotInput[]) => {
     try {
       // Transform the availability data to match the database schema
       const transformedAvailability = availability.map(slot => ({
-        "5": employeeId,  // This matches the database column name
+        "5": employeeId,
         dayofweek: slot.dayofweek,
         starttime: slot.starttime,
         endtime: slot.endtime,

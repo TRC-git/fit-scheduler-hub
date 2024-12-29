@@ -3,6 +3,7 @@ import { useStaffQuery } from "@/components/staff/hooks/useStaffQuery";
 import { Plus } from "lucide-react";
 import { BulkScheduleDialog } from "@/components/schedule/BulkScheduleDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
 
 export const StaffList = () => {
   const { data: staff, isLoading } = useStaffQuery();
@@ -42,12 +43,14 @@ export const StaffList = () => {
       </ScrollArea>
 
       {selectedEmployee && (
-        <BulkScheduleDialog
-          employeeId={selectedEmployee.id}
-          employeeName={selectedEmployee.name}
-          onClose={() => setSelectedEmployee(null)}
-          open={!!selectedEmployee}
-        />
+        <ScheduleProvider>
+          <BulkScheduleDialog
+            employeeId={selectedEmployee.id}
+            employeeName={selectedEmployee.name}
+            onClose={() => setSelectedEmployee(null)}
+            open={!!selectedEmployee}
+          />
+        </ScheduleProvider>
       )}
     </div>
   );
