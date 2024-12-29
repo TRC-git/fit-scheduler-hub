@@ -6,10 +6,12 @@ import { BusinessDetailsForm } from "./business-details/BusinessDetailsForm";
 import { LogoUpload } from "./business-details/LogoUpload";
 import { useBusinessLocation } from "./business-details/useBusinessLocation";
 import { BusinessLocationUpdate } from "./business-details/types";
+import { useToast } from "@/hooks/use-toast";
 
 const BusinessDetails = () => {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const { businessLocation, isLoading, updateMutation } = useBusinessLocation();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
