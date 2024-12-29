@@ -17,7 +17,6 @@ export const TimeSlotRow = ({
     return appointments.find((apt) => apt.timeSlot === timeSlot && apt.day === day);
   };
 
-  // Format the time slot for better display
   const formatTimeSlot = (timeSlot: string) => {
     return (
       <div className="flex flex-row items-center justify-start space-x-1 text-sm whitespace-nowrap">
@@ -28,7 +27,7 @@ export const TimeSlotRow = ({
 
   return (
     <div className="grid grid-cols-8 gap-2">
-      <div className="text-fitness-text p-2 flex items-center">
+      <div className="text-fitness-text p-2 flex items-center min-w-[150px]">
         {formatTimeSlot(timeSlot)}
       </div>
       {days.map((day) => (
