@@ -15,7 +15,7 @@ import { Settings2 } from "lucide-react";
 const PayrollSettings = () => {
   const { toast } = useToast();
 
-  const { data: employeeId } = useQuery({
+  const { data: employeeId, isLoading: isLoadingEmployee } = useQuery({
     queryKey: ['currentEmployee'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -25,16 +25,18 @@ const PayrollSettings = () => {
         .from('employees')
         .select('employeeid')
         .eq('email', user.email)
-        .single();
+        .maybeSingle();
       
       return employee?.employeeid;
     }
   });
 
-  const { data: settings } = useQuery({
+  const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['payrollSettings', employeeId],
-    enabled: !!employeeId,
+    enabled: !!employeeId && typeof employeeId === 'number',
     queryFn: async () => {
+      console.log('Fetching settings for employee:', employeeId);
+      
       const [
         { data: tax },
         { data: deductions },
@@ -79,6 +81,8 @@ const PayrollSettings = () => {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (updates: any) => {
+      if (!employeeId) throw new Error('No employee ID found');
+      
       const promises = [];
       
       if (updates.tax) {
@@ -138,6 +142,26 @@ const PayrollSettings = () => {
       });
     }
   });
+
+  if (isLoadingEmployee || isLoadingSettings) {
+    return (
+      <Card className="bg-fitness-card">
+        <CardContent className="p-6">
+          Loading payroll settings...
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!employeeId) {
+    return (
+      <Card className="bg-fitness-card">
+        <CardContent className="p-6">
+          No employee record found. Please contact your administrator.
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-fitness-card">
