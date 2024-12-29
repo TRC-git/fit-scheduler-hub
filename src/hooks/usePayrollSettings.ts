@@ -5,27 +5,33 @@ import { useToast } from "@/components/ui/use-toast";
 export const usePayrollSettings = () => {
   const { toast } = useToast();
 
-  const { data: employeeId, isLoading: isLoadingEmployee } = useQuery({
+  const { data: employeeData, isLoading: isLoadingEmployee } = useQuery({
     queryKey: ['currentEmployee'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
+      if (!user?.email) throw new Error('No authenticated user found');
       
-      const { data: employee } = await supabase
+      const { data: employee, error } = await supabase
         .from('employees')
         .select('employeeid')
         .eq('email', user.email)
         .maybeSingle();
       
-      if (!employee?.employeeid) return null;
-      return employee.employeeid;
+      if (error) throw error;
+      if (!employee) return null;
+      
+      return employee;
     }
   });
 
+  const employeeId = employeeData?.employeeid;
+
   const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['payrollSettings', employeeId],
-    enabled: typeof employeeId === 'number',
+    enabled: !!employeeId,
     queryFn: async () => {
+      if (!employeeId) throw new Error('No employee ID available');
+      
       console.log('Fetching settings for employee:', employeeId);
       
       const [
@@ -72,7 +78,9 @@ export const usePayrollSettings = () => {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (updates: any) => {
-      if (typeof employeeId !== 'number') throw new Error('No employee ID found');
+      if (!employeeId) {
+        throw new Error('No employee ID found. Please try again later.');
+      }
       
       const promises = [];
       
@@ -80,7 +88,11 @@ export const usePayrollSettings = () => {
         promises.push(
           supabase
             .from('tax_withholding_settings')
-            .upsert({ ...updates.tax, employee_id: employeeId })
+            .upsert({ 
+              ...updates.tax, 
+              employee_id: employeeId,
+              updated_at: new Date().toISOString()
+            })
         );
       }
       
@@ -88,7 +100,11 @@ export const usePayrollSettings = () => {
         promises.push(
           supabase
             .from('employee_deductions')
-            .upsert({ ...updates.deductions, employee_id: employeeId })
+            .upsert({ 
+              ...updates.deductions, 
+              employee_id: employeeId,
+              updated_at: new Date().toISOString()
+            })
         );
       }
       
@@ -96,7 +112,11 @@ export const usePayrollSettings = () => {
         promises.push(
           supabase
             .from('pto_holiday_settings')
-            .upsert({ ...updates.pto, employee_id: employeeId })
+            .upsert({ 
+              ...updates.pto, 
+              employee_id: employeeId,
+              updated_at: new Date().toISOString()
+            })
         );
       }
       
@@ -104,7 +124,11 @@ export const usePayrollSettings = () => {
         promises.push(
           supabase
             .from('commission_bonus_settings')
-            .upsert({ ...updates.commission, employee_id: employeeId })
+            .upsert({ 
+              ...updates.commission, 
+              employee_id: employeeId,
+              updated_at: new Date().toISOString()
+            })
         );
       }
 
@@ -116,7 +140,13 @@ export const usePayrollSettings = () => {
         );
       }
 
-      await Promise.all(promises);
+      const results = await Promise.all(promises);
+      const errors = results.filter(r => r.error).map(r => r.error);
+      
+      if (errors.length > 0) {
+        console.error('Errors updating settings:', errors);
+        throw new Error('Failed to update some settings. Please try again.');
+      }
     },
     onSuccess: () => {
       toast({
@@ -124,11 +154,11 @@ export const usePayrollSettings = () => {
         description: "Payroll settings updated successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Error updating settings:', error);
       toast({
         title: "Error",
-        description: "Failed to update payroll settings",
+        description: error.message || "Failed to update payroll settings",
         variant: "destructive",
       });
     }
