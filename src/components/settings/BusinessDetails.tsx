@@ -23,6 +23,24 @@ const BusinessDetails = () => {
       address: formData.get('address') as string,
     };
 
+    // If the address has changed, trigger a manual coordinates update
+    if (updates.address && updates.address !== businessLocation?.address) {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(updates.address)}`
+        );
+        const data = await response.json();
+        
+        if (data && data.length > 0) {
+          updates.latitude = parseFloat(data[0].lat);
+          updates.longitude = parseFloat(data[0].lon);
+          console.log('Coordinates updated:', updates.latitude, updates.longitude);
+        }
+      } catch (error) {
+        console.error('Error updating coordinates:', error);
+      }
+    }
+
     if (logoFile) {
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('business-logos')
