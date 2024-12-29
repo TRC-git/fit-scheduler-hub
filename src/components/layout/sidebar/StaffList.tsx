@@ -21,7 +21,11 @@ export const StaffList = () => {
             className="flex items-center justify-between p-2 rounded-md hover:bg-fitness-card/50 mb-2"
           >
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-fitness-accent/20" />
+              <div className="w-8 h-8 rounded-full bg-fitness-accent/20 flex items-center justify-center">
+                <span className="text-[#15e7fb] font-medium">
+                  {employee.firstname[0]}{employee.lastname[0]}
+                </span>
+              </div>
               <span className="text-fitness-text">
                 {employee.firstname} {employee.lastname}
               </span>
