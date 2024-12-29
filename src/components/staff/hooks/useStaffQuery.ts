@@ -20,10 +20,6 @@ export const useStaffQuery = () => {
                 access_level,
                 defaultpayrate
               )
-            ),
-            positions:employees_position_id_fkey (
-              positionid,
-              positionname
             )
           `)
           .eq("isactive", true)
