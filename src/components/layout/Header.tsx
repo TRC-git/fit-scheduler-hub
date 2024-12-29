@@ -47,7 +47,7 @@ const Header = () => {
                 variant={isActive("/") ? "default" : "ghost"}
                 className={isActive("/") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <Calendar className="h-4 w-4 mr-2" />
+                <Calendar className="h-4 w-4 mr-1" />
                 Schedule
               </Button>
             </Link>
@@ -56,7 +56,7 @@ const Header = () => {
                 variant={isActive("/staff") ? "default" : "ghost"}
                 className={isActive("/staff") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <Users className="h-4 w-4 mr-2" />
+                <Users className="h-4 w-4 mr-1" />
                 Staff
               </Button>
             </Link>
@@ -65,7 +65,7 @@ const Header = () => {
                 variant={isActive("/payroll") ? "default" : "ghost"}
                 className={isActive("/payroll") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <DollarSign className="h-4 w-4 mr-2" />
+                <DollarSign className="h-4 w-4 mr-1" />
                 Payroll/Hrs
               </Button>
             </Link>
@@ -74,7 +74,7 @@ const Header = () => {
                 variant={isActive("/reports") ? "default" : "ghost"}
                 className={isActive("/reports") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <BarChart className="h-4 w-4 mr-2" />
+                <BarChart className="h-4 w-4 mr-1" />
                 Reports
               </Button>
             </Link>
@@ -83,7 +83,7 @@ const Header = () => {
                 variant={isActive("/settings") ? "default" : "ghost"}
                 className={isActive("/settings") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
               >
-                <Settings className="h-4 w-4 mr-2" />
+                <Settings className="h-4 w-4 mr-1" />
                 Settings
               </Button>
             </Link>
