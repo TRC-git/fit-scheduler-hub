@@ -49,7 +49,7 @@ export const useStaffSubmitMutation = () => {
     if (positionsError) throw positionsError;
   };
 
-  return useMutation<number, Error, MutationParams>({
+  return useMutation<number, Error, MutationParams, unknown>({
     mutationFn: async ({
       formData,
       selectedPositions,
