@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { StaffDialogForm } from "./dialog/StaffDialogForm";
 import { useStaffMutations } from "./hooks/useStaffMutations";
 
@@ -21,26 +20,18 @@ const NewStaffDialog = ({ open, onOpenChange, initialData }: NewStaffDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-fitness-card border-fitness-muted max-h-[90vh]">
+      <DialogContent className="bg-fitness-card border-fitness-muted">
         <DialogHeader>
           <DialogTitle className="text-fitness-text">
             {initialData ? 'Edit Staff Member' : 'Add New Staff Member'}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea 
-          className="pr-4" 
-          style={{
-            '--scrollbar-thumb': '#15e7fb',
-            '--scrollbar-track': 'transparent'
-          } as React.CSSProperties}
-        >
-          <StaffDialogForm
-            initialData={initialData}
-            onSubmit={handleSubmit}
-            onCancel={() => onOpenChange(false)}
-            loading={loading}
-          />
-        </ScrollArea>
+        <StaffDialogForm
+          initialData={initialData}
+          onSubmit={handleSubmit}
+          onCancel={() => onOpenChange(false)}
+          loading={loading}
+        />
       </DialogContent>
     </Dialog>
   );
