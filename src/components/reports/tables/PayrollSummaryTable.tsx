@@ -7,6 +7,7 @@ import { Edit2, Lock, Save } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { PayrollDetailsTable } from "./components/PayrollDetailsTable";
 import { Adjustments, PayrollRecord, PayrollSummaryTableProps } from "./types/payroll";
+import { Json } from "@/types/database/common";
 
 export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSummaryTableProps) => {
   const { toast } = useToast();
@@ -28,13 +29,16 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         .single();
 
       if (existingRecord) {
-        const parsedAdjustments = {
-          bonus: Number(existingRecord.adjustments?.bonus) || 0,
-          deductions: Number(existingRecord.adjustments?.deductions) || 0,
-          comments: existingRecord.adjustments?.comments || "",
+        const parsedAdjustments: Adjustments = {
+          bonus: Number((existingRecord.adjustments as Json as any)?.bonus) || 0,
+          deductions: Number((existingRecord.adjustments as Json as any)?.deductions) || 0,
+          comments: String((existingRecord.adjustments as Json as any)?.comments || ""),
         };
         setAdjustments(parsedAdjustments);
-        return existingRecord as PayrollRecord;
+        return {
+          ...existingRecord,
+          adjustments: parsedAdjustments
+        } as PayrollRecord;
       }
 
       // Calculate from time entries if no existing record
@@ -94,7 +98,7 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         gross_pay: adjustedGrossPay,
         net_pay: adjustedNetPay,
         status: 'draft',
-        adjustments
+        adjustments: adjustments as unknown as Json
       });
 
     if (error) {
