@@ -18,12 +18,12 @@ export const useTimeEntries = () => {
           islate,
           isovertime,
           notes,
-          employees!timeentries_employeeid_fkey (
+          employees (
             employeeid,
             firstname,
             lastname
           ),
-          positions!timeentries_positionid_fkey (
+          positions (
             positionid,
             positionname
           )
