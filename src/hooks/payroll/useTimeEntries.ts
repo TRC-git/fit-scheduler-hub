@@ -1,6 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface TimeEntry {
+  timeentryid: number;
+  clockintime: string;
+  clockouttime: string | null;
+  employees: {
+    firstname: string;
+    lastname: string;
+  };
+  positions: {
+    positionname: string;
+  };
+}
+
 export const useTimeEntries = () => {
   return useQuery({
     queryKey: ['clocked-in-staff'],
@@ -12,19 +25,11 @@ export const useTimeEntries = () => {
           timeentryid,
           clockintime,
           clockouttime,
-          breakduration,
-          hoursworked,
-          isapproved,
-          islate,
-          isovertime,
-          notes,
           employees (
-            employeeid,
             firstname,
             lastname
           ),
           positions (
-            positionid,
             positionname
           )
         `)
@@ -37,7 +42,7 @@ export const useTimeEntries = () => {
       }
       
       console.log("Time entries data:", data);
-      return data;
+      return data as TimeEntry[];
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
