@@ -20,12 +20,12 @@ export const ClockInStaff = () => {
           timeentryid,
           clockintime,
           clockouttime,
-          employeeid!timeentries_employeeid_fkey (
+          employees!timeentries_employeeid_fkey (
             employeeid,
             firstname,
             lastname
           ),
-          positionid (
+          positions!timeentries_positionid_fkey (
             positionid,
             positionname
           )
@@ -99,10 +99,10 @@ export const ClockInStaff = () => {
           >
             <div className="space-y-1">
               <p className="text-fitness-text font-medium">
-                {entry.employeeid.firstname} {entry.employeeid.lastname}
+                {entry.employees.firstname} {entry.employees.lastname}
               </p>
               <p className="text-sm text-gray-400">
-                {entry.positionid?.positionname}
+                {entry.positions?.positionname}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className="text-fitness-accent">

@@ -14,7 +14,7 @@ export const PayrollSummary = () => {
           scheduleid,
           starttime,
           endtime,
-          employeeid (
+          employees!schedules_employeeid_fkey (
             employeeid,
             employeepositions (
               payrate,
@@ -36,7 +36,7 @@ export const PayrollSummary = () => {
         totalHours += hours;
         
         // Get the primary position's pay rate
-        const primaryPosition = schedule.employeeid?.employeepositions?.find(
+        const primaryPosition = schedule.employees?.employeepositions?.find(
           (pos: any) => pos.is_primary
         );
         const payRate = primaryPosition?.payrate || 0;
