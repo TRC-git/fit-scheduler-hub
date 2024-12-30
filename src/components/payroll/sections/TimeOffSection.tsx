@@ -49,7 +49,15 @@ export const TimeOffSection = () => {
         .lte('end_date', dateRange.endDate.toISOString());
 
       if (error) throw error;
-      setRequests(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData = data?.map(request => ({
+        ...request,
+        employees: request.employees as { firstname: string; lastname: string },
+        approver: request.approver as { firstname: string; lastname: string } | undefined
+      }));
+
+      setRequests(transformedData || []);
     } catch (error) {
       console.error('Error fetching time off requests:', error);
       toast({
