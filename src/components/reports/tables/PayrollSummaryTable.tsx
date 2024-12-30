@@ -98,7 +98,7 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         gross_pay: adjustedGrossPay,
         net_pay: adjustedNetPay,
         status: 'draft',
-        adjustments: adjustments as unknown as Json
+        adjustments
       });
 
     if (error) {
