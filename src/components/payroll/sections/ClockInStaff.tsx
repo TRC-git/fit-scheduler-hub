@@ -1,42 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Clock, Timer } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import { format, differenceInSeconds } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Clock } from "lucide-react";
+import { differenceInSeconds } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useTimeEntries } from "@/hooks/payroll/useTimeEntries";
+import { TimeEntryCard } from "./TimeEntryCard";
 
 export const ClockInStaff = () => {
   const { toast } = useToast();
   const [runningTimes, setRunningTimes] = useState<{[key: number]: number}>({});
-
-  const { data: clockedInStaff, refetch } = useQuery({
-    queryKey: ['clocked-in-staff'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('timeentries')
-        .select(`
-          timeentryid,
-          clockintime,
-          clockouttime,
-          employees!timeentries_employeeid_fkey (
-            employeeid,
-            firstname,
-            lastname
-          ),
-          positions!timeentries_positionid_fkey (
-            positionid,
-            positionname
-          )
-        `)
-        .is('clockouttime', null)
-        .order('clockintime', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    }
-  });
+  const { data: clockedInStaff, refetch } = useTimeEntries();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,13 +50,6 @@ export const ClockInStaff = () => {
     }
   };
 
-  const formatRunningTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
   return (
     <Card className="bg-fitness-card">
       <CardHeader>
@@ -93,34 +60,12 @@ export const ClockInStaff = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {clockedInStaff?.map((entry) => (
-          <div
+          <TimeEntryCard
             key={entry.timeentryid}
-            className="flex items-center justify-between p-4 rounded-lg bg-[#202020]"
-          >
-            <div className="space-y-1">
-              <p className="text-fitness-text font-medium">
-                {entry.employees.firstname} {entry.employees.lastname}
-              </p>
-              <p className="text-sm text-gray-400">
-                {entry.positions?.positionname}
-              </p>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="text-fitness-accent">
-                  In: {format(new Date(entry.clockintime), 'hh:mm a')}
-                </span>
-                <span className="flex items-center gap-1 text-fitness-accent">
-                  <Timer className="w-4 h-4" />
-                  {formatRunningTime(runningTimes[entry.timeentryid] || 0)}
-                </span>
-              </div>
-            </div>
-            <Button
-              variant="destructive"
-              onClick={() => handleClockOut(entry.timeentryid)}
-            >
-              Clock Out
-            </Button>
-          </div>
+            entry={entry}
+            runningTime={runningTimes[entry.timeentryid] || 0}
+            onClockOut={handleClockOut}
+          />
         ))}
         {(!clockedInStaff || clockedInStaff.length === 0) && (
           <p className="text-center text-gray-400">No staff members currently clocked in</p>
