@@ -3,7 +3,17 @@ import { Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TimeEntryCardProps {
-  entry: any;
+  entry: {
+    timeentryid: number;
+    clockintime: string;
+    employees: {
+      firstname: string;
+      lastname: string;
+    };
+    positions: {
+      positionname: string;
+    };
+  };
   runningTime: number;
   onClockOut: (timeentryId: number) => void;
 }
