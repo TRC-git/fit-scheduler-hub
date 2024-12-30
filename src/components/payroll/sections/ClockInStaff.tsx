@@ -17,13 +17,16 @@ export const ClockInStaff = () => {
       const { data, error } = await supabase
         .from('timeentries')
         .select(`
-          *,
-          employees (
+          timeentryid,
+          clockintime,
+          clockouttime,
+          employeeid (
+            employeeid,
             firstname,
-            lastname,
-            employeeid
+            lastname
           ),
-          positions (
+          positionid (
+            positionid,
             positionname
           )
         `)
@@ -96,10 +99,10 @@ export const ClockInStaff = () => {
           >
             <div className="space-y-1">
               <p className="text-fitness-text font-medium">
-                {entry.employees?.firstname} {entry.employees?.lastname}
+                {entry.employeeid.firstname} {entry.employeeid.lastname}
               </p>
               <p className="text-sm text-gray-400">
-                {entry.positions?.positionname}
+                {entry.positionid?.positionname}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className="text-fitness-accent">

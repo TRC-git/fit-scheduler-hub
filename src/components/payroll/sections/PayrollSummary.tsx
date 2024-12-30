@@ -11,9 +11,14 @@ export const PayrollSummary = () => {
       const { data: schedules, error: schedulesError } = await supabase
         .from('schedules')
         .select(`
-          *,
-          employeepositions!inner (
-            payrate
+          scheduleid,
+          starttime,
+          endtime,
+          employeeid (
+            employeeid,
+            employeepositions (
+              payrate
+            )
           )
         `)
         .gte('shiftdate', new Date().toISOString())
@@ -28,7 +33,13 @@ export const PayrollSummary = () => {
         const hours = new Date(`2000-01-01T${schedule.endtime}`).getHours() - 
                      new Date(`2000-01-01T${schedule.starttime}`).getHours();
         totalHours += hours;
-        totalPayroll += hours * (schedule.employeepositions?.payrate || 0);
+        
+        // Get the primary position's pay rate
+        const primaryPosition = schedule.employeeid?.employeepositions?.find(
+          (pos: any) => pos.is_primary
+        );
+        const payRate = primaryPosition?.payrate || 0;
+        totalPayroll += hours * payRate;
       });
 
       return {
