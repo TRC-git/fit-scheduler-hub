@@ -55,9 +55,9 @@ export const TimeOffSection = () => {
         ...request,
         employees: request.employees as { firstname: string; lastname: string },
         approver: request.approver as { firstname: string; lastname: string } | undefined
-      }));
+      })) || [];
 
-      setRequests(transformedData || []);
+      setRequests(transformedData);
     } catch (error) {
       console.error('Error fetching time off requests:', error);
       toast({
