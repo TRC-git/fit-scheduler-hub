@@ -9,16 +9,12 @@ export interface PayrollRecord {
   gross_pay: number;
   net_pay: number;
   status: 'draft' | 'finalized';
-  created_by: number;
-  created_at: string;
-  last_edited_by: number;
-  last_edited_at: string;
-  notes: string;
-  adjustments: {
-    bonus?: number;
-    deductions?: number;
-    comments?: string;
-  };
+  created_by?: number;
+  created_at?: string;
+  last_edited_by?: number;
+  last_edited_at?: string;
+  notes?: string;
+  adjustments: Adjustments;
 }
 
 export interface Adjustments {

@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { Edit2, Lock, Save } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { PayrollAdjustmentsForm } from "./components/PayrollAdjustmentsForm";
+import { PayrollDetailsTable } from "./components/PayrollDetailsTable";
 import { Adjustments, PayrollRecord, PayrollSummaryTableProps } from "./types/payroll";
 
 export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSummaryTableProps) => {
@@ -21,7 +20,6 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
   const { data: payrollRecord, isLoading, refetch } = useQuery({
     queryKey: ['payroll-summary', dateRange.startDate, dateRange.endDate, selectedEmployee],
     queryFn: async () => {
-      // First check if there's an existing record
       const { data: existingRecord } = await supabase
         .from('payroll_records')
         .select('*')
@@ -30,7 +28,6 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         .single();
 
       if (existingRecord) {
-        // Safely parse adjustments with default values
         const parsedAdjustments = {
           bonus: Number(existingRecord.adjustments?.bonus) || 0,
           deductions: Number(existingRecord.adjustments?.deductions) || 0,
@@ -40,7 +37,7 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         return existingRecord as PayrollRecord;
       }
 
-      // If no existing record, calculate from time entries
+      // Calculate from time entries if no existing record
       const { data: timeEntries } = await supabase
         .from('timeentries')
         .select(`
@@ -66,7 +63,6 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
       const overtimeRate = basePayRate * 1.5;
 
       const grossPay = (regularHours * basePayRate) + (overtimeHours * overtimeRate);
-      // Simplified tax calculation - this should be more sophisticated in production
       const netPay = grossPay * 0.75;
 
       return {
@@ -86,7 +82,7 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
     if (!payrollRecord) return;
 
     const adjustedGrossPay = payrollRecord.gross_pay + adjustments.bonus - adjustments.deductions;
-    const adjustedNetPay = adjustedGrossPay * 0.75; // Simplified tax calculation
+    const adjustedNetPay = adjustedGrossPay * 0.75;
 
     const { error } = await supabase
       .from('payroll_records')
@@ -192,97 +188,12 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         )}
       </div>
 
-      <div className="rounded-md border border-fitness-grid">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableHead className="text-fitness-text">Metric</TableHead>
-              <TableHead className="text-fitness-text text-right">Value</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableCell className="text-fitness-text font-medium">
-                Total Hours
-              </TableCell>
-              <TableCell className="text-fitness-text text-right">
-                {payrollRecord.total_hours.toFixed(1)}h
-              </TableCell>
-            </TableRow>
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableCell className="text-fitness-text font-medium">
-                Overtime Hours
-              </TableCell>
-              <TableCell className="text-fitness-text text-right">
-                {payrollRecord.total_overtime_hours.toFixed(1)}h
-              </TableCell>
-            </TableRow>
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableCell className="text-fitness-text font-medium">
-                Gross Pay
-              </TableCell>
-              <TableCell className="text-fitness-text text-right">
-                ${payrollRecord.gross_pay.toFixed(2)}
-              </TableCell>
-            </TableRow>
-            {editMode ? (
-              <PayrollAdjustmentsForm 
-                adjustments={adjustments}
-                onChange={setAdjustments}
-              />
-            ) : (
-              <>
-                <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                  <TableCell className="text-fitness-text font-medium">
-                    Bonus
-                  </TableCell>
-                  <TableCell className="text-fitness-text text-right">
-                    ${adjustments.bonus.toFixed(2)}
-                  </TableCell>
-                </TableRow>
-                <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                  <TableCell className="text-fitness-text font-medium">
-                    Deductions
-                  </TableCell>
-                  <TableCell className="text-fitness-text text-right">
-                    ${adjustments.deductions.toFixed(2)}
-                  </TableCell>
-                </TableRow>
-                {adjustments.comments && (
-                  <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                    <TableCell className="text-fitness-text font-medium">
-                      Comments
-                    </TableCell>
-                    <TableCell className="text-fitness-text text-right">
-                      {adjustments.comments}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </>
-            )}
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableCell className="text-fitness-text font-medium">
-                Net Pay
-              </TableCell>
-              <TableCell className="text-fitness-text text-right">
-                ${payrollRecord.net_pay.toFixed(2)}
-              </TableCell>
-            </TableRow>
-            <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-              <TableCell className="text-fitness-text font-medium">
-                Status
-              </TableCell>
-              <TableCell className="text-fitness-text text-right">
-                {payrollRecord.status === 'finalized' ? (
-                  <span className="text-green-500">Finalized</span>
-                ) : (
-                  <span className="text-yellow-500">Draft</span>
-                )}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+      <PayrollDetailsTable
+        payrollRecord={payrollRecord}
+        adjustments={adjustments}
+        editMode={editMode}
+        onAdjustmentsChange={setAdjustments}
+      />
     </div>
   );
 };
