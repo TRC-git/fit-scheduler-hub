@@ -35,10 +35,16 @@ interface PayrollRecord {
   };
 }
 
+interface Adjustments {
+  bonus: number;
+  deductions: number;
+  comments: string;
+}
+
 export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSummaryTableProps) => {
   const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
-  const [adjustments, setAdjustments] = useState({
+  const [adjustments, setAdjustments] = useState<Adjustments>({
     bonus: 0,
     deductions: 0,
     comments: "",
@@ -56,7 +62,13 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         .single();
 
       if (existingRecord) {
-        setAdjustments(existingRecord.adjustments || { bonus: 0, deductions: 0, comments: "" });
+        // Safely parse adjustments with default values
+        const parsedAdjustments = {
+          bonus: Number(existingRecord.adjustments?.bonus) || 0,
+          deductions: Number(existingRecord.adjustments?.deductions) || 0,
+          comments: existingRecord.adjustments?.comments || "",
+        };
+        setAdjustments(parsedAdjustments);
         return existingRecord as PayrollRecord;
       }
 
