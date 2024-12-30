@@ -25,11 +25,11 @@ export const useTimeEntries = () => {
           timeentryid,
           clockintime,
           clockouttime,
-          employees (
+          employees!timeentries_employeeid_fkey (
             firstname,
             lastname
           ),
-          positions (
+          positions!timeentries_positionid_fkey (
             positionname
           )
         `)
