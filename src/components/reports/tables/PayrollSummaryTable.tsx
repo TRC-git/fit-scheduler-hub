@@ -2,44 +2,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DateRange } from "@/types/reports";
 import { supabase } from "@/integrations/supabase/client";
 import { Edit2, Lock, Save } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-
-interface PayrollSummaryTableProps {
-  dateRange: DateRange;
-  selectedEmployee?: number;
-}
-
-interface PayrollRecord {
-  record_id: number;
-  pay_period_start: string;
-  pay_period_end: string;
-  total_hours: number;
-  total_overtime_hours: number;
-  gross_pay: number;
-  net_pay: number;
-  status: 'draft' | 'finalized';
-  created_by: number;
-  created_at: string;
-  last_edited_by: number;
-  last_edited_at: string;
-  notes: string;
-  adjustments: {
-    bonus?: number;
-    deductions?: number;
-    comments?: string;
-  };
-}
-
-interface Adjustments {
-  bonus: number;
-  deductions: number;
-  comments: string;
-}
+import { PayrollAdjustmentsForm } from "./components/PayrollAdjustmentsForm";
+import { Adjustments, PayrollRecord, PayrollSummaryTableProps } from "./types/payroll";
 
 export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSummaryTableProps) => {
   const { toast } = useToast();
@@ -130,7 +98,7 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
         gross_pay: adjustedGrossPay,
         net_pay: adjustedNetPay,
         status: 'draft',
-        adjustments
+        adjustments: adjustments as unknown as Json
       });
 
     if (error) {
@@ -258,55 +226,10 @@ export const PayrollSummaryTable = ({ dateRange, selectedEmployee }: PayrollSumm
               </TableCell>
             </TableRow>
             {editMode ? (
-              <>
-                <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                  <TableCell className="text-fitness-text font-medium">
-                    Bonus
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Input
-                      type="number"
-                      value={adjustments.bonus}
-                      onChange={(e) => setAdjustments(prev => ({
-                        ...prev,
-                        bonus: parseFloat(e.target.value) || 0
-                      }))}
-                      className="w-32 ml-auto bg-fitness-inner text-fitness-text text-right"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                  <TableCell className="text-fitness-text font-medium">
-                    Deductions
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Input
-                      type="number"
-                      value={adjustments.deductions}
-                      onChange={(e) => setAdjustments(prev => ({
-                        ...prev,
-                        deductions: parseFloat(e.target.value) || 0
-                      }))}
-                      className="w-32 ml-auto bg-fitness-inner text-fitness-text text-right"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow className="border-fitness-grid hover:bg-fitness-inner">
-                  <TableCell className="text-fitness-text font-medium">
-                    Comments
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Input
-                      value={adjustments.comments}
-                      onChange={(e) => setAdjustments(prev => ({
-                        ...prev,
-                        comments: e.target.value
-                      }))}
-                      className="w-full bg-fitness-inner text-fitness-text"
-                    />
-                  </TableCell>
-                </TableRow>
-              </>
+              <PayrollAdjustmentsForm 
+                adjustments={adjustments}
+                onChange={setAdjustments}
+              />
             ) : (
               <>
                 <TableRow className="border-fitness-grid hover:bg-fitness-inner">
