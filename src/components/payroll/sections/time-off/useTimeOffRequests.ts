@@ -21,11 +21,11 @@ export const useTimeOffRequests = () => {
           status,
           approved_by,
           approved_at,
-          employees!time_off_requests_employee_id_fkey (
+          employees (
             firstname,
             lastname
           ),
-          approver:time_off_requests_approved_by_fkey!employees (
+          approver:employees!time_off_requests_approved_by_fkey (
             firstname,
             lastname
           )
