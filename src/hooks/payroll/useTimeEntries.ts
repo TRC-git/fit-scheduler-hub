@@ -12,6 +12,12 @@ export const useTimeEntries = () => {
           timeentryid,
           clockintime,
           clockouttime,
+          breakduration,
+          hoursworked,
+          isapproved,
+          islate,
+          isovertime,
+          notes,
           employees!timeentries_employeeid_fkey (
             employeeid,
             firstname,
