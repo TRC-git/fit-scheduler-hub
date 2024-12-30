@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { TimeOffRequest } from "./types";
 import { DateRange } from "@/types/reports";
+import { approveTimeOffRequest, fetchTimeOffRequests, getCurrentAdminId } from "./api/timeOffQueries";
 
 export const useTimeOffRequests = () => {
   const { toast } = useToast();
@@ -10,45 +10,17 @@ export const useTimeOffRequests = () => {
 
   const fetchRequests = async (dateRange: DateRange) => {
     try {
-      const { data, error } = await supabase
-        .from('time_off_requests')
-        .select(`
-          request_id,
-          employee_id,
-          start_date,
-          end_date,
-          reason,
-          status,
-          approved_by,
-          approved_at,
-          employees (
-            firstname,
-            lastname
-          ),
-          approver:employees!time_off_requests_approved_by_fkey (
-            firstname,
-            lastname
-          )
-        `)
-        .gte('start_date', dateRange.startDate.toISOString())
-        .lte('end_date', dateRange.endDate.toISOString());
-
-      if (error) throw error;
+      const data = await fetchTimeOffRequests(dateRange);
       
-      if (!data) {
-        setRequests([]);
-        return;
-      }
-
       const transformedData = data.map(request => ({
         ...request,
         employees: {
-          firstname: request.employees?.firstname || '',
-          lastname: request.employees?.lastname || ''
+          firstname: request.employees.firstname,
+          lastname: request.employees.lastname
         },
         approver: request.approver ? {
-          firstname: request.approver.firstname || '',
-          lastname: request.approver.lastname || ''
+          firstname: request.approver.firstname,
+          lastname: request.approver.lastname
         } : undefined
       }));
 
@@ -65,24 +37,8 @@ export const useTimeOffRequests = () => {
 
   const handleApprove = async (requestId: number) => {
     try {
-      const { data: adminData, error: adminError } = await supabase
-        .from('employees')
-        .select('employeeid')
-        .eq('email', (await supabase.auth.getUser()).data.user?.email)
-        .single();
-
-      if (adminError) throw adminError;
-
-      const { error: updateError } = await supabase
-        .from('time_off_requests')
-        .update({
-          status: 'approved',
-          approved_by: adminData.employeeid,
-          approved_at: new Date().toISOString(),
-        })
-        .eq('request_id', requestId);
-
-      if (updateError) throw updateError;
+      const adminId = await getCurrentAdminId();
+      await approveTimeOffRequest(requestId, adminId);
 
       toast({
         title: "Success",
