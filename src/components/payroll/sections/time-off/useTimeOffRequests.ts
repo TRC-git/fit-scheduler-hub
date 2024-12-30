@@ -14,8 +14,8 @@ export const useTimeOffRequests = () => {
         .from('time_off_requests')
         .select(`
           *,
-          employees:employee_id(firstname, lastname),
-          approver:approved_by(firstname, lastname)
+          employees!time_off_requests_employee_id_fkey (firstname, lastname),
+          approver:employees!time_off_requests_approved_by_fkey (firstname, lastname)
         `)
         .gte('start_date', dateRange.startDate.toISOString())
         .lte('end_date', dateRange.endDate.toISOString());
