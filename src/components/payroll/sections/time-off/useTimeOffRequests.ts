@@ -13,9 +13,22 @@ export const useTimeOffRequests = () => {
       const { data, error } = await supabase
         .from('time_off_requests')
         .select(`
-          *,
-          employees:time_off_requests_employee_id_fkey (firstname, lastname),
-          approver:time_off_requests_approved_by_fkey (firstname, lastname)
+          request_id,
+          employee_id,
+          start_date,
+          end_date,
+          reason,
+          status,
+          approved_by,
+          approved_at,
+          employees!time_off_requests_employee_id_fkey (
+            firstname,
+            lastname
+          ),
+          approver:time_off_requests_approved_by_fkey!employees (
+            firstname,
+            lastname
+          )
         `)
         .gte('start_date', dateRange.startDate.toISOString())
         .lte('end_date', dateRange.endDate.toISOString());
