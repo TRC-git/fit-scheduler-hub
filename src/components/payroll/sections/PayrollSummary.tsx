@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Clock, Calendar } from "lucide-react";
+import { DollarSign, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const PayrollSummary = () => {
   const { data: summary } = useQuery({
     queryKey: ['payroll-summary'],
     queryFn: async () => {
-      // Get scheduled hours and estimated payroll
       const { data: schedules, error: schedulesError } = await supabase
         .from('schedules')
         .select(`
