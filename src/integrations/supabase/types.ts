@@ -903,6 +903,57 @@ export type Database = {
           },
         ]
       }
+      time_off_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by: number | null
+          created_at: string | null
+          employee_id: number | null
+          end_date: string
+          reason: string | null
+          request_id: number
+          start_date: string
+          status: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: number | null
+          created_at?: string | null
+          employee_id?: number | null
+          end_date: string
+          reason?: string | null
+          request_id?: number
+          start_date: string
+          status?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: number | null
+          created_at?: string | null
+          employee_id?: number | null
+          end_date?: string
+          reason?: string | null
+          request_id?: number
+          start_date?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_off_requests_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+          {
+            foreignKeyName: "time_off_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       timeentries: {
         Row: {
           approvalby: number | null
