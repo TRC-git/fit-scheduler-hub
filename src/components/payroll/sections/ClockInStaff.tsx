@@ -20,7 +20,7 @@ export const ClockInStaff = () => {
           timeentryid,
           clockintime,
           clockouttime,
-          employeeid (
+          employeeid!timeentries_employeeid_fkey (
             employeeid,
             firstname,
             lastname

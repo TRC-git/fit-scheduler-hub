@@ -17,7 +17,8 @@ export const PayrollSummary = () => {
           employeeid (
             employeeid,
             employeepositions (
-              payrate
+              payrate,
+              is_primary
             )
           )
         `)
