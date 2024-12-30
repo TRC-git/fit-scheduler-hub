@@ -459,6 +459,72 @@ export type Database = {
         }
         Relationships: []
       }
+      payroll_records: {
+        Row: {
+          adjustments: Json | null
+          created_at: string | null
+          created_by: number | null
+          gross_pay: number
+          last_edited_at: string | null
+          last_edited_by: number | null
+          net_pay: number
+          notes: string | null
+          pay_period_end: string
+          pay_period_start: string
+          record_id: number
+          status: string
+          total_hours: number
+          total_overtime_hours: number
+        }
+        Insert: {
+          adjustments?: Json | null
+          created_at?: string | null
+          created_by?: number | null
+          gross_pay?: number
+          last_edited_at?: string | null
+          last_edited_by?: number | null
+          net_pay?: number
+          notes?: string | null
+          pay_period_end: string
+          pay_period_start: string
+          record_id?: number
+          status?: string
+          total_hours?: number
+          total_overtime_hours?: number
+        }
+        Update: {
+          adjustments?: Json | null
+          created_at?: string | null
+          created_by?: number | null
+          gross_pay?: number
+          last_edited_at?: string | null
+          last_edited_by?: number | null
+          net_pay?: number
+          notes?: string | null
+          pay_period_end?: string
+          pay_period_start?: string
+          record_id?: number
+          status?: string
+          total_hours?: number
+          total_overtime_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_records_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+          {
+            foreignKeyName: "payroll_records_last_edited_by_fkey"
+            columns: ["last_edited_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["employeeid"]
+          },
+        ]
+      }
       positions: {
         Row: {
           access_level: Json | null

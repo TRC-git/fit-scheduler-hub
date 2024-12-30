@@ -4,10 +4,11 @@ import { DateRangePicker } from "./DateRangePicker";
 import { useReports } from "@/hooks/reports/useReports";
 import { DateRange } from "@/types/reports";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Users, User } from "lucide-react";
+import { BarChart3, Users, User, DollarSign } from "lucide-react";
 import { PositionSummaryTable } from "./tables/PositionSummaryTable";
 import { AttendanceSummaryTable } from "./tables/AttendanceSummaryTable";
 import { StaffSummaryTable } from "./tables/StaffSummaryTable";
+import { PayrollSummaryTable } from "./tables/PayrollSummaryTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useStaffQuery } from "@/components/staff/hooks/useStaffQuery";
 
@@ -74,6 +75,10 @@ export const StaffReports = () => {
             <User className="w-4 h-4 mr-0.5" />
             Staff Summary
           </TabsTrigger>
+          <TabsTrigger value="payroll" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+            <DollarSign className="w-4 h-4 mr-0.5" />
+            Payroll Summary
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="position" className="space-y-4">
@@ -122,6 +127,23 @@ export const StaffReports = () => {
               <StaffSummaryTable 
                 data={employeeHours} 
                 isLoading={isLoadingEmployeeHours} 
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="payroll" className="space-y-4">
+          <Card className="bg-fitness-card border-fitness-grid">
+            <CardHeader>
+              <CardTitle className="text-fitness-text flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-fitness-accent" />
+                Payroll Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PayrollSummaryTable 
+                dateRange={dateRange}
+                selectedEmployee={selectedEmployee !== "all" ? parseInt(selectedEmployee) : undefined}
               />
             </CardContent>
           </Card>
