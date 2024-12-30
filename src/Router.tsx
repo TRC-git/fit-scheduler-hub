@@ -7,6 +7,7 @@ import Settings from "@/pages/Settings";
 import Login from "@/pages/Login";
 import Staff from "@/pages/Staff";
 import Reports from "@/pages/Reports";
+import Payroll from "@/pages/Payroll";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -102,6 +103,14 @@ const Router = () => {
         element={
           <ProtectedRoute>
             <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payroll"
+        element={
+          <ProtectedRoute>
+            <Payroll />
           </ProtectedRoute>
         }
       />
