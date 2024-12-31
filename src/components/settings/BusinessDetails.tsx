@@ -63,13 +63,15 @@ const BusinessDetails = () => {
             businessLocation={businessLocation}
             onFileSelect={setLogoFile}
           />
-          <Button 
-            type="submit"
-            disabled={updateMutation.isPending}
-            className="w-full bg-fitness-accent hover:bg-fitness-accent/90 text-black"
-          >
-            {updateMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
+          <div className="flex justify-center">
+            <Button 
+              type="submit"
+              disabled={updateMutation.isPending}
+              className="px-8 bg-fitness-accent hover:bg-fitness-accent/90 text-black"
+            >
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
