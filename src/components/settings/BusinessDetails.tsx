@@ -63,7 +63,7 @@ const BusinessDetails = () => {
             businessLocation={businessLocation}
             onFileSelect={setLogoFile}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-end">
             <Button 
               type="submit"
               disabled={updateMutation.isPending}
