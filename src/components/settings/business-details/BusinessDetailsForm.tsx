@@ -60,8 +60,9 @@ export const BusinessDetailsForm = ({ businessLocation }: BusinessDetailsFormPro
             className="bg-fitness-inner text-fitness-text border-fitness-muted"
           />
           {businessLocation?.latitude && businessLocation?.longitude && (
-            <div className="mt-2 text-sm text-fitness-text">
-              Coordinates: {businessLocation.latitude}, {businessLocation.longitude}
+            <div className="mt-2 text-sm text-fitness-text/70 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-fitness-accent" />
+              <span>Coordinates: {businessLocation.latitude.toFixed(6)}, {businessLocation.longitude.toFixed(6)}</span>
             </div>
           )}
         </div>
