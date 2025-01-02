@@ -30,13 +30,20 @@ serve(async (req) => {
       throw new Error("Supabase configuration is missing");
     }
 
-    // Test Resend API key validity
+    // Test Resend API key validity with a test email
     try {
       const testResponse = await fetch("https://api.resend.com/emails", {
-        method: "GET",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
+        body: JSON.stringify({
+          from: "Schedule System <onboarding@resend.dev>",
+          to: "onboarding@resend.dev",
+          subject: "API Key Test",
+          html: "This is a test email to validate the API key.",
+        }),
       });
       
       if (!testResponse.ok) {
