@@ -20,10 +20,16 @@ serve(async (req) => {
     console.log("Starting send-schedule-emails function");
     
     if (!RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is not configured");
       throw new Error("RESEND_API_KEY is not configured");
     }
 
-    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Supabase configuration is missing");
+      throw new Error("Supabase configuration is missing");
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Get all active employees
     const { data: employees, error: employeesError } = await supabase
@@ -43,6 +49,8 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    console.log(`Found ${employees.length} active employees`);
 
     // Get all schedules for the current week
     const startOfWeek = new Date();
@@ -65,11 +73,13 @@ serve(async (req) => {
       throw schedulesError;
     }
 
-    console.log(`Found ${employees.length} employees and ${schedules?.length || 0} schedules`);
+    console.log(`Found ${schedules?.length || 0} schedules for the week`);
 
     // Send email to each employee
     const emailPromises = employees.map(async (employee) => {
       try {
+        console.log(`Processing email for ${employee.email}`);
+        
         // Filter schedules for this employee
         const employeeSchedules = schedules?.filter(
           schedule => schedule.employees?.firstname === employee.firstname && 
@@ -86,8 +96,6 @@ serve(async (req) => {
             ${schedule.notes ? `<p>Notes: ${schedule.notes}</p>` : ''}
           </div>
         `).join('');
-
-        console.log(`Sending email to ${employee.email}`);
 
         // Send email using Resend
         const emailResponse = await fetch("https://api.resend.com/emails", {
@@ -111,14 +119,14 @@ serve(async (req) => {
           }),
         });
 
+        const responseText = await emailResponse.text();
+        console.log(`Resend API response for ${employee.email}:`, responseText);
+
         if (!emailResponse.ok) {
-          const errorData = await emailResponse.text();
-          throw new Error(`Failed to send email: ${errorData}`);
+          throw new Error(`Failed to send email: ${responseText}`);
         }
 
-        const responseData = await emailResponse.json();
-        console.log(`Successfully sent email to ${employee.email}:`, responseData);
-        return responseData;
+        return JSON.parse(responseText);
 
       } catch (error) {
         console.error(`Error sending email to ${employee.email}:`, error);
