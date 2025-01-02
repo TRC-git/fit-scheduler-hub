@@ -5,6 +5,9 @@ import { format, addWeeks, subWeeks, startOfWeek, endOfWeek } from "date-fns";
 import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
 import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
 import { ClockInOutDialog } from "./dialog/ClockInOutDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { Button } from "../ui/button";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
@@ -12,6 +15,7 @@ const ScheduleHeader = () => {
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
   const [isClockInDialogOpen, setIsClockInDialogOpen] = useState(false);
   const { selectedScheduleType, setSelectedScheduleType } = useScheduleContext();
+  const [isPosting, setIsPosting] = useState(false);
 
   const handlePreviousWeek = () => {
     setCurrentWeek(prevWeek => subWeeks(prevWeek, 1));
@@ -19,6 +23,31 @@ const ScheduleHeader = () => {
 
   const handleNextWeek = () => {
     setCurrentWeek(prevWeek => addWeeks(prevWeek, 1));
+  };
+
+  const handlePostSchedule = async () => {
+    try {
+      setIsPosting(true);
+      
+      // Call the edge function to send emails
+      const { data, error } = await supabase.functions.invoke('send-schedule-emails');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Schedule has been posted and emails have been sent to all staff members.",
+      });
+    } catch (error) {
+      console.error('Error posting schedule:', error);
+      toast({
+        title: "Error",
+        description: "Failed to post schedule. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   // Get the start (Monday) and end (Sunday) of the week
@@ -48,9 +77,13 @@ const ScheduleHeader = () => {
             </>
           )}
         </select>
-        <button className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md w-[140px]">
-          Post Schedule
-        </button>
+        <Button
+          onClick={handlePostSchedule}
+          disabled={isPosting}
+          className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md w-[140px] hover:bg-fitness-inner transition-colors"
+        >
+          {isPosting ? "Posting..." : "Post Schedule"}
+        </Button>
       </div>
       
       <div className="flex items-center gap-4">
