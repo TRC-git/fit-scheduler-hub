@@ -6,6 +6,7 @@ import PositionSettings from "@/components/settings/PositionSettings";
 import PayrollSettings from "@/components/settings/PayrollSettings";
 import PermissionSettings from "@/components/settings/PermissionSettings";
 import BusinessDetails from "@/components/settings/BusinessDetails";
+import APIKeysSettings from "@/components/settings/APIKeysSettings";
 import { OperationalDaysProvider } from "@/contexts/operational-days/OperationalDaysContext";
 
 const Settings = () => {
@@ -31,6 +32,7 @@ const Settings = () => {
               <TabsTrigger value="permissions">Permissions</TabsTrigger>
               <TabsTrigger value="payroll">Payroll Settings</TabsTrigger>
               <TabsTrigger value="business">Business Details</TabsTrigger>
+              <TabsTrigger value="api-keys">API Keys</TabsTrigger>
             </TabsList>
             
             <TabsContent value="schedule">
@@ -51,6 +53,10 @@ const Settings = () => {
 
             <TabsContent value="business">
               <BusinessDetails />
+            </TabsContent>
+
+            <TabsContent value="api-keys">
+              <APIKeysSettings />
             </TabsContent>
           </Tabs>
         </OperationalDaysProvider>
