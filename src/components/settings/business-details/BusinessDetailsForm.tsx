@@ -5,11 +5,25 @@ import { BusinessLocation } from "./types";
 
 interface BusinessDetailsFormProps {
   businessLocation: BusinessLocation | null;
+  onSubmit?: (data: Partial<BusinessLocation>) => void;
 }
 
-export const BusinessDetailsForm = ({ businessLocation }: BusinessDetailsFormProps) => {
+export const BusinessDetailsForm = ({ businessLocation, onSubmit }: BusinessDetailsFormProps) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (onSubmit) {
+      const formData = new FormData(e.currentTarget);
+      onSubmit({
+        business_name: formData.get('business_name') as string,
+        phone_number: formData.get('phone_number') as string,
+        tax_id: formData.get('tax_id') as string,
+        address: formData.get('address') as string,
+      });
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex items-center space-x-4">
         <Building2 className="w-5 h-5 text-fitness-accent" />
         <div className="flex-1">
@@ -67,6 +81,6 @@ export const BusinessDetailsForm = ({ businessLocation }: BusinessDetailsFormPro
           )}
         </div>
       </div>
-    </div>
+    </form>
   );
 };
