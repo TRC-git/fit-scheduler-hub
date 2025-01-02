@@ -1,19 +1,22 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useClassTypes } from "@/hooks/schedule/useClassTypes";
 import { useState } from "react";
 import { format, addWeeks, subWeeks, startOfWeek, endOfWeek } from "date-fns";
 import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
 import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
 import { ClockInOutDialog } from "./dialog/ClockInOutDialog";
+import { AIScheduleGeneratorDialog } from "./dialog/AIScheduleGeneratorDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "../ui/button";
+import { Dialog } from "../ui/dialog";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
   const [isClockInDialogOpen, setIsClockInDialogOpen] = useState(false);
+  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const { selectedScheduleType, setSelectedScheduleType } = useScheduleContext();
   const [isPosting, setIsPosting] = useState(false);
   const { toast } = useToast();
@@ -88,6 +91,13 @@ const ScheduleHeader = () => {
       </div>
       
       <div className="flex items-center gap-4">
+        <Button
+          onClick={() => setIsAIDialogOpen(true)}
+          className="bg-[#333333] text-[#15e7fb] hover:bg-[#444444] p-2 rounded-md"
+          size="icon"
+        >
+          <Sparkles className="w-5 h-5" />
+        </Button>
         <div className="flex items-center gap-2 bg-fitness-card px-4 py-2 rounded-md">
           <ChevronLeft 
             className="w-5 h-5 text-fitness-text cursor-pointer hover:text-fitness-accent transition-colors" 
@@ -124,6 +134,10 @@ const ScheduleHeader = () => {
         open={isClockInDialogOpen}
         onOpenChange={setIsClockInDialogOpen}
       />
+
+      <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
+        <AIScheduleGeneratorDialog onOpenChange={setIsAIDialogOpen} />
+      </Dialog>
     </div>
   );
 };
