@@ -19,6 +19,7 @@ serve(async (req) => {
   try {
     console.log("Starting send-schedule-emails function");
     
+    // Validate environment variables
     if (!RESEND_API_KEY) {
       console.error("RESEND_API_KEY is not configured");
       throw new Error("RESEND_API_KEY is not configured");
@@ -27,6 +28,27 @@ serve(async (req) => {
     if (!supabaseUrl || !supabaseServiceKey) {
       console.error("Supabase configuration is missing");
       throw new Error("Supabase configuration is missing");
+    }
+
+    // Test Resend API key validity
+    try {
+      const testResponse = await fetch("https://api.resend.com/emails", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+        },
+      });
+      
+      if (!testResponse.ok) {
+        const errorText = await testResponse.text();
+        console.error("Resend API key validation failed:", errorText);
+        throw new Error(`Invalid Resend API key: ${errorText}`);
+      }
+      
+      console.log("Resend API key validated successfully");
+    } catch (error) {
+      console.error("Error validating Resend API key:", error);
+      throw new Error(`Failed to validate Resend API key: ${error.message}`);
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -96,6 +118,8 @@ serve(async (req) => {
             ${schedule.notes ? `<p>Notes: ${schedule.notes}</p>` : ''}
           </div>
         `).join('');
+
+        console.log(`Attempting to send email to ${employee.email}`);
 
         // Send email using Resend
         const emailResponse = await fetch("https://api.resend.com/emails", {
