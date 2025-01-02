@@ -6,7 +6,7 @@ import { CloneWeekDialog } from "./dialog/CloneWeekDialog";
 import { useScheduleContext } from "@/contexts/schedule/ScheduleContext";
 import { ClockInOutDialog } from "./dialog/ClockInOutDialog";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "../ui/button";
 
 const ScheduleHeader = () => {
@@ -16,6 +16,7 @@ const ScheduleHeader = () => {
   const [isClockInDialogOpen, setIsClockInDialogOpen] = useState(false);
   const { selectedScheduleType, setSelectedScheduleType } = useScheduleContext();
   const [isPosting, setIsPosting] = useState(false);
+  const { toast } = useToast();
 
   const handlePreviousWeek = () => {
     setCurrentWeek(prevWeek => subWeeks(prevWeek, 1));
