@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export const useTimeEntries = (startDate: Date) => {
+export const useTimeEntries = (startDate: Date = new Date()) => {
   const { toast } = useToast();
 
   return useQuery({
@@ -37,13 +37,15 @@ export const useTimeEntries = (startDate: Date) => {
 
       return data;
     },
-    onError: (error: Error) => {
-      console.error('Query error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch time entries. Please try again.",
-        variant: "destructive",
-      });
+    meta: {
+      errorHandler: (error: Error) => {
+        console.error('Query error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch time entries. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
