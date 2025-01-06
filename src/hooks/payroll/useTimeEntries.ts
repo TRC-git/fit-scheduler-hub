@@ -1,30 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-interface TimeEntry {
-  timeentryid: number;
-  clockintime: string;
-  clockouttime: string | null;
-  employees: {
-    firstname: string;
-    lastname: string;
-  };
-  positions: {
-    positionname: string;
-  };
-}
+export const useTimeEntries = (startDate: Date) => {
+  const { toast } = useToast();
 
-export const useTimeEntries = () => {
   return useQuery({
-    queryKey: ['clocked-in-staff'],
+    queryKey: ['timeEntries', startDate],
     queryFn: async () => {
-      console.log("Fetching time entries...");
+      // First check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        throw new Error('No valid session found');
+      }
+
       const { data, error } = await supabase
         .from('timeentries')
         .select(`
-          timeentryid,
-          clockintime,
-          clockouttime,
+          *,
           employees!timeentries_employeeid_fkey (
             firstname,
             lastname
@@ -33,16 +27,23 @@ export const useTimeEntries = () => {
             positionname
           )
         `)
-        .is('clockouttime', null)
+        .gte('clockintime', startDate.toISOString())
         .order('clockintime', { ascending: false });
 
       if (error) {
-        console.error("Error fetching time entries:", error);
+        console.error('Error fetching time entries:', error);
         throw error;
       }
-      
-      console.log("Time entries data:", data);
-      return data as TimeEntry[];
+
+      return data;
+    },
+    onError: (error: Error) => {
+      console.error('Query error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch time entries. Please try again.",
+        variant: "destructive",
+      });
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
