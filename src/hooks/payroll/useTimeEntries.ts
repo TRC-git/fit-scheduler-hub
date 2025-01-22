@@ -8,7 +8,6 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
   return useQuery({
     queryKey: ['timeEntries', startDate],
     queryFn: async () => {
-      // First check if we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
@@ -18,15 +17,21 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
       const { data, error } = await supabase
         .from('timeentries')
         .select(`
-          *,
-          employees!timeentries_employeeid_fkey (
+          timeentryid,
+          clockintime,
+          clockouttime,
+          breakduration,
+          employeeid,
+          positionid,
+          employees (
             firstname,
             lastname
           ),
-          positions!timeentries_positionid_fkey (
+          positions (
             positionname
           )
         `)
+        .is('clockouttime', null)  // Only get entries without clockout time
         .gte('clockintime', startDate.toISOString())
         .order('clockintime', { ascending: false });
 

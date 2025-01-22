@@ -10,7 +10,7 @@ import { TimeEntryCard } from "./TimeEntryCard";
 export const ClockInStaff = () => {
   const { toast } = useToast();
   const [runningTimes, setRunningTimes] = useState<{[key: number]: number}>({});
-  const { data: clockedInStaff, refetch } = useTimeEntries();
+  const { data: clockedInStaff, refetch } = useTimeEntries(new Date());
 
   useEffect(() => {
     const timer = setInterval(() => {
