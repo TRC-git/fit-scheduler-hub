@@ -8,6 +8,7 @@ import Login from "@/pages/Login";
 import Staff from "@/pages/Staff";
 import Reports from "@/pages/Reports";
 import Payroll from "@/pages/Payroll";
+import { useToast } from "./components/ui/use-toast";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -41,27 +42,49 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const { data: employees } = await supabase
-        .from('employees')
-        .select('is_admin')
-        .eq('email', (await supabase.auth.getSession()).data.session?.user?.email)
-        .single();
+      try {
+        const { data: employees, error } = await supabase
+          .from('employees')
+          .select('is_admin')
+          .eq('email', (await supabase.auth.getSession()).data.session?.user?.email)
+          .single();
 
-      setIsAdmin(employees?.is_admin || false);
-      setLoading(false);
+        if (error) {
+          console.error('Error checking admin status:', error);
+          toast({
+            title: "Error",
+            description: "Failed to verify admin access",
+            variant: "destructive",
+          });
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(employees?.is_admin || false);
+        }
+      } catch (error) {
+        console.error('Error in checkAdminStatus:', error);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkAdminStatus();
-  }, []);
+  }, [toast]);
 
   if (loading) {
     return <div className="min-h-screen bg-fitness-background" />;
   }
 
   if (!isAdmin) {
+    toast({
+      title: "Access Denied",
+      description: "You need admin privileges to access this page",
+      variant: "destructive",
+    });
     return <Navigate to="/" />;
   }
 
