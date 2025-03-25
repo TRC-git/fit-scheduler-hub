@@ -19,6 +19,10 @@ export const defaultPermissions: PermissionSettingsType = {
   manage_locations: false
 };
 
+export const createEmptyPermissions = (): PermissionSettingsType => {
+  return { ...defaultPermissions };
+};
+
 export const convertToJson = (permissions: PermissionSettingsType): Json => {
   // Ensure we're working with a valid permissions object
   const safePermissions = permissions || defaultPermissions;

@@ -2,7 +2,7 @@
 import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 import { PositionHeader } from "./PositionHeader";
 import { PermissionGroup } from "./PermissionGroup";
-import { permissionGroups } from "../utils/permissionUtils";
+import { permissionGroups, defaultPermissions } from "../utils/permissionUtils";
 
 interface PositionPermissionsProps {
   position: PositionWithPermissions;
@@ -27,14 +27,8 @@ export const PositionPermissions = ({
 }: PositionPermissionsProps) => {
   // Ensure we have a valid permissions object to work with
   const currentPermissions = isEditing 
-    ? editingPermissions 
-    : (position.access_level || {});
-
-  // Safeguard against null/undefined permissions
-  if (!currentPermissions) {
-    console.error("No permissions found for position:", position.positionname);
-    return null;
-  }
+    ? (editingPermissions || defaultPermissions)
+    : (position.access_level || defaultPermissions);
 
   return (
     <div className="bg-fitness-inner p-6 rounded-lg">

@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 import { useState } from "react";
 import { PositionPermissions } from "./components/PositionPermissions";
+import { createEmptyPermissions } from "./utils/permissionUtils";
 
 interface PermissionListProps {
   positions: PositionWithPermissions[];
@@ -24,7 +25,7 @@ export const PermissionList = ({
   const handleEdit = (position: PositionWithPermissions) => {
     setEditingPosition(position.positionid);
     // Use defensive copy and ensure we have valid access_level
-    setEditingPermissions(position.access_level ? {...position.access_level} : {});
+    setEditingPermissions(position.access_level ? {...position.access_level} : createEmptyPermissions());
   };
 
   const handleCancel = () => {

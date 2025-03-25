@@ -25,7 +25,7 @@ export const usePositionsQuery = () => {
         access_level: position.access_level ? {
           ...defaultPermissions,
           ...(position.access_level as PermissionSettingsType)
-        } : defaultPermissions
+        } : {...defaultPermissions}
       })) as Position[];
     }
   });
