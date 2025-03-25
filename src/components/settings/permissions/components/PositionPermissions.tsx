@@ -3,6 +3,7 @@ import type { PositionWithPermissions, PermissionSettingsType } from "@/types/pe
 import { PositionHeader } from "./PositionHeader";
 import { PermissionGroup } from "./PermissionGroup";
 import { permissionGroups, defaultPermissions } from "../utils/permissionUtils";
+import { useMemo } from "react";
 
 interface PositionPermissionsProps {
   position: PositionWithPermissions;
@@ -25,10 +26,13 @@ export const PositionPermissions = ({
   onCancel,
   onPermissionChange,
 }: PositionPermissionsProps) => {
-  // Ensure we have a valid permissions object to work with
-  const currentPermissions = isEditing 
-    ? (editingPermissions || defaultPermissions)
-    : (position.access_level || defaultPermissions);
+  // Use memoization to avoid recalculating permissions on each render
+  const currentPermissions = useMemo(() => {
+    if (isEditing) {
+      return editingPermissions || defaultPermissions;
+    }
+    return position.access_level || defaultPermissions;
+  }, [isEditing, editingPermissions, position.access_level]);
 
   return (
     <div className="bg-fitness-inner p-6 rounded-lg">
