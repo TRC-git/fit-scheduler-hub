@@ -51,7 +51,7 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
 
       const { data: employee, error: employeeError } = await supabase
         .from("employees")
-        .select("employeeid, positions (positionid)")
+        .select("employeeid, positions!employees_position_id_fkey (positionid)")
         .eq("firstname", firstName)
         .eq("lastname", lastName)
         .maybeSingle();

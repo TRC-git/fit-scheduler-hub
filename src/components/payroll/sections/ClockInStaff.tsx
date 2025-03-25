@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTimeEntries } from "@/hooks/payroll/useTimeEntries";
 import { TimeEntryCard } from "./TimeEntryCard";
 import { Button } from "@/components/ui/button";
+import { RealTimeClock } from "./RealTimeClock";
 
 export const ClockInStaff = () => {
   const { toast } = useToast();
@@ -71,14 +72,17 @@ export const ClockInStaff = () => {
           <Clock className="w-5 h-5 text-fitness-accent" />
           Currently Clocked In
         </CardTitle>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => refetch()}
-          className="text-xs"
-        >
-          Refresh
-        </Button>
+        <div className="flex items-center gap-4">
+          <RealTimeClock />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => refetch()}
+            className="text-xs"
+          >
+            Refresh
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoading ? (
