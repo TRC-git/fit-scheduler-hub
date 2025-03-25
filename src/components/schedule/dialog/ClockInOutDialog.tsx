@@ -49,20 +49,24 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
 
       console.log("Looking up employee:", { firstName, lastName });
 
-      const { data: employee, error: employeeError } = await supabase
+      // Use .eq for each column separately and remove .maybeSingle() 
+      // since there might be multiple employees with same name
+      const { data: employees, error: employeeError } = await supabase
         .from("employees")
         .select("employeeid, positions!employees_position_id_fkey (positionid)")
         .eq("firstname", firstName)
-        .eq("lastname", lastName)
-        .maybeSingle();
+        .eq("lastname", lastName);
 
       if (employeeError) {
         throw employeeError;
       }
 
-      if (!employee) {
+      if (!employees || employees.length === 0) {
         throw new Error(`No employee found with name ${firstName} ${lastName}`);
       }
+
+      // Use the first matching employee
+      const employee = employees[0];
 
       // Check if employee is already clocked in
       const { data: activeTimeEntry, error: activeTimeEntryError } = await supabase
