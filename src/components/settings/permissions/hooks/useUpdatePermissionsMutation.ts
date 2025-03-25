@@ -1,3 +1,4 @@
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,7 +10,7 @@ export const useUpdatePermissionsMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ positionId, access }: { positionId: string, access: PermissionSettingsType }) => {
+    mutationFn: async ({ positionId, access }: { positionId: number, access: PermissionSettingsType }) => {
       console.log("Updating permissions for position:", positionId, "with access:", access);
       
       const jsonAccess = convertToJson(access);
