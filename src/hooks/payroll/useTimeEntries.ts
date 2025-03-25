@@ -15,6 +15,8 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
         throw new Error('No valid session found');
       }
 
+      console.log("Fetching time entries since:", startDate.toISOString());
+
       const { data, error } = await supabase
         .from('timeentries')
         .select(`
@@ -33,7 +35,7 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
           )
         `)
         .is('clockouttime', null)  // Only get entries without clockout time
-        .gte('clockintime', startDate.toISOString())
+        .gte('clockintime', new Date(startDate.setHours(0, 0, 0, 0)).toISOString())
         .order('clockintime', { ascending: false });
 
       if (error) {
@@ -41,6 +43,7 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
         throw error;
       }
 
+      console.log("Retrieved time entries:", data);
       return data;
     },
     meta: {
@@ -54,5 +57,6 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
       }
     },
     refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 10000, // Consider data stale after 10 seconds
   });
 };

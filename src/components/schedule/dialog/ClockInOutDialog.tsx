@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,7 @@ import { useState } from "react";
 import { StaffSelect } from "./StaffSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ClockInOutDialogProps {
   open: boolean;
@@ -19,6 +21,7 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
   const [selectedStaff, setSelectedStaff] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleClockIn = async () => {
     if (!selectedStaff) {
@@ -48,7 +51,7 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
 
       const { data: employee, error: employeeError } = await supabase
         .from("employees")
-        .select("employeeid")
+        .select("employeeid, positions (positionid)")
         .eq("firstname", firstName)
         .eq("lastname", lastName)
         .maybeSingle();
@@ -61,9 +64,26 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
         throw new Error(`No employee found with name ${firstName} ${lastName}`);
       }
 
+      // Check if employee is already clocked in
+      const { data: activeTimeEntry, error: activeTimeEntryError } = await supabase
+        .from("timeentries")
+        .select("timeentryid")
+        .eq("employeeid", employee.employeeid)
+        .is("clockouttime", null)
+        .maybeSingle();
+
+      if (activeTimeEntryError) {
+        throw activeTimeEntryError;
+      }
+
+      if (activeTimeEntry) {
+        throw new Error(`${selectedStaff} is already clocked in`);
+      }
+
       // Create time entry
       const { error: timeEntryError } = await supabase.from("timeentries").insert({
         employeeid: employee.employeeid,
+        positionid: employee.positions?.positionid,
         clockintime: new Date().toISOString(),
       });
 
@@ -73,7 +93,12 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
         title: "Success",
         description: `${selectedStaff} has been clocked in successfully`,
       });
+
+      // Invalidate the timeEntries query to force a refetch
+      queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
+      
       onOpenChange(false);
+      setSelectedStaff("");
     } catch (error: any) {
       console.error("Error clocking in:", error);
       toast({
