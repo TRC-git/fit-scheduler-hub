@@ -1,3 +1,4 @@
+
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 import { useState } from "react";
@@ -7,7 +8,7 @@ interface PermissionListProps {
   positions: PositionWithPermissions[];
   onEdit: (position: PositionWithPermissions) => void;
   onDelete: (positionId: number) => void;
-  onSave: (positionId: string, permissions: PermissionSettingsType) => void;
+  onSave: (positionId: number, permissions: PermissionSettingsType) => void;
   isLoading?: boolean;
 }
 
@@ -17,11 +18,11 @@ export const PermissionList = ({
   onSave,
   isLoading
 }: PermissionListProps) => {
-  const [editingPosition, setEditingPosition] = useState<string | null>(null);
+  const [editingPosition, setEditingPosition] = useState<number | null>(null);
   const [editingPermissions, setEditingPermissions] = useState<PermissionSettingsType | null>(null);
 
   const handleEdit = (position: PositionWithPermissions) => {
-    setEditingPosition(position.positionid.toString());
+    setEditingPosition(position.positionid);
     setEditingPermissions({...position.access_level});
   };
 
@@ -30,7 +31,7 @@ export const PermissionList = ({
     setEditingPermissions(null);
   };
 
-  const handleSave = (positionId: string) => {
+  const handleSave = (positionId: number) => {
     if (editingPermissions) {
       onSave(positionId, editingPermissions);
       setEditingPosition(null);
@@ -38,7 +39,7 @@ export const PermissionList = ({
     }
   };
 
-  const handlePermissionChange = (positionId: string, key: keyof PermissionSettingsType, value: boolean) => {
+  const handlePermissionChange = (positionId: number, key: keyof PermissionSettingsType, value: boolean) => {
     if (editingPermissions) {
       const updatedPermissions = {
         ...editingPermissions,
@@ -71,14 +72,14 @@ export const PermissionList = ({
         <PositionPermissions
           key={position.positionid}
           position={position}
-          isEditing={editingPosition === position.positionid.toString()}
+          isEditing={editingPosition === position.positionid}
           editingPermissions={editingPermissions}
           onEdit={() => handleEdit(position)}
           onDelete={() => onDelete(position.positionid)}
-          onSave={() => handleSave(position.positionid.toString())}
+          onSave={() => handleSave(position.positionid)}
           onCancel={handleCancel}
           onPermissionChange={(key, value) => 
-            handlePermissionChange(position.positionid.toString(), key, value)
+            handlePermissionChange(position.positionid, key, value)
           }
         />
       ))}

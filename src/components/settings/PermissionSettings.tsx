@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PermissionList } from "./permissions/PermissionList";
 import { usePermissions } from "./permissions/hooks/usePermissions";
@@ -6,7 +7,7 @@ import type { PermissionSettingsType } from "@/types/permissions";
 const PermissionSettings = () => {
   const { positions, isLoading, updateAccess, deletePermissions } = usePermissions();
 
-  const handleSavePermissions = (positionId: string, permissions: PermissionSettingsType) => {
+  const handleSavePermissions = (positionId: number, permissions: PermissionSettingsType) => {
     updateAccess({
       positionId,
       access: permissions
