@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -23,7 +24,7 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
           breakduration,
           employeeid,
           positionid,
-          employees (
+          employees!timeentries_employeeid_fkey (
             firstname,
             lastname
           ),
