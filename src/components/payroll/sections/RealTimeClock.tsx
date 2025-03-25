@@ -18,7 +18,7 @@ export const RealTimeClock = () => {
     <div className="flex items-center gap-2 text-fitness-accent">
       <Clock className="h-5 w-5" />
       <span className="font-mono text-xl">
-        {format(currentTime, "HH:mm:ss")}
+        {format(currentTime, "hh:mm:ss a")}
       </span>
     </div>
   );
