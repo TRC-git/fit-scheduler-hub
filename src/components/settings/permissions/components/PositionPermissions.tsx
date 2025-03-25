@@ -1,3 +1,4 @@
+
 import type { PositionWithPermissions, PermissionSettingsType } from "@/types/permissions";
 import { PositionHeader } from "./PositionHeader";
 import { PermissionGroup } from "./PermissionGroup";
@@ -24,9 +25,16 @@ export const PositionPermissions = ({
   onCancel,
   onPermissionChange,
 }: PositionPermissionsProps) => {
-  const currentPermissions = isEditing ? editingPermissions : position.access_level;
+  // Ensure we have a valid permissions object to work with
+  const currentPermissions = isEditing 
+    ? editingPermissions 
+    : (position.access_level || {});
 
-  if (!currentPermissions) return null;
+  // Safeguard against null/undefined permissions
+  if (!currentPermissions) {
+    console.error("No permissions found for position:", position.positionname);
+    return null;
+  }
 
   return (
     <div className="bg-fitness-inner p-6 rounded-lg">
@@ -40,7 +48,7 @@ export const PositionPermissions = ({
         onDelete={onDelete}
       />
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {Object.entries(permissionGroups).map(([groupName, permissions]) => (
           <PermissionGroup
             key={groupName}

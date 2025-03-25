@@ -23,7 +23,8 @@ export const PermissionList = ({
 
   const handleEdit = (position: PositionWithPermissions) => {
     setEditingPosition(position.positionid);
-    setEditingPermissions({...position.access_level});
+    // Use defensive copy and ensure we have valid access_level
+    setEditingPermissions(position.access_level ? {...position.access_level} : {});
   };
 
   const handleCancel = () => {
@@ -66,23 +67,33 @@ export const PermissionList = ({
     );
   }
 
+  // Safety check - if positions is undefined, return empty div
+  if (!positions || positions.length === 0) {
+    return <div className="text-fitness-text">No positions found</div>;
+  }
+
   return (
     <div className="space-y-6">
-      {positions?.map((position) => position.access_level && (
-        <PositionPermissions
-          key={position.positionid}
-          position={position}
-          isEditing={editingPosition === position.positionid}
-          editingPermissions={editingPermissions}
-          onEdit={() => handleEdit(position)}
-          onDelete={() => onDelete(position.positionid)}
-          onSave={() => handleSave(position.positionid)}
-          onCancel={handleCancel}
-          onPermissionChange={(key, value) => 
-            handlePermissionChange(position.positionid, key, value)
-          }
-        />
-      ))}
+      {positions.map((position) => {
+        // Only render if position has valid data
+        if (!position || !position.positionid) return null;
+        
+        return (
+          <PositionPermissions
+            key={position.positionid}
+            position={position}
+            isEditing={editingPosition === position.positionid}
+            editingPermissions={editingPermissions}
+            onEdit={() => handleEdit(position)}
+            onDelete={() => onDelete(position.positionid)}
+            onSave={() => handleSave(position.positionid)}
+            onCancel={handleCancel}
+            onPermissionChange={(key, value) => 
+              handlePermissionChange(position.positionid, key, value)
+            }
+          />
+        );
+      })}
     </div>
   );
 };

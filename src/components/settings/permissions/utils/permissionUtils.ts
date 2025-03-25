@@ -1,3 +1,4 @@
+
 import type { Json } from "@/types/database/common";
 import type { PermissionSettingsType } from "@/types/permissions";
 
@@ -7,7 +8,7 @@ export const defaultPermissions: PermissionSettingsType = {
   calendar_manage: false,
   manage_employees: false,
   manage_positions: false,
-  approve_timeoff: false, // New permission added
+  approve_timeoff: false,
   manage_payroll: false,
   approve_timesheets: false,
   view_reports: false,
@@ -19,16 +20,18 @@ export const defaultPermissions: PermissionSettingsType = {
 };
 
 export const convertToJson = (permissions: PermissionSettingsType): Json => {
+  // Ensure we're working with a valid permissions object
+  const safePermissions = permissions || defaultPermissions;
   const jsonObject: Record<string, boolean> = {};
-  Object.entries(permissions).forEach(([key, value]) => {
-    jsonObject[key] = value;
+  Object.entries(safePermissions).forEach(([key, value]) => {
+    jsonObject[key] = !!value; // Convert to boolean to ensure type safety
   });
   return jsonObject;
 };
 
 export const permissionGroups = {
   "Calendar Access": ["calendar_view", "calendar_edit", "calendar_manage"],
-  "Employee Management": ["manage_employees", "manage_positions", "approve_timeoff"], // Added new permission
+  "Employee Management": ["manage_employees", "manage_positions", "approve_timeoff"],
   "Payroll & Finance": ["manage_payroll", "approve_timesheets", "view_reports"],
   "Schedule Management": ["create_schedules", "modify_schedules", "approve_swaps"],
   "System Settings": ["manage_settings", "manage_locations"]

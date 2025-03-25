@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Position, PermissionSettingsType } from "@/types/permissions";
@@ -18,6 +19,7 @@ export const usePositionsQuery = () => {
       }
       
       console.log("Positions fetched:", data);
+      // Ensure all access_level values are properly structured
       return (data as any[]).map(position => ({
         ...position,
         access_level: position.access_level ? {
