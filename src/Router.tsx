@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
@@ -8,24 +9,33 @@ import Login from "@/pages/Login";
 import Staff from "@/pages/Staff";
 import Reports from "@/pages/Reports";
 import Payroll from "@/pages/Payroll";
-import { useToast } from "./components/ui/use-toast";
+import { useToast } from "./hooks/use-toast";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
+      if (isMounted) {
+        setSession(session);
+        setLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
+      if (isMounted) {
+        setSession(session);
+        setLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (loading) {
@@ -45,34 +55,50 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let isMounted = true;
+    
     const checkAdminStatus = async () => {
       try {
+        const sessionResult = await supabase.auth.getSession();
+        const userEmail = sessionResult.data.session?.user?.email;
+        
+        if (!userEmail || !isMounted) return;
+
         const { data: employees, error } = await supabase
           .from('employees')
           .select('is_admin')
-          .eq('email', (await supabase.auth.getSession()).data.session?.user?.email)
-          .single();
+          .eq('email', userEmail);
 
-        if (error) {
-          console.error('Error checking admin status:', error);
-          toast({
-            title: "Error",
-            description: "Failed to verify admin access",
-            variant: "destructive",
-          });
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(employees?.is_admin || false);
+        if (isMounted) {
+          if (error) {
+            console.error('Error checking admin status:', error);
+            toast({
+              title: "Error",
+              description: "Failed to verify admin access",
+              variant: "destructive",
+            });
+            setIsAdmin(false);
+          } else {
+            // Check if any employee was found with admin access
+            const isAdminUser = employees && employees.length > 0 && employees[0]?.is_admin;
+            setIsAdmin(!!isAdminUser);
+          }
+          setLoading(false);
         }
       } catch (error) {
-        console.error('Error in checkAdminStatus:', error);
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
+        if (isMounted) {
+          console.error('Error in checkAdminStatus:', error);
+          setIsAdmin(false);
+          setLoading(false);
+        }
       }
     };
 
     checkAdminStatus();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [toast]);
 
   if (loading) {
