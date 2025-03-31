@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { StaffSelect } from "./StaffSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,19 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    // Reset component state when dialog opens
+    if (open) {
+      setSelectedStaff("");
+    }
+    
+    return () => {
+      // Set the mounted ref to false when component unmounts
+      isMounted.current = false;
+    };
+  }, [open]);
 
   const handleClockIn = async () => {
     if (!selectedStaff) {
@@ -68,7 +81,7 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
       // Use the first matching employee
       const employee = employees[0];
 
-      // Check if employee is already clocked in - removing maybeSingle() here too
+      // Check if employee is already clocked in
       const { data: activeTimeEntries, error: activeTimeEntryError } = await supabase
         .from("timeentries")
         .select("timeentryid")
@@ -92,25 +105,34 @@ export const ClockInOutDialog = ({ open, onOpenChange }: ClockInOutDialogProps) 
 
       if (timeEntryError) throw timeEntryError;
 
-      toast({
-        title: "Success",
-        description: `${selectedStaff} has been clocked in successfully`,
-      });
-
-      // Invalidate the timeEntries query to force a refetch
-      queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
-      
-      onOpenChange(false);
-      setSelectedStaff("");
+      // Only update UI if the component is still mounted
+      if (isMounted.current) {
+        toast({
+          title: "Success",
+          description: `${selectedStaff} has been clocked in successfully`,
+        });
+        
+        // Invalidate the timeEntries query to force a refetch
+        queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
+        
+        onOpenChange(false);
+        setSelectedStaff("");
+      }
     } catch (error: any) {
       console.error("Error clocking in:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to clock in",
-        variant: "destructive",
-      });
+      // Only update UI if the component is still mounted
+      if (isMounted.current) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to clock in",
+          variant: "destructive",
+        });
+      }
     } finally {
-      setLoading(false);
+      // Only update state if the component is still mounted
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 
