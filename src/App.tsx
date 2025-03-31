@@ -15,13 +15,6 @@ function App() {
         retry: 1,
         // Add staleTime to prevent unnecessary refetches
         staleTime: 1000 * 30, // 30 seconds
-        // The onError property has been removed from here
-      },
-    },
-    // Global error handler using queryCache
-    queryCache: {
-      onError: (error) => {
-        console.error("Query error:", error);
       },
     },
   }));

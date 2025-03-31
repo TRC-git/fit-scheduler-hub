@@ -47,7 +47,7 @@ export const useTimeEntries = (startDate: Date = new Date()) => {
       return data;
     },
     meta: {
-      errorHandler: (error: Error) => {
+      onError: (error: Error) => {
         console.error('Query error:', error);
         toast({
           title: "Error",

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -27,11 +28,6 @@ export const useStaffQuery = () => {
 
       if (error) {
         console.error("Error fetching staff:", error);
-        toast({
-          title: "Error fetching staff",
-          description: error.message,
-          variant: "destructive",
-        });
         throw error;
       }
 
@@ -41,5 +37,15 @@ export const useStaffQuery = () => {
     retry: 3,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
+    meta: {
+      onError: (error: Error) => {
+        console.error("Staff query error:", error);
+        toast({
+          title: "Error fetching staff",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    }
   });
 };

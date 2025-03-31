@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useRef } from "react";
 
 interface StaffSelectProps {
   value: string;
@@ -15,6 +16,14 @@ interface StaffSelectProps {
 }
 
 export const StaffSelect = ({ value, onChange }: StaffSelectProps) => {
+  const isMounted = useRef(true);
+  
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const { data: staff } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
@@ -31,6 +40,13 @@ export const StaffSelect = ({ value, onChange }: StaffSelectProps) => {
     // Prevent query from automatically refetching when component unmounts
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    meta: {
+      onError: (error: Error) => {
+        if (isMounted.current) {
+          console.error("Staff select error:", error);
+        }
+      }
+    }
   });
 
   return (
