@@ -82,6 +82,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
           description: "Operational days saved successfully",
         });
       }
+      // No return statement here, which implicitly returns undefined (void)
     } catch (error) {
       console.error('Error saving operational days:', error);
       toast({
@@ -89,6 +90,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         description: "Failed to save operational days",
         variant: "destructive",
       });
+      // No return statement here either
     }
   }, [operationalDays, handleLoadOperationalDays, toast]);
 
