@@ -70,7 +70,7 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
     });
   }, []);
 
-  const handleSaveOperationalDays = useCallback(async () => {
+  const handleSaveOperationalDays = useCallback(async (): Promise<void> => {
     try {
       const success = await saveOperationalDaysToDb(operationalDays);
       
@@ -82,7 +82,6 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
           description: "Operational days saved successfully",
         });
       }
-      return success;
     } catch (error) {
       console.error('Error saving operational days:', error);
       toast({
@@ -90,7 +89,6 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         description: "Failed to save operational days",
         variant: "destructive",
       });
-      return false;
     }
   }, [operationalDays, handleLoadOperationalDays, toast]);
 
