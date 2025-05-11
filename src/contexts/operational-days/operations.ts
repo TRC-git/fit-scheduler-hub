@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
@@ -19,13 +20,8 @@ const createDefaultLocation = async () => {
   try {
     const isAdmin = await checkAdminStatus();
     if (!isAdmin) {
-      console.log('User is not admin, skipping default location creation');
-      toast({
-        title: "Access Denied",
-        description: "Only administrators can create business locations.",
-        variant: "destructive"
-      });
-      return;
+      console.info('User is not admin, skipping default location creation');
+      return false;
     }
 
     const { data: existingLocation, error: fetchError } = await supabase
@@ -59,15 +55,23 @@ const createDefaultLocation = async () => {
         throw insertError;
       }
     }
+    
+    return true;
   } catch (error) {
     console.error('Error in createDefaultLocation:', error);
-    throw error;
+    return false;
   }
 };
 
 export const loadOperationalDays = async () => {
   try {
-    await createDefaultLocation();
+    const defaultCreated = await createDefaultLocation();
+    
+    // If the user isn't admin and couldn't create a default location,
+    // return default operational days instead of trying to fetch
+    if (!defaultCreated) {
+      return new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']);
+    }
 
     const { data: location, error } = await supabase
       .from('businesslocations')
@@ -83,7 +87,8 @@ export const loadOperationalDays = async () => {
     return new Set(location?.operational_days || ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']);
   } catch (error) {
     console.error('Error in loadOperationalDays:', error);
-    throw error;
+    // Return default days when an error occurs
+    return new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']);
   }
 };
 
@@ -136,8 +141,10 @@ export const saveOperationalDays = async (operationalDays: Set<string>) => {
       title: "Success",
       description: "Operational days have been updated successfully.",
     });
+    
+    return true;
   } catch (error) {
     console.error('Error in saveOperationalDays:', error);
-    throw error;
+    return false;
   }
 };

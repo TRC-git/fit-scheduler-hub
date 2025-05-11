@@ -438,6 +438,66 @@ export type Database = {
           },
         ]
       }
+      oauth_connections: {
+        Row: {
+          created_at: string | null
+          id: number
+          location_address: string | null
+          location_id: string | null
+          location_name: string | null
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: number
+          location_address?: string | null
+          location_id?: string | null
+          location_name?: string | null
+          provider: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          location_address?: string | null
+          location_id?: string | null
+          location_name?: string | null
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      oauth_tokens: {
+        Row: {
+          access_token: string
+          created_at: string | null
+          expires_at: number | null
+          id: number
+          provider: string
+          refresh_token: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_token: string
+          created_at?: string | null
+          expires_at?: number | null
+          id: number
+          provider: string
+          refresh_token: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_token?: string
+          created_at?: string | null
+          expires_at?: number | null
+          id?: number
+          provider?: string
+          refresh_token?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       overtimerules: {
         Row: {
           description: string
@@ -1106,17 +1166,11 @@ export type Database = {
     }
     Functions: {
       bytea_to_text: {
-        Args: {
-          data: string
-        }
+        Args: { data: string }
         Returns: string
       }
       calculate_employee_hours: {
-        Args: {
-          employee_id: number
-          start_date: string
-          end_date: string
-        }
+        Args: { employee_id: number; start_date: string; end_date: string }
         Returns: {
           total_scheduled_hours: number
           total_worked_hours: number
@@ -1126,11 +1180,12 @@ export type Database = {
           schedule_details: Json
         }[]
       }
+      check_and_create_oauth_tokens_table: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_employee_attendance_summary: {
-        Args: {
-          start_date: string
-          end_date: string
-        }
+        Args: { start_date: string; end_date: string }
         Returns: {
           employee_name: string
           position_name: string
@@ -1142,10 +1197,7 @@ export type Database = {
         }[]
       }
       get_position_schedule_summary: {
-        Args: {
-          start_date: string
-          end_date: string
-        }
+        Args: { start_date: string; end_date: string }
         Returns: {
           position_name: string
           total_shifts: number
@@ -1155,51 +1207,25 @@ export type Database = {
         }[]
       }
       http: {
-        Args: {
-          request: Database["public"]["CompositeTypes"]["http_request"]
-        }
+        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
       }
-      http_delete:
-        | {
-            Args: {
-              uri: string
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
-        | {
-            Args: {
-              uri: string
-              content: string
-              content_type: string
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
-      http_get:
-        | {
-            Args: {
-              uri: string
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
-        | {
-            Args: {
-              uri: string
-              data: Json
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
+      http_delete: {
+        Args:
+          | { uri: string }
+          | { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_get: {
+        Args: { uri: string } | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
       http_head: {
-        Args: {
-          uri: string
-        }
+        Args: { uri: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
       }
       http_header: {
-        Args: {
-          field: string
-          value: string
-        }
+        Args: { field: string; value: string }
         Returns: Database["public"]["CompositeTypes"]["http_header"]
       }
       http_list_curlopt: {
@@ -1210,35 +1236,17 @@ export type Database = {
         }[]
       }
       http_patch: {
-        Args: {
-          uri: string
-          content: string
-          content_type: string
-        }
+        Args: { uri: string; content: string; content_type: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
       }
-      http_post:
-        | {
-            Args: {
-              uri: string
-              content: string
-              content_type: string
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
-        | {
-            Args: {
-              uri: string
-              data: Json
-            }
-            Returns: Database["public"]["CompositeTypes"]["http_response"]
-          }
+      http_post: {
+        Args:
+          | { uri: string; content: string; content_type: string }
+          | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
       http_put: {
-        Args: {
-          uri: string
-          content: string
-          content_type: string
-        }
+        Args: { uri: string; content: string; content_type: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
       }
       http_reset_curlopt: {
@@ -1246,10 +1254,7 @@ export type Database = {
         Returns: boolean
       }
       http_set_curlopt: {
-        Args: {
-          curlopt: string
-          value: string
-        }
+        Args: { curlopt: string; value: string }
         Returns: boolean
       }
       is_admin: {
@@ -1257,30 +1262,13 @@ export type Database = {
         Returns: boolean
       }
       text_to_bytea: {
-        Args: {
-          data: string
-        }
+        Args: { data: string }
         Returns: string
       }
-      urlencode:
-        | {
-            Args: {
-              data: Json
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              string: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              string: string
-            }
-            Returns: string
-          }
+      urlencode: {
+        Args: { data: Json } | { string: string } | { string: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
@@ -1307,27 +1295,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -1335,20 +1325,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -1356,20 +1348,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1377,21 +1371,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -1400,6 +1396,12 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
