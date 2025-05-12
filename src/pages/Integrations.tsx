@@ -7,6 +7,7 @@ import {
   disconnectLeadConnector,
 } from '../integrations/api';
 
+// Type for integration
 type Integration = {
   name: string;
   type: string;
@@ -79,22 +80,33 @@ export default function Integrations() {
     }
   };
 
-  // Render cards for each integration (simplified)
   return (
     <div>
-      <h1>Integrations</h1>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <h2 className="text-xl font-semibold mb-4 text-fitness-text">Integrations</h2>
+      {error && <div className="text-red-400 mb-2">{error}</div>}
       {integrations.map(integration => (
-        <div key={integration.type} style={{ border: '1px solid #ccc', margin: 8, padding: 8 }}>
-          <h2>{integration.name}</h2>
-          <p>Status: {integration.status}</p>
+        <div
+          key={integration.type}
+          className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border"
+        >
+          <div className="font-bold text-fitness-text mb-2">{integration.name}</div>
+          <div className="mb-2 text-fitness-text">
+            Status: <span className="font-semibold">{integration.status}</span>
+          </div>
           {integration.type === 'leadconnector' && (
             <>
               {integration.status === 'not_connected' && (
                 <>
-                  <button onClick={handleOAuth} disabled={loading}>Connect via OAuth</button>
-                  <div style={{ marginTop: 8 }}>
+                  <button
+                    className="bg-fitness-accent text-black px-4 py-2 rounded mr-2 hover:bg-fitness-accent-dark transition"
+                    onClick={handleOAuth}
+                    disabled={loading}
+                  >
+                    Connect via OAuth
+                  </button>
+                  <div className="flex gap-2 mt-2">
                     <input
+                      className="bg-fitness-input text-fitness-text border border-fitness-border rounded px-2 py-1"
                       type="text"
                       placeholder="PIT"
                       value={pit}
@@ -102,13 +114,18 @@ export default function Integrations() {
                       disabled={loading}
                     />
                     <input
+                      className="bg-fitness-input text-fitness-text border border-fitness-border rounded px-2 py-1"
                       type="text"
                       placeholder="Location ID"
                       value={locationId}
                       onChange={e => setLocationId(e.target.value)}
                       disabled={loading}
                     />
-                    <button onClick={handleManualConnect} disabled={loading || !pit || !locationId}>
+                    <button
+                      className="bg-fitness-accent text-black px-4 py-2 rounded hover:bg-fitness-accent-dark transition"
+                      onClick={handleManualConnect}
+                      disabled={loading || !pit || !locationId}
+                    >
                       Connect Manually
                     </button>
                   </div>
@@ -116,16 +133,36 @@ export default function Integrations() {
               )}
               {integration.status === 'connected' && (
                 <>
-                  <button onClick={handleSync} disabled={loading}>Sync Again</button>
-                  <button onClick={handleDisconnect} disabled={loading}>Disconnect</button>
+                  <button
+                    className="bg-fitness-accent text-black px-4 py-2 rounded mr-2 hover:bg-fitness-accent-dark transition"
+                    onClick={handleSync}
+                    disabled={loading}
+                  >
+                    Sync Again
+                  </button>
+                  <button
+                    className="bg-fitness-danger text-white px-4 py-2 rounded hover:bg-fitness-danger-dark transition"
+                    onClick={handleDisconnect}
+                    disabled={loading}
+                  >
+                    Disconnect
+                  </button>
                   {integration.synced_data && (
-                    <div>Contacts Synced: {integration.synced_data.contact_count}</div>
+                    <div className="mt-2 text-fitness-text">
+                      Contacts Synced: {integration.synced_data.contact_count}
+                    </div>
                   )}
-                  <div>Last Synced: {integration.last_synced_at}</div>
+                  <div className="text-fitness-text">Last Synced: {integration.last_synced_at}</div>
                 </>
               )}
               {integration.status === 'disconnected' && (
-                <button onClick={handleOAuth} disabled={loading}>Reconnect</button>
+                <button
+                  className="bg-fitness-accent text-black px-4 py-2 rounded hover:bg-fitness-accent-dark transition"
+                  onClick={handleOAuth}
+                  disabled={loading}
+                >
+                  Reconnect
+                </button>
               )}
             </>
           )}
