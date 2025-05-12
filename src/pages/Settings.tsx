@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import UserProfileSettings from "@/components/settings/UserProfileSettings";
 import { OperationalDaysProvider } from "@/contexts/operational-days/OperationalDaysContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import Integrations from "./Integrations";
 
 const Settings = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -84,6 +84,7 @@ const Settings = () => {
                   <TabsTrigger value="payroll">Payroll Settings</TabsTrigger>
                   <TabsTrigger value="business">Business Details</TabsTrigger>
                   <TabsTrigger value="api-keys">API Keys</TabsTrigger>
+                  <TabsTrigger value="integrations">Integrations</TabsTrigger>
                 </>
               )}
             </TabsList>
@@ -116,6 +117,10 @@ const Settings = () => {
 
                 <TabsContent value="api-keys">
                   <APIKeysSettings />
+                </TabsContent>
+
+                <TabsContent value="integrations">
+                  <Integrations />
                 </TabsContent>
               </>
             )}
