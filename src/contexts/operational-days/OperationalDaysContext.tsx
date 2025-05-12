@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { OperationalDaysContextType } from './types';
 import { loadOperationalDays, saveOperationalDays as saveOperationalDaysToDb } from './operations';
 
@@ -7,12 +8,14 @@ export const OperationalDaysContext = createContext<OperationalDaysContextType |
 
 export const OperationalDaysProvider = ({ children }: { children: React.ReactNode }) => {
   const [operationalDays, setOperationalDays] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const handleLoadOperationalDays = async () => {
+  const handleLoadOperationalDays = useCallback(async () => {
+    setIsLoading(true);
     try {
       const days = await loadOperationalDays();
-      setOperationalDays(days as Set<string>);
+      setOperationalDays(days);
     } catch (error) {
       console.error('Error loading operational days:', error);
       setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
@@ -20,14 +23,42 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         title: "Notice",
         description: "Using default operational days",
       });
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
-    handleLoadOperationalDays();
-  }, []);
+    let isMounted = true;
+    
+    const loadDays = async () => {
+      try {
+        const days = await loadOperationalDays();
+        if (isMounted) {
+          setOperationalDays(days);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error loading operational days:', error);
+          setOperationalDays(new Set(['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']));
+          setIsLoading(false);
+          toast({
+            title: "Notice",
+            description: "Using default operational days",
+          });
+        }
+      }
+    };
+    
+    loadDays();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [toast]);
 
-  const toggleDay = (day: string) => {
+  const toggleDay = useCallback((day: string) => {
     setOperationalDays(prev => {
       const newDays = new Set(prev);
       if (newDays.has(day)) {
@@ -37,17 +68,21 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
       }
       return newDays;
     });
-  };
+  }, []);
 
-  const handleSaveOperationalDays = async () => {
+  const handleSaveOperationalDays = useCallback(async (): Promise<void> => {
     try {
-      await saveOperationalDaysToDb(operationalDays);
-      await handleLoadOperationalDays();
+      const success = await saveOperationalDaysToDb(operationalDays);
       
-      toast({
-        title: "Success",
-        description: "Operational days saved successfully",
-      });
+      if (success) {
+        await handleLoadOperationalDays();
+        
+        toast({
+          title: "Success",
+          description: "Operational days saved successfully",
+        });
+      }
+      // No return statement here, which implicitly returns undefined (void)
     } catch (error) {
       console.error('Error saving operational days:', error);
       toast({
@@ -55,16 +90,17 @@ export const OperationalDaysProvider = ({ children }: { children: React.ReactNod
         description: "Failed to save operational days",
         variant: "destructive",
       });
-      throw error;
+      // No return statement here either
     }
-  };
+  }, [operationalDays, handleLoadOperationalDays, toast]);
 
   return (
     <OperationalDaysContext.Provider value={{ 
       operationalDays, 
       toggleDay, 
       saveOperationalDays: handleSaveOperationalDays,
-      reloadOperationalDays: handleLoadOperationalDays 
+      reloadOperationalDays: handleLoadOperationalDays,
+      isLoading
     }}>
       {children}
     </OperationalDaysContext.Provider>

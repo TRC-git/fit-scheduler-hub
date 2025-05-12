@@ -59,32 +59,46 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
     
     const checkAdminStatus = async () => {
       try {
+        // First check if the user is authenticated
         const sessionResult = await supabase.auth.getSession();
         const userEmail = sessionResult.data.session?.user?.email;
         
         if (!userEmail || !isMounted) return;
 
+        // Then check if the user is an admin
         const { data: employees, error } = await supabase
           .from('employees')
           .select('is_admin')
-          .eq('email', userEmail);
+          .eq('email', userEmail)
+          .maybeSingle();
 
-        if (isMounted) {
-          if (error) {
-            console.error('Error checking admin status:', error);
+        if (!isMounted) return; // Check again before setting state
+          
+        if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+          if (isMounted) {
             toast({
               title: "Error",
               description: "Failed to verify admin access",
               variant: "destructive",
             });
-            setIsAdmin(false);
-          } else {
-            // Check if any employee was found with admin access
-            const isAdminUser = employees && employees.length > 0 && employees[0]?.is_admin;
-            setIsAdmin(!!isAdminUser);
           }
-          setLoading(false);
+        } else {
+          // Check if any employee was found with admin access
+          const isAdminUser = employees && employees.is_admin;
+          setIsAdmin(!!isAdminUser);
+          
+          if (!isAdminUser && isMounted) {
+            toast({
+              title: "Access Denied",
+              description: "You need admin privileges to access this page",
+              variant: "destructive",
+            });
+          }
         }
+        
+        setLoading(false);
       } catch (error) {
         if (isMounted) {
           console.error('Error in checkAdminStatus:', error);
@@ -105,16 +119,11 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
     return <div className="min-h-screen bg-fitness-background" />;
   }
 
-  if (!isAdmin) {
-    toast({
-      title: "Access Denied",
-      description: "You need admin privileges to access this page",
-      variant: "destructive",
-    });
-    return <Navigate to="/" />;
+  if (isAdmin === false) {
+    return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return isAdmin ? <>{children}</> : null;
 };
 
 const Router = () => {
@@ -141,9 +150,7 @@ const Router = () => {
         path="/settings"
         element={
           <ProtectedRoute>
-            <AdminRoute>
-              <Settings />
-            </AdminRoute>
+            <Settings />
           </ProtectedRoute>
         }
       />
