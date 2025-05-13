@@ -1,6 +1,8 @@
+
 const { createClient } = require('@supabase/supabase-js');
 const fetch = require('node-fetch');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
+const localCredentials = require('./localCredentials');
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -16,10 +18,10 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Connect to Supabase
+  // Connect to Supabase with environment variables or local credentials
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL || localCredentials.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || localCredentials.SUPABASE_SERVICE_ROLE_KEY
   );
 
   // Get the user's LeadConnector integration

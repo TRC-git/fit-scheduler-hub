@@ -1,5 +1,7 @@
+
 const { createClient } = require('@supabase/supabase-js');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
+const localCredentials = require('./localCredentials');
 
 exports.handler = async (event, context) => {
   // Authenticate user using Supabase JWT
@@ -11,10 +13,10 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Connect to Supabase
+  // Connect to Supabase with environment variables or local credentials
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY // Use service role for server-side
+    process.env.SUPABASE_URL || localCredentials.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || localCredentials.SUPABASE_SERVICE_ROLE_KEY
   );
 
   // Fetch integrations for this user

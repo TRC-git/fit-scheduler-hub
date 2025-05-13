@@ -1,6 +1,9 @@
-const jwt = require('jsonwebtoken');
 
-const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
+const jwt = require('jsonwebtoken');
+const localCredentials = require('./localCredentials');
+
+// Use environment variable with fallback to local credentials
+const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET || localCredentials.SUPABASE_JWT_SECRET;
 
 function verifySupabaseJwt(authHeader) {
   if (!authHeader) return null;

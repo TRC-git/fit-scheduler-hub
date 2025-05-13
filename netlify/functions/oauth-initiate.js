@@ -1,5 +1,7 @@
+
 const { URLSearchParams } = require('url');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
+const localCredentials = require('./localCredentials');
 
 exports.handler = async (event, context) => {
   // Authenticate user using Supabase JWT
@@ -11,9 +13,9 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // GoHighLevel OAuth details from environment variables
-  const clientId = process.env.GHL_CLIENT_ID;
-  const redirectUri = process.env.GHL_REDIRECT_URI; // Must match the one set in GoHighLevel app
+  // GoHighLevel OAuth details from environment variables or local credentials
+  const clientId = process.env.GHL_CLIENT_ID || localCredentials.GHL_CLIENT_ID;
+  const redirectUri = process.env.GHL_REDIRECT_URI || localCredentials.GHL_REDIRECT_URI;
 
   // Scopes required for your integration (adjust as needed)
   const scopes = [

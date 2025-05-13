@@ -1,6 +1,8 @@
+
 const { createClient } = require('@supabase/supabase-js');
 const fetch = require('node-fetch');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
+const localCredentials = require('./localCredentials');
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -49,10 +51,10 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Store credentials in Supabase
+  // Store credentials in Supabase with environment variables or local credentials
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL || localCredentials.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || localCredentials.SUPABASE_SERVICE_ROLE_KEY
   );
 
   const { error } = await supabase

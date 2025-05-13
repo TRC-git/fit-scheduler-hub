@@ -1,6 +1,7 @@
+
 const { createClient } = require('@supabase/supabase-js');
 const fetch = require('node-fetch');
-// No need to verifySupabaseJwt here, userId comes from state
+const localCredentials = require('./localCredentials');
 
 exports.handler = async (event, context) => {
   // Parse query params from redirect
@@ -24,11 +25,11 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Exchange code for tokens
+  // Exchange code for tokens using environment variables or local credentials
   const tokenUrl = 'https://services.leadconnectorhq.com/oauth/token';
-  const clientId = process.env.GHL_CLIENT_ID;
-  const clientSecret = process.env.GHL_CLIENT_SECRET;
-  const redirectUri = process.env.GHL_REDIRECT_URI;
+  const clientId = process.env.GHL_CLIENT_ID || localCredentials.GHL_CLIENT_ID;
+  const clientSecret = process.env.GHL_CLIENT_SECRET || localCredentials.GHL_CLIENT_SECRET;
+  const redirectUri = process.env.GHL_REDIRECT_URI || localCredentials.GHL_REDIRECT_URI;
 
   const tokenRes = await fetch(tokenUrl, {
     method: 'POST',
@@ -60,10 +61,10 @@ exports.handler = async (event, context) => {
   });
   const testData = await testRes.json();
 
-  // Prepare data for DB
+  // Prepare data for DB - connect to Supabase with environment variables or local credentials
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL || localCredentials.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || localCredentials.SUPABASE_SERVICE_ROLE_KEY
   );
 
   // Upsert integration record
@@ -92,11 +93,14 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Redirect user to frontend success page (or show a message)
+  // Use environment variables or local credentials for redirect
+  const successRedirect = process.env.OAUTH_SUCCESS_REDIRECT || localCredentials.OAUTH_SUCCESS_REDIRECT;
+
+  // Redirect user to frontend success page
   return {
     statusCode: 302,
     headers: {
-      Location: process.env.OAUTH_SUCCESS_REDIRECT || 'https://yourfrontend.com/integrations?success=1',
+      Location: successRedirect,
     },
     body: '',
   };
