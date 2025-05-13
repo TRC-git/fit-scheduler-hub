@@ -1160,6 +1160,48 @@ export type Database = {
           },
         ]
       }
+      user_integrations: {
+        Row: {
+          connection_method: string
+          created_at: string | null
+          credentials: Json | null
+          id: number
+          integration_type: string
+          last_synced_at: string | null
+          location_id: string | null
+          status: string
+          synced_data: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          connection_method: string
+          created_at?: string | null
+          credentials?: Json | null
+          id?: number
+          integration_type: string
+          last_synced_at?: string | null
+          location_id?: string | null
+          status: string
+          synced_data?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          connection_method?: string
+          created_at?: string | null
+          credentials?: Json | null
+          id?: number
+          integration_type?: string
+          last_synced_at?: string | null
+          location_id?: string | null
+          status?: string
+          synced_data?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
