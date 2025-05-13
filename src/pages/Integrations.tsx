@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   getIntegrations,
@@ -26,6 +25,7 @@ export default function Integrations() {
   const [error, setError] = useState<string | null>(null);
   const [pit, setPit] = useState('');
   const [locationId, setLocationId] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,8 +33,21 @@ export default function Integrations() {
       setLoading(true);
       setError(null);
       try {
+        console.log('Loading integrations...');
         const data = await getIntegrations();
-        setIntegrations(data.integrations);
+        
+        if (data && data.integrations) {
+          console.log('Integrations loaded:', data.integrations);
+          setIntegrations(data.integrations);
+        } else {
+          console.warn('Unexpected data format from getIntegrations():', data);
+          setError('Invalid data format received from server');
+          toast({
+            title: "Warning",
+            description: "Couldn't load integration data correctly",
+            variant: "destructive",
+          });
+        }
       } catch (err) {
         console.error('Failed to load integrations:', err);
         setError('Failed to load integrations. Please try again.');
@@ -43,13 +56,21 @@ export default function Integrations() {
           description: "Failed to load integrations",
           variant: "destructive",
         });
+        
+        // If we've retried less than 3 times and this isn't our initial load,
+        // schedule a retry after a delay
+        if (retryCount < 3) {
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+          }, 3000); // 3 second delay
+        }
       } finally {
         setLoading(false);
       }
     }
     
     loadIntegrations();
-  }, [toast]);
+  }, [toast, retryCount]);
 
   const handleOAuth = async () => {
     setActionLoading(true);
@@ -147,24 +168,53 @@ export default function Integrations() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-fitness-accent mb-4" />
-        <p className="text-fitness-text">Loading integrations...</p>
+  const renderLoadingState = () => (
+    <div className="flex flex-col items-center justify-center p-8">
+      <Loader2 className="h-8 w-8 animate-spin text-fitness-accent mb-4" />
+      <p className="text-fitness-text">Loading integrations...</p>
+    </div>
+  );
+
+  const renderErrorState = () => (
+    <div className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border">
+      <div className="text-red-400 mb-4 p-3 bg-red-100/10 border border-red-400 rounded">
+        <p>{error}</p>
+        <button 
+          onClick={() => setRetryCount(prev => prev + 1)} 
+          className="mt-2 bg-red-400 text-white px-3 py-1 rounded text-sm"
+        >
+          Retry
+        </button>
       </div>
-    );
+      <p className="text-fitness-text">
+        Integrations could not be loaded. Please check your connection and try again.
+      </p>
+    </div>
+  );
+
+  const renderEmptyState = () => (
+    <div className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border">
+      <p className="text-fitness-text">No integrations found. Try refreshing the page.</p>
+      <button 
+        onClick={() => setRetryCount(prev => prev + 1)} 
+        className="mt-2 bg-fitness-accent text-black px-3 py-1 rounded text-sm"
+      >
+        Refresh
+      </button>
+    </div>
+  );
+
+  if (loading) {
+    return renderLoadingState();
   }
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4 text-fitness-text">Integrations</h2>
-      {error && <div className="text-red-400 mb-2 p-3 bg-red-100/10 border border-red-400 rounded">{error}</div>}
+      {error && renderErrorState()}
       
-      {integrations.length === 0 ? (
-        <div className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border">
-          <p className="text-fitness-text">No integrations found. Try refreshing the page.</p>
-        </div>
+      {!error && integrations.length === 0 ? (
+        renderEmptyState()
       ) : (
         integrations.map(integration => (
           <div
@@ -173,7 +223,9 @@ export default function Integrations() {
           >
             <div className="font-bold text-fitness-text mb-2">{integration.name}</div>
             <div className="mb-2 text-fitness-text">
-              Status: <span className="font-semibold">{integration.status}</span>
+              Status: <span className={`font-semibold ${integration.status === 'connected' ? 'text-green-400' : ''}`}>
+                {integration.status}
+              </span>
             </div>
             {integration.type === 'leadconnector' && (
               <>

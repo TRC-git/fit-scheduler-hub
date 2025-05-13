@@ -1,3 +1,4 @@
+
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,24 +13,49 @@ import { OperationalDaysProvider } from "@/contexts/operational-days/Operational
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Integrations from "./Integrations";
+import { useLocation } from "react-router-dom";
 
 const Settings = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tabParam = searchParams.get('tab');
+  
+  // Determine the default tab based on URL parameters
+  const getDefaultTab = () => {
+    if (tabParam && ['profile', 'schedule', 'positions', 'permissions', 
+                     'payroll', 'business', 'api-keys', 'integrations'].includes(tabParam)) {
+      return tabParam;
+    }
+    return 'profile';
+  };
 
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
+        console.log("Checking admin status...");
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user?.email) return;
+        if (!session?.user?.email) {
+          console.log("No user session found");
+          setLoading(false);
+          return;
+        }
 
-        const { data: employee } = await supabase
+        console.log("Fetching employee data for:", session.user.email);
+        const { data: employee, error } = await supabase
           .from('employees')
           .select('is_admin')
           .eq('email', session.user.email)
           .maybeSingle();
 
-        setIsAdmin(!!employee?.is_admin);
+        if (error) {
+          console.error('Error fetching employee data:', error);
+        }
+
+        const adminStatus = !!employee?.is_admin;
+        console.log("Admin status:", adminStatus);
+        setIsAdmin(adminStatus);
       } catch (error) {
         console.error('Error checking admin status:', error);
       } finally {
@@ -73,7 +99,7 @@ const Settings = () => {
         </div>
         
         <OperationalDaysProvider>
-          <Tabs defaultValue="profile" className="w-full">
+          <Tabs defaultValue={getDefaultTab()} className="w-full">
             <TabsList className="bg-fitness-card">
               <TabsTrigger value="profile">User Profile</TabsTrigger>
               {isAdmin && (
@@ -93,7 +119,7 @@ const Settings = () => {
               <UserProfileSettings />
             </TabsContent>
             
-            {isAdmin && (
+            {isAdmin ? (
               <>
                 <TabsContent value="schedule">
                   <ScheduleSettings />
@@ -123,7 +149,11 @@ const Settings = () => {
                   <Integrations />
                 </TabsContent>
               </>
-            )}
+            ) : tabParam && tabParam !== 'profile' ? (
+              <div className="p-4 bg-red-500/10 text-red-500 rounded-md mt-4">
+                You need administrator privileges to access this section.
+              </div>
+            ) : null}
           </Tabs>
         </OperationalDaysProvider>
       </div>

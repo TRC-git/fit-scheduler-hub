@@ -6,6 +6,7 @@ const base = '/.netlify/functions';
 // Helper to handle fetch errors and parse JSON safely
 async function fetchWithErrorHandling(url: string, options: RequestInit = {}) {
   try {
+    console.log(`Making API request to: ${url}`);
     const response = await fetch(url, options);
     
     // Check if the response is OK
@@ -21,8 +22,19 @@ async function fetchWithErrorHandling(url: string, options: RequestInit = {}) {
       return await response.json();
     } else {
       const text = await response.text();
-      console.error('Unexpected response format:', text);
-      throw new Error('Invalid response format from API');
+      if (!text || text.trim() === '') {
+        console.log('Empty response received');
+        return {};
+      }
+      
+      try {
+        // Try to parse it as JSON anyway
+        return JSON.parse(text);
+      } catch (parseError) {
+        console.error('Unexpected response format:', text);
+        console.error('Parse error:', parseError);
+        throw new Error('Invalid response format from API');
+      }
     }
   } catch (error) {
     console.error('API request error:', error);
@@ -35,17 +47,21 @@ async function getAuthHeader() {
     data: { session },
   } = await supabase.auth.getSession();
   if (session?.access_token) {
+    console.log('Got auth token for API request');
     return { Authorization: `Bearer ${session.access_token}` };
   }
+  console.warn('No auth token available for API request');
   return {};
 }
 
 export async function getIntegrations() {
   try {
     const headers = await getAuthHeader();
+    console.log('Fetching integrations...');
     return await fetchWithErrorHandling(`${base}/get-integrations`, { headers, credentials: 'include' });
   } catch (error) {
     console.error('Failed to get integrations:', error);
+    // Return a default response to prevent UI crashes
     return { integrations: [] };
   }
 }

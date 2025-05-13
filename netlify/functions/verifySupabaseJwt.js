@@ -15,11 +15,32 @@ function verifySupabaseJwt(authHeader) {
   
   try {
     console.log('Attempting to verify JWT token');
-    const payload = jwt.verify(token, SUPABASE_JWT_SECRET);
-    console.log('JWT verification successful, user ID:', payload.sub);
+    
+    // Try to verify the JWT with different secret formats in case the format is wrong
+    let payload;
+    try {
+      // Try with the raw secret
+      payload = jwt.verify(token, SUPABASE_JWT_SECRET);
+      console.log('JWT verification successful with raw secret, user ID:', payload.sub);
+    } catch (rawError) {
+      console.error('JWT verification with raw secret failed:', rawError.message);
+      
+      try {
+        // Try with the base64 decoded secret (if the secret is in base64 format)
+        const decodedSecret = Buffer.from(SUPABASE_JWT_SECRET, 'base64').toString('utf8');
+        payload = jwt.verify(token, decodedSecret);
+        console.log('JWT verification successful with decoded base64 secret, user ID:', payload.sub);
+      } catch (decodedError) {
+        console.error('JWT verification with decoded base64 secret failed too:', decodedError.message);
+        throw rawError; // Re-throw the original error
+      }
+    }
+    
     return payload.sub; // This is the user ID
   } catch (e) {
     console.error('JWT verification failed:', e.message);
+    console.error('JWT token (first 20 chars):', token.substring(0, 20) + '...');
+    console.error('JWT secret (length):', SUPABASE_JWT_SECRET ? SUPABASE_JWT_SECRET.length : 'undefined');
     return null;
   }
 }
