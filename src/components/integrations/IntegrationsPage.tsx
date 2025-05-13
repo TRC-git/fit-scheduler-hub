@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { getIntegrations } from '../../integrations/api';
+import { getIntegrations } from '../../integrations/apis/integrationsApi';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { Integration } from './IntegrationCard';
