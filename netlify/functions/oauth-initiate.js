@@ -23,44 +23,61 @@ exports.handler = async (event, context) => {
   // Add CORS headers to all responses
   const headers = { ...corsHeaders };
 
-  // Authenticate user using Supabase JWT
-  const userId = verifySupabaseJwt(event.headers.authorization);
-  if (!userId) {
+  try {
+    // Authenticate user using Supabase JWT
+    const userId = verifySupabaseJwt(event.headers.authorization);
+    if (!userId) {
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ error: 'Unauthorized' }),
+      };
+    }
+
+    // Get the host for dynamic redirect URLs
+    const host = event.headers.host || 'localhost:8888';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const baseUrl = `${protocol}://${host}`;
+
+    // GoHighLevel OAuth details from environment variables or local credentials
+    const clientId = process.env.GHL_CLIENT_ID || localCredentials.GHL_CLIENT_ID;
+    // Use dynamic redirect URI based on the host
+    const redirectUri = process.env.GHL_REDIRECT_URI || 
+                        `${baseUrl}/.netlify/functions/oauth-callback`;
+
+    // Scopes required for your integration (adjust as needed)
+    const scopes = [
+      'contacts.read',
+      // add more scopes as needed
+    ].join(' ');
+
+    // State parameter for CSRF protection (optional but recommended)
+    // You may want to store this in a session or DB for later verification
+    const state = `${userId}-${Date.now()}`;
+
+    // Construct the authorization URL
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: scopes,
+      state,
+    });
+
+    const authUrl = `https://marketplace.gohighlevel.com/oauth/chooselocation?${params.toString()}`;
+    console.log("Generated OAuth URL:", authUrl);
+
     return {
-      statusCode: 401,
+      statusCode: 200,
       headers,
-      body: JSON.stringify({ error: 'Unauthorized' }),
+      body: JSON.stringify({ url: authUrl }),
+    };
+  } catch (err) {
+    console.error("Error in oauth-initiate function:", err);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Internal server error', details: err.message }),
     };
   }
-
-  // GoHighLevel OAuth details from environment variables or local credentials
-  const clientId = process.env.GHL_CLIENT_ID || localCredentials.GHL_CLIENT_ID;
-  const redirectUri = process.env.GHL_REDIRECT_URI || localCredentials.GHL_REDIRECT_URI;
-
-  // Scopes required for your integration (adjust as needed)
-  const scopes = [
-    'contacts.read',
-    // add more scopes as needed
-  ].join(' ');
-
-  // State parameter for CSRF protection (optional but recommended)
-  // You may want to store this in a session or DB for later verification
-  const state = `${userId}-${Date.now()}`;
-
-  // Construct the authorization URL
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    response_type: 'code',
-    scope: scopes,
-    state,
-  });
-
-  const authUrl = `https://marketplace.gohighlevel.com/oauth/chooselocation?${params.toString()}`;
-
-  return {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({ url: authUrl }),
-  };
 };

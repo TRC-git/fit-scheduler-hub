@@ -32,7 +32,26 @@ function verifySupabaseJwt(authHeader) {
         console.log('JWT verification successful with decoded base64 secret, user ID:', payload.sub);
       } catch (decodedError) {
         console.error('JWT verification with decoded base64 secret failed too:', decodedError.message);
-        throw rawError; // Re-throw the original error
+        
+        try {
+          // Try with different JWT algorithms
+          const algorithms = ['HS256', 'HS384', 'HS512'];
+          for (const algorithm of algorithms) {
+            try {
+              payload = jwt.verify(token, SUPABASE_JWT_SECRET, { algorithms: [algorithm] });
+              console.log(`JWT verification successful with algorithm ${algorithm}, user ID:`, payload.sub);
+              break;
+            } catch (algError) {
+              console.error(`JWT verification with algorithm ${algorithm} failed:`, algError.message);
+            }
+          }
+          
+          if (!payload) {
+            throw new Error('Failed to verify token with any algorithm');
+          }
+        } catch (algError) {
+          throw rawError; // Re-throw the original error
+        }
       }
     }
     

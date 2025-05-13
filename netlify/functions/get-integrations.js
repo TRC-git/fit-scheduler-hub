@@ -2,6 +2,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
 const localCredentials = require('./localCredentials');
+const { ensureUserIntegrationsTable } = require('./checkTables');
 
 // Add CORS headers for local development
 const corsHeaders = {
@@ -55,45 +56,34 @@ exports.handler = async (event, context) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log("Checking if user_integrations table exists");
-    // First check if the user_integrations table exists
-    const { data: tables, error: tablesError } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public')
-      .eq('table_name', 'user_integrations');
-      
-    if (tablesError) {
-      console.error("Error checking tables:", tablesError);
+    // First ensure the user_integrations table exists
+    const tableExists = await ensureUserIntegrationsTable(supabase);
+    if (!tableExists) {
+      console.error("Failed to ensure user_integrations table exists");
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'Database schema error', details: tablesError.message }),
+        body: JSON.stringify({ error: 'Database setup error' }),
       };
     }
 
-    let data = [];
-    let error = null;
-    
-    if (tables && tables.length > 0) {
-      console.log("Fetching integrations for user:", userId);
-      // Fetch integrations for this user
-      const result = await supabase
-        .from('user_integrations')
-        .select('*')
-        .eq('user_id', userId);
-        
-      data = result.data || [];
-      error = result.error;
+    console.log("Fetching integrations for user:", userId);
+    // Fetch integrations for this user
+    const { data, error } = await supabase
+      .from('user_integrations')
+      .select('*')
+      .eq('user_id', userId);
       
-      if (error) {
-        console.error("Supabase query error:", error);
-      } else {
-        console.log(`Found ${data.length} integrations for user`);
-      }
-    } else {
-      console.log("user_integrations table does not exist, returning empty array");
+    if (error) {
+      console.error("Supabase query error:", error);
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Database query error', details: error.message }),
+      };
     }
+    
+    console.log(`Found ${data?.length || 0} integrations for user`);
 
     // Create a list of integrations with status info
     const integrations = [
