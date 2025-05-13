@@ -3,12 +3,32 @@ const { createClient } = require('@supabase/supabase-js');
 const { verifySupabaseJwt } = require('./verifySupabaseJwt');
 const localCredentials = require('./localCredentials');
 
+// Add CORS headers for local development
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+};
+
 exports.handler = async (event, context) => {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: corsHeaders,
+      body: ''
+    };
+  }
+
+  // Add CORS headers to all responses
+  const headers = { ...corsHeaders };
+
   // Authenticate user using Supabase JWT
   const userId = verifySupabaseJwt(event.headers.authorization);
   if (!userId) {
     return {
       statusCode: 401,
+      headers,
       body: JSON.stringify({ error: 'Unauthorized' }),
     };
   }
@@ -26,8 +46,10 @@ exports.handler = async (event, context) => {
     .eq('user_id', userId);
 
   if (error) {
+    console.error('Supabase error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: error.message }),
     };
   }
@@ -37,14 +59,16 @@ exports.handler = async (event, context) => {
     {
       name: 'LeadConnector',
       type: 'leadconnector',
-      status: data.find(i => i.integration_type === 'leadconnector')?.status || 'not_connected',
-      // ...other fields
+      status: data?.find(i => i.integration_type === 'leadconnector')?.status || 'not_connected',
+      synced_data: data?.find(i => i.integration_type === 'leadconnector')?.synced_data || {},
+      last_synced_at: data?.find(i => i.integration_type === 'leadconnector')?.last_synced_at || null,
     },
     // Add other integrations as needed
   ];
 
   return {
     statusCode: 200,
+    headers,
     body: JSON.stringify({ integrations }),
   };
-}; 
+};
