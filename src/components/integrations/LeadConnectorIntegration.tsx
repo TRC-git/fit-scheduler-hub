@@ -7,8 +7,17 @@ import {
   disconnectLeadConnector 
 } from '../../integrations/apis/integrationsApi';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Info } from 'lucide-react';
 import { Integration } from './IntegrationCard';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface LeadConnectorIntegrationProps {
   integration: Integration;
@@ -121,109 +130,152 @@ export const LeadConnectorIntegration: React.FC<LeadConnectorIntegrationProps> =
     <div
       className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border"
     >
-      <div className="font-bold text-fitness-text mb-2">{integration.name}</div>
-      <div className="mb-2 text-fitness-text">
-        Status: <span className={`font-semibold ${integration.status === 'connected' ? 'text-green-400' : ''}`}>
+      <h3 className="text-xl font-bold text-fitness-text mb-2">{integration.name}</h3>
+      <div className="mb-4 text-fitness-text">
+        Status: <span className={`font-semibold ${integration.status === 'connected' ? 'text-green-400' : 'text-amber-400'}`}>
           {integration.status}
         </span>
       </div>
       
       {integration.status === 'not_connected' && (
-        <>
-          <button
-            className="bg-fitness-accent text-black px-4 py-2 rounded mr-2 hover:bg-fitness-accent-dark transition disabled:opacity-50"
-            onClick={handleOAuth}
-            disabled={actionLoading}
-          >
-            {actionLoading ? (
-              <><Loader2 className="h-4 w-4 animate-spin mr-2 inline" /> Processing...</>
-            ) : (
-              'Connect via OAuth'
-            )}
-          </button>
-          <div className="flex flex-col md:flex-row gap-2 mt-2">
-            <input
-              className="bg-fitness-input text-fitness-text border border-fitness-border rounded px-2 py-1"
-              type="text"
-              placeholder="PIT"
-              value={pit}
-              onChange={e => setPit(e.target.value)}
+        <Tabs defaultValue="oauth" className="w-full">
+          <TabsList className="w-full mb-4">
+            <TabsTrigger value="oauth" className="flex-1">Connect via OAuth</TabsTrigger>
+            <TabsTrigger value="manual" className="flex-1">Connect Manually</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="oauth" className="pt-2">
+            <p className="text-sm text-muted-foreground mb-4">
+              Connect directly using GoHighLevel OAuth for a simpler setup process.
+            </p>
+            <Button 
+              onClick={handleOAuth}
               disabled={actionLoading}
-            />
-            <input
-              className="bg-fitness-input text-fitness-text border border-fitness-border rounded px-2 py-1"
-              type="text"
-              placeholder="Location ID"
-              value={locationId}
-              onChange={e => setLocationId(e.target.value)}
-              disabled={actionLoading}
-            />
-            <button
-              className="bg-fitness-accent text-black px-4 py-2 rounded hover:bg-fitness-accent-dark transition disabled:opacity-50"
-              onClick={handleManualConnect}
-              disabled={actionLoading || !pit || !locationId}
+              className="w-full"
             >
               {actionLoading ? (
-                <><Loader2 className="h-4 w-4 animate-spin mr-2 inline" /> Processing...</>
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+              ) : (
+                'Connect via OAuth'
+              )}
+            </Button>
+          </TabsContent>
+          
+          <TabsContent value="manual" className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <label htmlFor="pit" className="text-sm font-medium text-fitness-text mr-2">
+                  Private Integration Token
+                </label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      Make sure to add read/write on Contacts, Users, Custom Values and Custom Fields. Along with Read Locations.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Input
+                id="pit"
+                type="text"
+                placeholder="Enter your PIT"
+                value={pit}
+                onChange={e => setPit(e.target.value)}
+                disabled={actionLoading}
+                className="w-full bg-fitness-input text-fitness-text"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="locationId" className="text-sm font-medium text-fitness-text">
+                Location ID
+              </label>
+              <Input
+                id="locationId"
+                type="text"
+                placeholder="Enter your Location ID"
+                value={locationId}
+                onChange={e => setLocationId(e.target.value)}
+                disabled={actionLoading}
+                className="w-full bg-fitness-input text-fitness-text"
+              />
+            </div>
+            
+            <Button
+              onClick={handleManualConnect}
+              disabled={actionLoading || !pit || !locationId}
+              className="w-full bg-fitness-accent text-black hover:bg-fitness-accent-dark"
+            >
+              {actionLoading ? (
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
               ) : (
                 'Connect Manually'
               )}
-            </button>
-          </div>
-        </>
+            </Button>
+          </TabsContent>
+        </Tabs>
       )}
       
       {integration.status === 'connected' && (
-        <>
-          <button
-            className="bg-fitness-accent text-black px-4 py-2 rounded mr-2 hover:bg-fitness-accent-dark transition disabled:opacity-50"
-            onClick={handleSync}
-            disabled={actionLoading}
-          >
-            {actionLoading ? (
-              <><Loader2 className="h-4 w-4 animate-spin mr-2 inline" /> Processing...</>
-            ) : (
-              'Sync Again'
+        <div className="space-y-4">
+          <div className="space-y-1">
+            {integration.synced_data && (
+              <div className="text-fitness-text">
+                Contacts Synced: <span className="font-semibold">{integration.synced_data.contact_count || 0}</span>
+              </div>
             )}
-          </button>
-          <button
-            className="bg-fitness-danger text-white px-4 py-2 rounded hover:bg-fitness-danger-dark transition disabled:opacity-50"
-            onClick={handleDisconnect}
-            disabled={actionLoading}
-          >
-            {actionLoading ? (
-              <><Loader2 className="h-4 w-4 animate-spin mr-2 inline" /> Processing...</>
-            ) : (
-              'Disconnect'
-            )}
-          </button>
-          {integration.synced_data && (
-            <div className="mt-2 text-fitness-text">
-              Contacts Synced: {integration.synced_data.contact_count || 0}
+            <div className="text-fitness-text">
+              Last Synced: <span className="font-semibold">{integration.last_synced_at ? new Date(integration.last_synced_at).toLocaleString() : 'Never'}</span>
             </div>
-          )}
-          <div className="text-fitness-text">
-            Last Synced: {integration.last_synced_at ? new Date(integration.last_synced_at).toLocaleString() : 'Never'}
           </div>
-        </>
+          
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button
+              onClick={handleSync}
+              disabled={actionLoading}
+              className="bg-fitness-accent text-black hover:bg-fitness-accent-dark"
+            >
+              {actionLoading ? (
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+              ) : (
+                'Sync Again'
+              )}
+            </Button>
+            
+            <Button
+              onClick={handleDisconnect}
+              disabled={actionLoading}
+              variant="destructive"
+            >
+              {actionLoading ? (
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+              ) : (
+                'Disconnect'
+              )}
+            </Button>
+          </div>
+        </div>
       )}
       
       {integration.status === 'disconnected' && (
-        <button
-          className="bg-fitness-accent text-black px-4 py-2 rounded hover:bg-fitness-accent-dark transition disabled:opacity-50"
+        <Button
           onClick={handleOAuth}
           disabled={actionLoading}
+          className="bg-fitness-accent text-black hover:bg-fitness-accent-dark"
         >
           {actionLoading ? (
-            <><Loader2 className="h-4 w-4 animate-spin mr-2 inline" /> Processing...</>
+            <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
           ) : (
             'Reconnect'
           )}
-        </button>
+        </Button>
       )}
       
       {error && (
-        <div className="mt-2 text-red-400 p-2 bg-red-100/10 border border-red-400 rounded">
+        <div className="mt-4 text-red-400 p-2 bg-red-100/10 border border-red-400 rounded">
           {error}
         </div>
       )}
