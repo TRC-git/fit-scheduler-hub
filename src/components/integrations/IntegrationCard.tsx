@@ -5,7 +5,7 @@ import { LeadConnectorIntegration } from './LeadConnectorIntegration';
 export type Integration = {
   name: string;
   type: string;
-  status: string;
+  status: 'connected' | 'not_connected' | 'disconnected';
   synced_data?: { contact_count?: number };
   last_synced_at?: string;
 };
