@@ -4,6 +4,8 @@ import { Integration } from './IntegrationCard';
 import { ConnectionTabs } from './lead-connector/ConnectionTabs';
 import { ConnectedControls } from './lead-connector/ConnectedControls';
 import { ReconnectControl } from './lead-connector/ReconnectControl';
+import { ErrorDisplay } from './lead-connector/ErrorDisplay';
+import { StatusBadge } from './lead-connector/StatusBadge';
 
 interface LeadConnectorIntegrationProps {
   integration: Integration;
@@ -17,11 +19,17 @@ export const LeadConnectorIntegration: React.FC<LeadConnectorIntegrationProps> =
     <div
       className="bg-fitness-card rounded-lg p-6 shadow mb-6 max-w-xl border border-fitness-border"
     >
-      <h3 className="text-xl font-bold text-fitness-text mb-2">{integration.name}</h3>
-      <div className="mb-4 text-fitness-text">
-        Status: <span className={`font-semibold ${integration.status === 'connected' ? 'text-green-400' : 'text-amber-400'}`}>
-          {integration.status}
-        </span>
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h3 className="text-xl font-bold text-fitness-text">{integration.name}</h3>
+        <StatusBadge status={integration.status} />
+      </div>
+      
+      <div className="mb-6 border-b border-fitness-border pb-4">
+        {integration.status === 'connected' && integration.last_synced_at && (
+          <div className="text-sm text-fitness-text opacity-80">
+            Last synced: {new Date(integration.last_synced_at).toLocaleString()}
+          </div>
+        )}
       </div>
       
       {integration.status === 'not_connected' && (
@@ -49,11 +57,7 @@ export const LeadConnectorIntegration: React.FC<LeadConnectorIntegrationProps> =
         />
       )}
       
-      {error && (
-        <div className="mt-4 text-red-400 p-2 bg-red-100/10 border border-red-400 rounded">
-          {error}
-        </div>
-      )}
+      <ErrorDisplay error={error} />
     </div>
   );
 };
