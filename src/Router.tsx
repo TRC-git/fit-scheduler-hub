@@ -9,6 +9,7 @@ import Login from "@/pages/Login";
 import Staff from "@/pages/Staff";
 import Reports from "@/pages/Reports";
 import Payroll from "@/pages/Payroll";
+import Integrations from "@/pages/Integrations";
 import { useToast } from "./hooks/use-toast";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -167,6 +168,14 @@ const Router = () => {
         element={
           <ProtectedRoute>
             <Payroll />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/integrations"
+        element={
+          <ProtectedRoute>
+            <Integrations />
           </ProtectedRoute>
         }
       />

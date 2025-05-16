@@ -28,7 +28,7 @@ export default function IntegrationsPage() {
           setIntegrations(data.integrations);
         } else {
           console.warn('Unexpected data format from getIntegrations():', data);
-          // Instead of setting an error, create a default integration
+          // Create a default integration as a fallback
           setIntegrations([{
             name: 'LeadConnector',
             type: 'leadconnector',
@@ -38,13 +38,14 @@ export default function IntegrationsPage() {
           }]);
           toast({
             title: "Notice",
-            description: "Using default integration settings",
+            description: "Using default integration settings - API may not be available",
             variant: "default",
           });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to load integrations:', err);
-        // Instead of just showing an error, create a default integration
+        setError(err?.message || "Failed to load integrations");
+        // Create a default integration as a fallback
         setIntegrations([{
           name: 'LeadConnector',
           type: 'leadconnector',
@@ -53,9 +54,9 @@ export default function IntegrationsPage() {
           last_synced_at: null,
         }]);
         toast({
-          title: "Notice",
-          description: "Using default integration settings",
-          variant: "default",
+          title: "API Connection Error",
+          description: "Using default integration settings - ensure API endpoints are configured",
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
@@ -65,21 +66,29 @@ export default function IntegrationsPage() {
     loadIntegrations();
   }, [toast, retryCount]);
 
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    toast({
+      title: "Retrying",
+      description: "Attempting to reconnect to integration services...",
+    });
+  };
+
   if (loading) {
     return <LoadingState />;
   }
 
   if (error && integrations.length === 0) {
-    return <ErrorState error={error} onRetry={() => setRetryCount(prev => prev + 1)} />;
+    return <ErrorState error={error} onRetry={handleRetry} />;
   }
 
   // Only show empty state if we explicitly have an empty array and no error
   if (integrations.length === 0 && !error) {
-    return <EmptyState onRefresh={() => setRetryCount(prev => prev + 1)} />;
+    return <EmptyState onRefresh={handleRetry} />;
   }
 
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <h2 className="text-xl font-semibold mb-4 text-fitness-text">Integrations</h2>
       <IntegrationsList integrations={integrations} />
     </div>

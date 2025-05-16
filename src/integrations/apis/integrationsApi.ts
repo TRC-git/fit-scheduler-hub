@@ -1,10 +1,14 @@
+
 import { fetchWithErrorHandling, getAuthHeader, BASE_API_URL } from '../utils/fetchUtils';
 
 export async function getIntegrations() {
   try {
     const headers = await getAuthHeader();
     console.log('Fetching integrations...');
-    const response = await fetchWithErrorHandling(`${BASE_API_URL}/get-integrations`, { headers, credentials: 'include' });
+    const response = await fetchWithErrorHandling(`${BASE_API_URL}/get-integrations`, { 
+      headers, 
+      credentials: 'include' 
+    });
     return response;
   } catch (error) {
     console.error('Failed to get integrations:', error);
@@ -26,7 +30,11 @@ export async function getIntegrations() {
 export async function initiateOAuth() {
   try {
     const headers = await getAuthHeader();
-    return await fetchWithErrorHandling(`${BASE_API_URL}/oauth-initiate`, { method: 'POST', headers, credentials: 'include' });
+    return await fetchWithErrorHandling(`${BASE_API_URL}/oauth-initiate`, { 
+      method: 'POST', 
+      headers, 
+      credentials: 'include' 
+    });
   } catch (error) {
     console.error('Failed to initiate OAuth:', error);
     throw error;
