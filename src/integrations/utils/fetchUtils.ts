@@ -1,4 +1,6 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 // Helper to get auth header for API requests
 export async function getAuthHeader() {
   try {
