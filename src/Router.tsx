@@ -19,13 +19,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
     
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get current session
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (isMounted) {
         setSession(session);
         setLoading(false);
       }
-    });
+    };
 
+    getSession();
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isMounted) {
         setSession(session);
@@ -44,12 +49,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
 };
 
+// Add a separate route for auth checks to prevent redirect loops
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
+
+// Admin route component (no changes needed)
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,7 +141,14 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 const Router = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
       <Route
         path="/"
         element={
