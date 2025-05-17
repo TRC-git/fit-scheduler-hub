@@ -2,37 +2,13 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [checkingSession, setCheckingSession] = useState(true);
-
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/");
-      }
-      setCheckingSession(false);
-    };
-    
-    checkSession();
-    
-    // Also listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  const { isLoading } = useAuth();
 
   // Show a loading state while checking the session
-  if (checkingSession) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4">
         <p className="text-fitness-text">Checking authentication...</p>

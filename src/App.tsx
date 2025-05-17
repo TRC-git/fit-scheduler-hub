@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import Router from "./Router";
 import "./App.css";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   // Create a new QueryClient instance for each app render
@@ -21,8 +22,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

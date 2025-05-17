@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 type UserProfile = {
   firstname: string;
@@ -21,14 +21,14 @@ const UserProfileSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { user, refreshAdminStatus } = useAuth();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        const { data: { session } } = await supabase.auth.getSession();
         
-        if (!session?.user?.email) {
+        if (!user?.email) {
           throw new Error("User not authenticated");
         }
         
@@ -36,7 +36,7 @@ const UserProfileSettings = () => {
         const { data: employee, error } = await supabase
           .from('employees')
           .select('*')
-          .eq('email', session.user.email)
+          .eq('email', user.email)
           .maybeSingle();
           
         if (error && error.code !== 'PGRST116') {
@@ -45,11 +45,11 @@ const UserProfileSettings = () => {
         
         if (!employee) {
           // Create new employee record if not exists
-          const userMetadata = session.user.user_metadata;
+          const userMetadata = user.user_metadata;
           
           const newEmployee = {
-            email: session.user.email,
-            firstname: userMetadata?.first_name || session.user.email.split('@')[0],
+            email: user.email,
+            firstname: userMetadata?.first_name || user.email.split('@')[0],
             lastname: userMetadata?.last_name || '',
             phonenumber: null,
             hiredate: new Date().toISOString().split('T')[0],
@@ -86,8 +86,10 @@ const UserProfileSettings = () => {
       }
     };
     
-    fetchUserProfile();
-  }, [toast]);
+    if (user?.email) {
+      fetchUserProfile();
+    }
+  }, [user, toast]);
 
   const handleSave = async () => {
     if (!profile || !profile.employeeid) return;
@@ -106,6 +108,9 @@ const UserProfileSettings = () => {
         
       if (error) throw error;
       
+      // Refresh admin status after profile update
+      await refreshAdminStatus();
+        
       toast({
         title: "Success",
         description: "Profile updated successfully",
