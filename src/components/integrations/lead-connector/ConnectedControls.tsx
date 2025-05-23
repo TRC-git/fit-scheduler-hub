@@ -1,8 +1,7 @@
-
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Users, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { syncLeadConnector, disconnectLeadConnector } from '@/integrations/apis/integrationsApi';
+import { syncLeadConnector, disconnectLeadConnector, syncUsersAndCalendars } from '@/integrations/apis/integrationsApi';
 import { useToast } from '@/hooks/use-toast';
 import { Integration } from '../IntegrationCard';
 
@@ -28,15 +27,38 @@ export const ConnectedControls: React.FC<ConnectedControlsProps> = ({
       await syncLeadConnector();
       toast({
         title: "Success",
-        description: "Sync completed successfully",
+        description: "Contact sync completed successfully",
       });
       // Force reload to refresh the integration status
       window.location.reload();
     } catch (e) {
-      setError('Sync failed');
+      setError('Contact sync failed');
       toast({
         title: "Error",
-        description: "Sync failed",
+        description: "Contact sync failed",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleUsersCalendarsSync = async () => {
+    setActionLoading(true);
+    setError(null);
+    try {
+      await syncUsersAndCalendars();
+      toast({
+        title: "Success",
+        description: "Users and calendars sync completed successfully",
+      });
+      // Force reload to refresh the integration status
+      window.location.reload();
+    } catch (e) {
+      setError('Users and calendars sync failed');
+      toast({
+        title: "Error",
+        description: "Users and calendars sync failed",
         variant: "destructive",
       });
     } finally {
@@ -68,43 +90,66 @@ export const ConnectedControls: React.FC<ConnectedControlsProps> = ({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        {integration.synced_data && (
-          <div className="text-fitness-text">
-            Contacts Synced: <span className="font-semibold">{integration.synced_data.contact_count || 0}</span>
-          </div>
+    <div className="space-y-3">
+      {/* Contact Sync Button */}
+      <Button
+        onClick={handleSync}
+        disabled={actionLoading}
+        className="w-full bg-fitness-accent text-black hover:bg-fitness-accent-dark"
+      >
+        {actionLoading ? (
+          <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+        ) : (
+          'Sync Contacts'
         )}
-        <div className="text-fitness-text">
-          Last Synced: <span className="font-semibold">{integration.last_synced_at ? new Date(integration.last_synced_at).toLocaleString() : 'Never'}</span>
-        </div>
-      </div>
+      </Button>
+
+      {/* Users & Calendars Sync Button */}
+      <Button
+        onClick={handleUsersCalendarsSync}
+        disabled={actionLoading}
+        variant="outline"
+        className="w-full border-fitness-accent text-fitness-accent hover:bg-fitness-accent hover:text-black"
+      >
+        {actionLoading ? (
+          <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+        ) : (
+          <>
+            <Users className="h-4 w-4 mr-2" />
+            <Calendar className="h-4 w-4 mr-2" />
+            Sync Users & Calendars
+          </>
+        )}
+      </Button>
       
-      <div className="flex flex-wrap gap-3 pt-2">
-        <Button
-          onClick={handleSync}
-          disabled={actionLoading}
-          className="bg-fitness-accent text-black hover:bg-fitness-accent-dark"
-        >
-          {actionLoading ? (
-            <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
-          ) : (
-            'Sync Again'
+      {/* Show sync statistics */}
+      {integration.synced_data && (
+        <div className="text-sm text-fitness-text/80 space-y-1">
+          {integration.synced_data.contact_count && (
+            <div>Contacts: {integration.synced_data.contact_count}</div>
           )}
-        </Button>
-        
-        <Button
-          onClick={handleDisconnect}
-          disabled={actionLoading}
-          variant="destructive"
-        >
-          {actionLoading ? (
-            <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
-          ) : (
-            'Disconnect'
+          {integration.synced_data.users_count && (
+            <div>Users: {integration.synced_data.users_count}</div>
           )}
-        </Button>
-      </div>
+          {integration.synced_data.calendars_count && (
+            <div>Calendars: {integration.synced_data.calendars_count}</div>
+          )}
+        </div>
+      )}
+
+      {/* Disconnect Button */}
+      <Button
+        onClick={handleDisconnect}
+        disabled={actionLoading}
+        variant="destructive"
+        className="w-full"
+      >
+        {actionLoading ? (
+          <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
+        ) : (
+          'Disconnect'
+        )}
+      </Button>
     </div>
   );
 };

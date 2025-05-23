@@ -1202,6 +1202,156 @@ export type Database = {
         }
         Relationships: []
       }
+      ghl_synced_users: {
+        Row: {
+          id: number
+          user_id: string
+          ghl_user_id: string
+          ghl_location_id: string
+          email: string
+          first_name: string | null
+          last_name: string | null
+          phone: string | null
+          role: string | null
+          permissions: Json | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          synced_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          ghl_user_id: string
+          ghl_location_id: string
+          email: string
+          first_name?: string | null
+          last_name?: string | null
+          phone?: string | null
+          role?: string | null
+          permissions?: Json | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          ghl_user_id?: string
+          ghl_location_id?: string
+          email?: string
+          first_name?: string | null
+          last_name?: string | null
+          phone?: string | null
+          role?: string | null
+          permissions?: Json | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Relationships: []
+      }
+      ghl_synced_calendars: {
+        Row: {
+          id: number
+          user_id: string
+          ghl_calendar_id: string
+          ghl_location_id: string
+          calendar_name: string
+          calendar_type: string | null
+          description: string | null
+          timezone: string | null
+          is_active: boolean
+          team_members: Json | null
+          settings: Json | null
+          created_at: string
+          updated_at: string
+          synced_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          ghl_calendar_id: string
+          ghl_location_id: string
+          calendar_name: string
+          calendar_type?: string | null
+          description?: string | null
+          timezone?: string | null
+          is_active?: boolean
+          team_members?: Json | null
+          settings?: Json | null
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          ghl_calendar_id?: string
+          ghl_location_id?: string
+          calendar_name?: string
+          calendar_type?: string | null
+          description?: string | null
+          timezone?: string | null
+          is_active?: boolean
+          team_members?: Json | null
+          settings?: Json | null
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Relationships: []
+      }
+      ghl_user_availability: {
+        Row: {
+          id: number
+          user_id: string
+          ghl_user_id: string
+          ghl_calendar_id: string
+          ghl_location_id: string
+          day_of_week: number
+          start_time: string
+          end_time: string
+          timezone: string | null
+          is_available: boolean
+          created_at: string
+          updated_at: string
+          synced_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          ghl_user_id: string
+          ghl_calendar_id: string
+          ghl_location_id: string
+          day_of_week: number
+          start_time: string
+          end_time: string
+          timezone?: string | null
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          ghl_user_id?: string
+          ghl_calendar_id?: string
+          ghl_location_id?: string
+          day_of_week?: number
+          start_time?: string
+          end_time?: string
+          timezone?: string | null
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+          synced_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

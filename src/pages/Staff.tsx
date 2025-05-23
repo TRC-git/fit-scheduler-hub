@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import NewStaffDialog from "@/components/staff/NewStaffDialog";
 import StaffList from "@/components/staff/StaffList";
+import SyncedStaffList from "@/components/staff/SyncedStaffList";
 
 const Staff = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -23,7 +24,15 @@ const Staff = () => {
           </Button>
         </div>
         
-        <StaffList />
+        {/* GoHighLevel Synced Staff */}
+        <SyncedStaffList />
+        
+        {/* Local Staff List */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-fitness-text mb-4">Local Staff</h2>
+          <StaffList />
+        </div>
+        
         <NewStaffDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       </main>
     </div>
