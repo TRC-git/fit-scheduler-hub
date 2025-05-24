@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -84,7 +83,7 @@ export const ManualConnector: React.FC<ManualConnectorProps> = ({
           value={pit}
           onChange={e => setPit(e.target.value)}
           disabled={actionLoading}
-          className="w-full bg-fitness-input text-fitness-text"
+          className="w-full bg-fitness-inner text-fitness-text border-fitness-muted"
         />
       </div>
       
@@ -99,7 +98,7 @@ export const ManualConnector: React.FC<ManualConnectorProps> = ({
           value={locationId}
           onChange={e => setLocationId(e.target.value)}
           disabled={actionLoading}
-          className="w-full bg-fitness-input text-fitness-text"
+          className="w-full bg-fitness-inner text-fitness-text border-fitness-muted"
         />
       </div>
       
