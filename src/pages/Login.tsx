@@ -3,9 +3,12 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { isLoading } = useAuth();
+  const navigate = useNavigate();
 
   // Show a loading state while checking the session
   if (isLoading) {
@@ -15,6 +18,10 @@ const Login = () => {
       </div>
     );
   }
+
+  const handleSkipToDemo = () => {
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4 font-['Cousine']">
@@ -51,6 +58,16 @@ const Login = () => {
             redirectTo={window.location.origin}
             view="sign_in"
           />
+          
+          <div className="mt-6 pt-4 border-t border-fitness-muted">
+            <Button
+              onClick={handleSkipToDemo}
+              variant="outline"
+              className="w-full bg-transparent border-fitness-accent text-fitness-accent hover:bg-fitness-accent hover:text-black font-['Cousine']"
+            >
+              Skip to Demo
+            </Button>
+          </div>
         </div>
       </div>
     </div>
