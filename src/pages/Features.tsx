@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -51,7 +50,7 @@ const Features = () => {
     },
     staff: {
       title: "Complete Staff Management Suite",
-      description: "Everything you need to manage your fitness team efficiently",
+      description: "Everything you need to manage your team efficiently",
       features: [
         "Staff scheduling and availability",
         "Certification tracking",
@@ -68,7 +67,7 @@ const Features = () => {
     },
     analytics: {
       title: "Advanced Analytics & Reporting",
-      description: "Data-driven insights to optimize your fitness business",
+      description: "Data-driven insights to optimize your business",
       features: [
         "Real-time operational dashboards",
         "Member engagement analytics",
@@ -85,7 +84,7 @@ const Features = () => {
     },
     advanced: {
       title: "Enterprise-Grade Advanced Features",
-      description: "Powerful tools for scaling your fitness empire",
+      description: "Powerful tools for scaling your empire",
       features: [
         "Multi-location management",
         "API integrations",
@@ -113,7 +112,7 @@ const Features = () => {
             Powerful Features for Modern Gyms
           </h1>
           <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-            Discover the comprehensive toolkit that's revolutionizing how fitness businesses operate and scale.
+            Discover the comprehensive toolkit that's revolutionizing how businesses operate and scale.
           </p>
         </div>
       </section>
@@ -266,7 +265,7 @@ const Features = () => {
             Ready to Transform Your Gym?
           </h2>
           <p className="text-xl text-white/80 mb-8">
-            Join thousands of fitness professionals who've revolutionized their operations with ScheduleFor.
+            Join thousands of professionals who've revolutionized their operations with ScheduleFor.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
