@@ -86,7 +86,7 @@ const MarketingSidebar = () => {
                 <span className="text-green-400">10,000+</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-white/60">Gyms Managed</span>
+                <span className="text-white/60">Businesses Managed</span>
                 <span className="text-green-400">2,500+</span>
               </div>
               <div className="flex justify-between">
