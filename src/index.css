@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cousine:wght@400;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,35 +7,35 @@
 
 @layer base {
   :root {
-    --background: 220 26% 14%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 95%;
 
-    --card: 222 17% 16%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 222 17% 16%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 191 98% 53%;
+    --primary: 142 76% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 13% 25%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 95%;
 
-    --muted: 220 13% 25%;
-    --muted-foreground: 220 8% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 191 98% 53%;
+    --accent: 142 76% 36%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 25%;
-    --input: 220 13% 25%;
-    --ring: 191 98% 53%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 142 76% 36%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 }
 
@@ -43,6 +44,131 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-br from-black via-zinc-900 to-black text-foreground font-inter;
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-orbitron;
+  }
+  
+  .matrix-font {
+    @apply font-rajdhani;
+  }
+}
+
+/* Matrix Rain Effect */
+.matrix-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.matrix-rain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(0deg, transparent 70%, rgba(3, 160, 98, 0.03) 71%, rgba(3, 160, 98, 0.03) 100%),
+    linear-gradient(90deg, transparent 70%, rgba(3, 160, 98, 0.03) 71%, rgba(3, 160, 98, 0.03) 100%);
+  background-size: 20px 20px;
+  animation: matrix-scroll 10s linear infinite;
+}
+
+@keyframes matrix-scroll {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Glassmorphism utilities */
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+  
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 bg-clip-text text-transparent;
+  }
+  
+  .matrix-gradient-text {
+    @apply bg-gradient-to-r from-green-300 via-green-400 to-emerald-500 bg-clip-text text-transparent;
+    background-size: 200% auto;
+    animation: matrix-glow 3s ease-in-out infinite;
+  }
+  
+  .laser-border {
+    @apply relative overflow-hidden rounded-lg;
+  }
+  
+  .laser-border::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 rounded-lg;
+    background-size: 200% 100%;
+    animation: laser-flow 2s ease-in-out infinite;
+    z-index: -1;
+  }
+  
+  .laser-border > * {
+    @apply relative bg-black/80 rounded-lg m-[2px];
+  }
+}
+
+@keyframes laser-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes matrix-glow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Animated spotlight background */
+.spotlight-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(3, 160, 98, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 70%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+  animation: spotlight-move 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes spotlight-move {
+  0%, 100% { 
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(3, 160, 98, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 70%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+  }
+  33% {
+    background: 
+      radial-gradient(circle at 70% 30%, rgba(3, 160, 98, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 30% 60%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+  }
+  66% {
+    background: 
+      radial-gradient(circle at 40% 80%, rgba(3, 160, 98, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 40%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 10% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
   }
 }

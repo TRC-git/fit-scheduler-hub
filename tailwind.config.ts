@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        orbitron: ['Orbitron', 'monospace'],
+        rajdhani: ['Rajdhani', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,15 +58,20 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        fitness: {
-          background: "#1a1d23",
-          card: "#000000",
-          accent: "#15e7fb",
-          text: "#EEEEEE",
-          muted: "#333333",
-          inner: "#171717",
-          grid: "#202020",
-          danger: "#ea384c",
+        green: {
+          300: "#86efac",
+          400: "#4ade80",
+          500: "#22c55e",
+          600: "#16a34a",
+        },
+        emerald: {
+          400: "#34d399",
+          500: "#10b981",
+        },
+        matrix: {
+          green: "#03a062",
+          light: "#4ade80",
+          dark: "#16a34a",
         },
       },
       borderRadius: {
@@ -77,10 +88,15 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "gradient-shift": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "gradient-shift": "gradient-shift 3s ease-in-out infinite",
       },
     },
   },
