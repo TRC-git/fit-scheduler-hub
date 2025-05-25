@@ -1,64 +1,49 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  Home, 
-  Zap, 
-  DollarSign, 
-  Star, 
-  Play, 
-  Menu, 
-  X,
-  Calendar,
-  Users,
-  BarChart3,
-  Shield
-} from "lucide-react";
-
+import { Home, Zap, DollarSign, Star, Play, Menu, X, Calendar, Users, BarChart3, Shield } from "lucide-react";
 const MarketingSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsOpen(false);
   }, [location]);
-
   const handleNavClick = () => {
     setIsOpen(false);
     window.scrollTo(0, 0);
   };
-
-  const navItems = [
-    { icon: Home, label: "Home", path: "/home" },
-    { icon: Zap, label: "Features", path: "/features" },
-    { icon: DollarSign, label: "Pricing", path: "/pricing" },
-    { icon: Star, label: "Testimonials", path: "/testimonials" },
-    { icon: Play, label: "Get Started", path: "/get-started" },
-  ];
-
-  return (
-    <>
+  const navItems = [{
+    icon: Home,
+    label: "Home",
+    path: "/home"
+  }, {
+    icon: Zap,
+    label: "Features",
+    path: "/features"
+  }, {
+    icon: DollarSign,
+    label: "Pricing",
+    path: "/pricing"
+  }, {
+    icon: Star,
+    label: "Testimonials",
+    path: "/testimonials"
+  }, {
+    icon: Play,
+    label: "Get Started",
+    path: "/get-started"
+  }];
+  return <>
       {/* Mobile Menu Button */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsOpen(!isOpen)}
-          className="glass text-white hover:bg-white/10"
-        >
+        <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="glass text-white hover:bg-white/10">
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
       </div>
 
       {/* Overlay for mobile */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsOpen(false)} />}
 
       {/* Sidebar */}
       <aside className={`
@@ -69,41 +54,25 @@ const MarketingSidebar = () => {
       `}>
         <div className="p-6 space-y-8">
           {/* Logo */}
-          <Link 
-            to="/home" 
-            onClick={handleNavClick}
-            className="block"
-          >
+          <Link to="/home" onClick={handleNavClick} className="block">
             <h1 className="text-2xl font-orbitron font-bold matrix-gradient-text">
               ScheduleFor
             </h1>
-            <p className="text-xs text-green-400 matrix-font mt-1">
-              FITNESS MANAGEMENT SYSTEM
-            </p>
+            <p className="text-xs text-green-400 matrix-font mt-1">STAFF MANAGEMENT SYSTEM</p>
           </Link>
 
           {/* Navigation */}
           <nav className="space-y-2">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={handleNavClick}
-                  className={`
+            {navItems.map(item => {
+            const isActive = location.pathname === item.path;
+            return <Link key={item.path} to={item.path} onClick={handleNavClick} className={`
                     flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
-                    ${isActive 
-                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                      : 'text-white/70 hover:text-white hover:bg-white/5'
-                    }
-                  `}
-                >
+                    ${isActive ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'text-white/70 hover:text-white hover:bg-white/5'}
+                  `}>
                   <item.icon className="h-5 w-5" />
                   <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
+                </Link>;
+          })}
           </nav>
 
           {/* Quick Stats */}
@@ -154,10 +123,7 @@ const MarketingSidebar = () => {
 
           {/* CTA */}
           <div className="laser-border">
-            <Button 
-              asChild 
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-            >
+            <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
               <Link to="/get-started" onClick={handleNavClick}>
                 Start Free Trial
               </Link>
@@ -165,8 +131,6 @@ const MarketingSidebar = () => {
           </div>
         </div>
       </aside>
-    </>
-  );
+    </>;
 };
-
 export default MarketingSidebar;
