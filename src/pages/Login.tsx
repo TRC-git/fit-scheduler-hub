@@ -19,8 +19,27 @@ const Login = () => {
     );
   }
 
-  const handleSkipToDemo = () => {
-    navigate("/");
+  const handleSkipToDemo = async () => {
+    try {
+      // Sign in with a demo account or create a temporary session
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'demo@example.com',
+        password: 'demo123456'
+      });
+      
+      if (error) {
+        console.log('Demo login failed, navigating anyway:', error);
+        // If demo login fails, just navigate directly
+        navigate("/");
+      } else {
+        // If demo login succeeds, navigation will happen automatically via auth state change
+        console.log('Demo login successful');
+      }
+    } catch (error) {
+      console.error('Error during demo login:', error);
+      // Fallback: navigate directly
+      navigate("/");
+    }
   };
 
   return (
