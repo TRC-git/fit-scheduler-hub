@@ -148,7 +148,7 @@ const MarketingSidebar = () => {
           </div>
 
           {/* CTA */}
-          <div className="laser-border">
+          <div className="glass-card p-3">
             <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
               <Link to="/get-started" onClick={handleNavClick}>
                 Start Free Trial
