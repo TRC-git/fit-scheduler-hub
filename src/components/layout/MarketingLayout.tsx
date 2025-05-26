@@ -12,7 +12,7 @@ const MarketingLayout = ({ children }: MarketingLayoutProps) => {
     <div className="min-h-screen spotlight-bg">
       <div className="matrix-rain" />
       <MarketingSidebar />
-      <main className="md:ml-64 min-h-screen">
+      <main className="md:ml-64 min-h-screen w-full md:w-[calc(100%-16rem)]">
         {children}
         <Footer />
       </main>

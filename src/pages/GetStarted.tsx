@@ -60,10 +60,10 @@ const GetStarted = () => {
       {/* Hero Section */}
       <section className="pt-20 pb-12 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-orbitron font-bold mb-6 matrix-gradient-text">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-orbitron font-bold mb-6 matrix-gradient-text leading-tight">
             Start Your Transformation
           </h1>
-          <p className="text-xl text-white/80 mb-8">
+          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-3xl mx-auto">
             Get up and running with ScheduleFor in just a few steps. Our team will guide you through the entire process.
           </p>
         </div>
@@ -72,9 +72,9 @@ const GetStarted = () => {
       {/* Progress Indicator */}
       <section className="pb-8 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 overflow-x-auto">
             {steps.map((step, index) => (
-              <div key={index} className="flex items-center">
+              <div key={index} className="flex items-center flex-shrink-0">
                 <div className={`
                   w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm
                   ${index + 1 <= currentStep 
@@ -90,7 +90,7 @@ const GetStarted = () => {
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`
-                    w-16 h-1 mx-4
+                    w-8 sm:w-16 h-1 mx-2 sm:mx-4
                     ${index + 1 < currentStep ? 'bg-green-600' : 'bg-white/20'}
                   `} />
                 )}
@@ -99,7 +99,7 @@ const GetStarted = () => {
           </div>
           
           <div className="text-center">
-            <h2 className="text-2xl font-orbitron font-bold text-white mb-2">
+            <h2 className="text-xl sm:text-2xl font-orbitron font-bold text-white mb-2">
               {steps[currentStep - 1].title}
             </h2>
             <p className="text-white/70">
@@ -112,7 +112,7 @@ const GetStarted = () => {
       {/* Form Steps */}
       <section className="pb-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto">
-          <div className="glass-card p-8">
+          <div className="glass-card p-6 sm:p-8">
             {/* Step 1: Business Information */}
             {currentStep === 1 && (
               <div className="space-y-6">
