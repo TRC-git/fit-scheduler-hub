@@ -31,12 +31,18 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     sourcemap: true,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ["react", "react-dom"],
-          tanstack: ["@tanstack/react-query"],
-          shadcn: ["@radix-ui/react-dialog", "@radix-ui/react-slot", "@radix-ui/react-tabs"],
+          vendor: ["react", "react-dom"],
+          router: ["react-router-dom"],
+          query: ["@tanstack/react-query"],
+          supabase: ["@supabase/supabase-js", "@supabase/auth-ui-react"],
+          ui: ["@radix-ui/react-dialog", "@radix-ui/react-slot", "@radix-ui/react-tabs", "@radix-ui/react-select"],
+          icons: ["lucide-react"],
+          charts: ["recharts"],
+          utils: ["clsx", "tailwind-merge", "date-fns"],
         },
       },
     },

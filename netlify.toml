@@ -12,13 +12,6 @@
   framework = "#custom"
   autoLaunch = false
 
-# Redirect all API requests to Netlify Functions
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
 # Fallback for all other routes to the SPA
 [[redirects]]
   from = "/*"

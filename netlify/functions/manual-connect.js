@@ -1,7 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
-import fetch from 'node-fetch';
-import { verifySupabaseJwt } from './verifySupabaseJwt.js';
-import localCredentials from './localCredentials.js';
+
+const { createClient } = require('@supabase/supabase-js');
+const fetch = require('node-fetch');
+const { verifySupabaseJwt } = require('./verifySupabaseJwt');
+const localCredentials = require('./localCredentials');
 
 // Add CORS headers for production
 const corsHeaders = {
@@ -10,7 +11,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
 };
 
-const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   console.log('Manual connect function started');
   
   // Handle CORS preflight requests
@@ -161,5 +162,3 @@ const handler = async (event, context) => {
     };
   }
 };
-
-export { handler as default }; 
