@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "../ui/button";
 import { Dialog } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const ScheduleHeader = () => {
   const { classTypes, isLoading } = useClassTypes();
@@ -63,28 +64,29 @@ const ScheduleHeader = () => {
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <select 
-          className="bg-fitness-card text-fitness-text border border-fitness-muted rounded-md px-4 py-2 w-[210px]"
-          value={selectedScheduleType}
-          onChange={(e) => setSelectedScheduleType(e.target.value)}
-        >
-          {isLoading ? (
-            <option className="pl-2">Loading...</option>
-          ) : (
-            <>
-              <option value="all" className="pl-2">All Schedules</option>
-              {classTypes?.map((type) => (
-                <option key={type.schedule_type_id} value={type.name} className="pl-2">
-                  {type.name}
-                </option>
-              ))}
-            </>
-          )}
-        </select>
+        <Select value={selectedScheduleType} onValueChange={setSelectedScheduleType}>
+          <SelectTrigger className="w-[210px] bg-card text-foreground border-border">
+            <SelectValue placeholder={isLoading ? "Loading..." : "All Schedules"} />
+          </SelectTrigger>
+          <SelectContent className="bg-popover border-border">
+            {isLoading ? (
+              <SelectItem value="loading" disabled>Loading...</SelectItem>
+            ) : (
+              [
+                <SelectItem key="all" value="all" className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">All Schedules</SelectItem>,
+                ...(classTypes?.map((type) => (
+                  <SelectItem key={type.schedule_type_id} value={type.name} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                    {type.name}
+                  </SelectItem>
+                )) || [])
+              ]
+            )}
+          </SelectContent>
+        </Select>
         <Button
           onClick={handlePostSchedule}
           disabled={isPosting}
-          className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md w-[140px] hover:bg-fitness-inner transition-colors"
+          className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md w-[140px] hover:bg-secondary/80 transition-colors"
         >
           {isPosting ? "Posting..." : "Post Schedule"}
         </Button>
@@ -98,19 +100,19 @@ const ScheduleHeader = () => {
         >
           <Sparkles className="w-5 h-5" />
         </Button>
-        <div className="flex items-center gap-2 bg-fitness-card px-4 py-2 rounded-md">
+        <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-md border border-border">
           <ChevronLeft 
-            className="w-5 h-5 text-fitness-text cursor-pointer hover:text-fitness-accent transition-colors" 
+            className="w-5 h-5 text-foreground cursor-pointer hover:text-primary transition-colors" 
             onClick={handlePreviousWeek}
           />
-          <span className="text-fitness-text min-w-[200px] text-center">{weekDisplay}</span>
+          <span className="text-foreground min-w-[200px] text-center">{weekDisplay}</span>
           <ChevronRight 
-            className="w-5 h-5 text-fitness-text cursor-pointer hover:text-fitness-accent transition-colors" 
+            className="w-5 h-5 text-foreground cursor-pointer hover:text-primary transition-colors" 
             onClick={handleNextWeek}
           />
         </div>
         <button 
-          className="px-4 py-2 bg-fitness-muted text-fitness-text rounded-md hover:bg-fitness-inner transition-colors"
+          className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
           onClick={() => setIsCloneDialogOpen(true)}
         >
           Clone Week
@@ -118,7 +120,7 @@ const ScheduleHeader = () => {
       </div>
       
       <button 
-        className="px-4 py-2 bg-fitness-accent text-[#333333] rounded-md hover:bg-fitness-accent/90"
+        className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
         onClick={() => setIsClockInDialogOpen(true)}
       >
         Clock-In

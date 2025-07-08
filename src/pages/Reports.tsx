@@ -5,7 +5,7 @@ const Reports = () => {
   return (
     <>
       <Header />
-      <div className="container mx-auto py-6 bg-fitness-background min-h-screen">
+      <div className="container mx-auto py-6 bg-background min-h-screen">
         <StaffReports />
       </div>
     </>

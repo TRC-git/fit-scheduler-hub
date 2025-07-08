@@ -67,40 +67,40 @@ const Settings = () => {
   }, []);
   
   if (loading) {
-    return <div className="flex flex-col min-h-screen bg-fitness-background">
+    return <div className="flex flex-col min-h-screen bg-background">
       <div className="p-6">
         <div className="flex items-center gap-4 mb-6">
           <Link 
             to="/" 
-            className="flex items-center gap-2 text-fitness-text hover:text-[#15e7fb] transition-colors"
+            className="flex items-center gap-2 text-foreground hover:text-[#15e7fb] transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Schedule
           </Link>
-          <h1 className="text-2xl font-bold text-fitness-text">Settings</h1>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
         </div>
-        <p className="text-fitness-text">Loading...</p>
+        <p className="text-foreground">Loading...</p>
       </div>
     </div>;
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-fitness-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <div className="p-6">
         <div className="flex items-center gap-4 mb-6">
           <Link 
             to="/" 
-            className="flex items-center gap-2 text-fitness-text hover:text-[#15e7fb] transition-colors"
+            className="flex items-center gap-2 text-foreground hover:text-[#15e7fb] transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Schedule
           </Link>
-          <h1 className="text-2xl font-bold text-fitness-text">Settings</h1>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
         </div>
         
         <OperationalDaysProvider>
           <Tabs defaultValue={getDefaultTab()} className="w-full">
-            <TabsList className="bg-fitness-card">
+            <TabsList className="bg-card border-border">
               <TabsTrigger value="profile">User Profile</TabsTrigger>
               {isAdmin && (
                 <>

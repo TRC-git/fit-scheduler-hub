@@ -36,21 +36,21 @@ export const StaffReports = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight text-fitness-text">Staff Reports</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">Staff Reports</h2>
         <div className="flex items-center gap-4">
           <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-            <SelectTrigger className="w-[200px] bg-fitness-card border-fitness-grid text-fitness-text">
+            <SelectTrigger className="w-[200px] bg-card border-border text-foreground">
               <SelectValue placeholder="Select staff member" />
             </SelectTrigger>
-            <SelectContent className="bg-fitness-card border-fitness-grid">
-              <SelectItem value="all" className="text-fitness-text hover:bg-fitness-accent hover:text-black">
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all" className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
                 All Staff
               </SelectItem>
               {staff?.map((member) => (
                 <SelectItem 
                   key={member.employeeid} 
                   value={member.employeeid.toString()}
-                  className="text-fitness-text hover:bg-fitness-accent hover:text-black"
+                  className="text-popover-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   {member.firstname} {member.lastname}
                 </SelectItem>
@@ -62,30 +62,30 @@ export const StaffReports = () => {
       </div>
 
       <Tabs defaultValue="position" className="space-y-4">
-        <TabsList className="bg-fitness-card border-fitness-grid">
-          <TabsTrigger value="position" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+        <TabsList className="bg-card border-border">
+          <TabsTrigger value="position" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <BarChart3 className="w-4 h-4 mr-0.5" />
             Position Summary
           </TabsTrigger>
-          <TabsTrigger value="attendance" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+          <TabsTrigger value="attendance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Users className="w-4 h-4 mr-0.5" />
             Attendance Summary
           </TabsTrigger>
-          <TabsTrigger value="staff" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+          <TabsTrigger value="staff" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <User className="w-4 h-4 mr-0.5" />
             Staff Summary
           </TabsTrigger>
-          <TabsTrigger value="payroll" className="data-[state=active]:bg-fitness-accent data-[state=active]:text-black">
+          <TabsTrigger value="payroll" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <DollarSign className="w-4 h-4 mr-0.5" />
             Payroll Summary
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="position" className="space-y-4">
-          <Card className="bg-fitness-card border-fitness-grid">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-fitness-text flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-fitness-accent" />
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
                 Position Schedule Summary
               </CardTitle>
             </CardHeader>
@@ -99,10 +99,10 @@ export const StaffReports = () => {
         </TabsContent>
 
         <TabsContent value="attendance" className="space-y-4">
-          <Card className="bg-fitness-card border-fitness-grid">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-fitness-text flex items-center gap-2">
-                <Users className="w-5 h-5 text-fitness-accent" />
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
                 Staff Attendance Summary
               </CardTitle>
             </CardHeader>
@@ -116,10 +116,10 @@ export const StaffReports = () => {
         </TabsContent>
 
         <TabsContent value="staff" className="space-y-4">
-          <Card className="bg-fitness-card border-fitness-grid">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-fitness-text flex items-center gap-2">
-                <User className="w-5 h-5 text-fitness-accent" />
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <User className="w-5 h-5 text-primary" />
                 Individual Staff Summary
               </CardTitle>
             </CardHeader>
@@ -133,10 +133,10 @@ export const StaffReports = () => {
         </TabsContent>
 
         <TabsContent value="payroll" className="space-y-4">
-          <Card className="bg-fitness-card border-fitness-grid">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-fitness-text flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-fitness-accent" />
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
                 Payroll Summary
               </CardTitle>
             </CardHeader>

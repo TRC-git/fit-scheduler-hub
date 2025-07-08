@@ -35,17 +35,17 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="bg-fitness-card border-b border-fitness-border">
+    <header className="bg-card border-b border-border">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-fitness-text text-xl font-bold font-['Cousine'] tracking-wider">
+          <Link to="/" className="text-foreground text-xl font-bold font-['Cousine'] tracking-wider">
             ScheduleFor
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button 
                 variant={isActive("/") ? "default" : "ghost"}
-                className={isActive("/") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
+                className={isActive("/") ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
               >
                 <Calendar className="h-4 w-4 mr-0.5" />
                 Schedule
@@ -54,7 +54,7 @@ const Header = () => {
             <Link to="/staff">
               <Button 
                 variant={isActive("/staff") ? "default" : "ghost"}
-                className={isActive("/staff") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
+                className={isActive("/staff") ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
               >
                 <Users className="h-4 w-4 mr-0.5" />
                 Staff
@@ -63,7 +63,7 @@ const Header = () => {
             <Link to="/payroll">
               <Button 
                 variant={isActive("/payroll") ? "default" : "ghost"}
-                className={isActive("/payroll") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
+                className={isActive("/payroll") ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
               >
                 <DollarSign className="h-4 w-4 mr-0.5" />
                 Payroll/Hrs
@@ -72,7 +72,7 @@ const Header = () => {
             <Link to="/reports">
               <Button 
                 variant={isActive("/reports") ? "default" : "ghost"}
-                className={isActive("/reports") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
+                className={isActive("/reports") ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
               >
                 <BarChart className="h-4 w-4 mr-0.5" />
                 Reports
@@ -81,7 +81,7 @@ const Header = () => {
             <Link to="/settings">
               <Button 
                 variant={isActive("/settings") ? "default" : "ghost"}
-                className={isActive("/settings") ? "bg-fitness-accent text-[#333333] hover:bg-fitness-accent/90" : ""}
+                className={isActive("/settings") ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
               >
                 <Settings className="h-4 w-4 mr-0.5" />
                 Settings
@@ -89,18 +89,18 @@ const Header = () => {
             </Link>
             
             {userEmail && (
-              <div className="flex items-center gap-2 px-3 py-2 bg-fitness-muted rounded-md">
+              <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md">
                 <Avatar className="h-6 w-6">
-                  <AvatarFallback className="bg-fitness-accent text-xs">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {userEmail.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-fitness-text">{userEmail}</span>
+                <span className="text-sm text-foreground">{userEmail}</span>
               </div>
             )}
             
             <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5 text-fitness-text" />
+              <LogOut className="h-5 w-5 text-foreground" />
             </Button>
           </div>
         </div>

@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Show loading state
   if (isLoading) {
-    return <div className="min-h-screen bg-fitness-background" />;
+    return <div className="min-h-screen bg-background" />;
   }
 
   // If no session, redirect to login

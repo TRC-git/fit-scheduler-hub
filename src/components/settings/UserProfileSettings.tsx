@@ -138,13 +138,13 @@ const UserProfileSettings = () => {
 
   if (loading) {
     return (
-      <Card className="bg-fitness-card">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-fitness-text">User Profile</CardTitle>
+          <CardTitle className="text-foreground">User Profile</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="h-32 flex items-center justify-center">
-            <p className="text-fitness-text">Loading profile...</p>
+            <p className="text-foreground">Loading profile...</p>
           </div>
         </CardContent>
       </Card>
@@ -152,51 +152,51 @@ const UserProfileSettings = () => {
   }
 
   return (
-    <Card className="bg-fitness-card">
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle className="text-fitness-text">User Profile</CardTitle>
+        <CardTitle className="text-foreground">User Profile</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {profile && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="firstname" className="text-fitness-text">First Name</Label>
+                <Label htmlFor="firstname" className="text-foreground">First Name</Label>
                 <Input
                   id="firstname"
                   value={profile.firstname}
                   onChange={(e) => handleChange('firstname', e.target.value)}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
+                  className="bg-background text-foreground border-border"
                 />
               </div>
               <div>
-                <Label htmlFor="lastname" className="text-fitness-text">Last Name</Label>
+                <Label htmlFor="lastname" className="text-foreground">Last Name</Label>
                 <Input
                   id="lastname"
                   value={profile.lastname}
                   onChange={(e) => handleChange('lastname', e.target.value)}
-                  className="bg-fitness-inner text-fitness-text border-fitness-muted"
+                  className="bg-background text-foreground border-border"
                 />
               </div>
             </div>
             
             <div>
-              <Label htmlFor="email" className="text-fitness-text">Email</Label>
+              <Label htmlFor="email" className="text-foreground">Email</Label>
               <Input
                 id="email"
                 value={profile.email}
                 readOnly
-                className="bg-fitness-inner/50 text-fitness-text border-fitness-muted"
+                className="bg-muted text-muted-foreground border-border"
               />
             </div>
             
             <div>
-              <Label htmlFor="phone" className="text-fitness-text">Phone Number</Label>
+              <Label htmlFor="phone" className="text-foreground">Phone Number</Label>
               <Input
                 id="phone"
                 value={profile.phonenumber || ''}
                 onChange={(e) => handleChange('phonenumber', e.target.value)}
-                className="bg-fitness-inner text-fitness-text border-fitness-muted"
+                className="bg-background text-foreground border-border"
                 placeholder="Enter your phone number"
               />
             </div>
