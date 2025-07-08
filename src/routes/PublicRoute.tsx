@@ -6,7 +6,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Show loading state
   if (isLoading) {
-    return <div className="min-h-screen bg-fitness-background" />;
+    return <div className="min-h-screen bg-background" />;
   }
 
   // If we have a session for a public route, redirect to home

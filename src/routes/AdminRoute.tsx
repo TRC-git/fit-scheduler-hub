@@ -17,7 +17,7 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   }, [user, isAdmin, refreshAdminStatus]);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-fitness-background" />;
+    return <div className="min-h-screen bg-background" />;
   }
 
   if (isAdmin === false) {

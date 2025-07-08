@@ -10,11 +10,11 @@ const Staff = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen bg-fitness-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-fitness-text">Staff Management</h1>
+          <h1 className="text-2xl font-bold text-foreground">Staff Management</h1>
           <Button 
             onClick={() => setDialogOpen(true)}
             className="bg-[#15e7fb] hover:bg-[#15e7fb]/80 text-[#1A1F2C]"
@@ -29,7 +29,7 @@ const Staff = () => {
         
         {/* Local Staff List */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-fitness-text mb-4">Local Staff</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-4">Local Staff</h2>
           <StaffList />
         </div>
         

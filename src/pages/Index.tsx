@@ -6,7 +6,7 @@ import { ScheduleProvider } from "@/contexts/schedule/ScheduleContext";
 
 const Index = () => {
   return (
-    <div className="flex flex-col h-screen bg-fitness-background">
+    <div className="flex flex-col h-screen bg-background">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

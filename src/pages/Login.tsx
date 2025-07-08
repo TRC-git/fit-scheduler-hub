@@ -13,8 +13,8 @@ const Login = () => {
   // Show a loading state while checking the session
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4">
-        <p className="text-fitness-text">Checking authentication...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <p className="text-foreground">Checking authentication...</p>
       </div>
     );
   }
@@ -43,11 +43,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-fitness-background flex items-center justify-center p-4 font-['Cousine']">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 font-['Cousine']">
       <div className="w-full max-w-md">
-        <div className="bg-fitness-card rounded-lg p-8">
-          <h1 className="text-2xl font-bold text-fitness-text mb-2 text-center font-['Cousine'] tracking-wider tracking-wider">ScheduleFor</h1>
-          <p className="text-fitness-text text-center mb-6 font-['Cousine'] text-sm">Sign in to your account or create a new one</p>
+        <div className="bg-card rounded-lg p-8 border border-border">
+          <h1 className="text-2xl font-bold text-foreground mb-2 text-center font-['Cousine'] tracking-wider tracking-wider">ScheduleFor</h1>
+          <p className="text-foreground text-center mb-6 font-['Cousine'] text-sm">Sign in to your account or create a new one</p>
           <Auth
             supabaseClient={supabase}
             appearance={{
@@ -78,11 +78,11 @@ const Login = () => {
             view="sign_in"
           />
           
-          <div className="mt-6 pt-4 border-t border-fitness-muted">
+          <div className="mt-6 pt-4 border-t border-border">
             <Button
               onClick={handleSkipToDemo}
               variant="outline"
-              className="w-full bg-transparent border-fitness-accent text-fitness-accent hover:bg-fitness-accent hover:text-black font-['Cousine']"
+              className="w-full bg-transparent border-primary text-primary hover:bg-primary hover:text-primary-foreground font-['Cousine']"
             >
               Skip to Demo
             </Button>
